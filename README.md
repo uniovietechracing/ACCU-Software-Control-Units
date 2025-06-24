@@ -1,5 +1,5 @@
 # ACCU-Software-Control-Units
-<h1 align="center"> Software Centralitas STM32F4 </h1>
+<h1 align="center"> ACCU Software STM32F4 </h1>
 <p align="left">
    <img src="https://img.shields.io/badge/STATUS-EN%20DESAROLLO-green">
    </p>
