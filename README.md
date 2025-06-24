@@ -1,4 +1,4 @@
-<h1 align="center"> ACCU-Software-Control-Units </h1>
+<h1 align="center"> ACCU Software Control Units </h1>
 <p align="left">
    <img src="https://img.shields.io/badge/STATUS-EN%20DESAROLLO-green">
    </p>
@@ -12,15 +12,11 @@
 ***
 Applications & Bootloader Software for the Electronic Control Units with STM32F4 listed below:
 
-		➜ Rear Control Unit 1 Shutdown Cicruit Readings Unit.
+		➜ AccuMaster Control Unit.
     
-		➜ Rear Control Power Distribution Cobtrol Unit.
+		➜ Temperatures Control Unit.
     
-		➜ Charger Control Unit.
-    
-		➜ Front Control Unit.
-    
-		➜ Battery Management System Master Unit.
+		➜ SDC Charger Control Unit.
     	
 
 
