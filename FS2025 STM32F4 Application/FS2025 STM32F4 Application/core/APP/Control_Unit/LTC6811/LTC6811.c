@@ -61,10 +61,7 @@ void LTC6811_SPI_Init()
 ********************************************************************************
 *******************************************************************************/
 void LTC6811_Init(Control_Unit_TypeDef* Control_Unit)
-{	
-	Timer_10ms_Init(&Control_Unit->Timing.Init_State_Timer,1,MILISECONDS,10);
-	Timer_10ms_Init(&Control_Unit->Timing.Init_State_Timer,1,MILISECONDS,10);
-	
+{		
 	Control_Unit->Status.LTC6811_1.SPI_Handler=&STM32_SPI1;
 	Control_Unit->Status.LTC6811_1.CS_PORT=GPIOA;
 	Control_Unit->Status.LTC6811_1.CS_PIN=GPIO_PIN_4;
@@ -72,17 +69,51 @@ void LTC6811_Init(Control_Unit_TypeDef* Control_Unit)
 	Control_Unit->Status.LTC6811_2.SPI_Handler=&STM32_SPI2;
 	Control_Unit->Status.LTC6811_2.CS_PORT=GPIOA;
 	Control_Unit->Status.LTC6811_2.CS_PIN=GPIO_PIN_15;
+	
+	Control_Unit->Status.LTC6811_1.Fail=FALSE;
+	Control_Unit->Status.LTC6811_2.Fail=FALSE;
+	
+	// Despierta ambos LTC6811
+  LTC6811_Wake_Up(&Control_Unit->Status.LTC6811_1);
+  LTC6811_Wake_Up(&Control_Unit->Status.LTC6811_2);
+  HAL_Delay(1);
+
+  // Desactiva balanceo al final (por seguridad)
+  LTC_Disable_Balancing(&Control_Unit->Status.LTC6811_1);
+  LTC_Disable_Balancing(&Control_Unit->Status.LTC6811_2);
+		
+	if(Control_Unit->Status.LTC6811_1.Fail==TRUE || Control_Unit->Status.LTC6811_2.Fail==TRUE)
+	{
+		Control_Unit->State=LTC6811_FAIL_MODE;
+	}	
 }
 
+
+
+
+/*******************************************************************************
+********************************************************************************
+***************							 	Float Volt to UINT8      	  	    ***************	
+********************************************************************************
+*******************************************************************************/
+uint8_t LTC6811_Encode_Volt_10mV(float volt) {
+    if (volt < 2.0f) volt = 2.0f;
+    if (volt > 4.55f) volt = 4.55f;
+
+    return (uint8_t)((volt - 2.0f) * 100.0f + 0.5f); // +0.5 para redondeo correcto
+}
 
 /*******************************************************************************
 ********************************************************************************
 ***************								INT8 Temp to UINT8      	  	   ***************	
 ********************************************************************************
 *******************************************************************************/
-uint8_t LTC6811_Enconde_Temp(int8_t Temp) 
+uint8_t LTC6811_Enconde_Temp(float Temp) 
 {
-    return (uint8_t)(127 - Temp);
+       if (Temp < -20.0f) Temp = -20.0f;
+    if (Temp > 107.5f) Temp = 107.5f;
+
+    return (uint8_t)((Temp + 20.0f) * 2.0f + 0.5f);  // +0.5 para redondeo
 }
 
 /*******************************************************************************
@@ -90,17 +121,16 @@ uint8_t LTC6811_Enconde_Temp(int8_t Temp)
 ***************										Voltage to Temp	      	  	   ***************	
 ********************************************************************************
 *******************************************************************************/
-int8_t LTC_Voltage_to_Temperature(float v) 
-{
-    for (unsigned char i = 0; i < sizeof(Temp_Table_V); i++) {
-        if (v >= Temp_Table_V[i+1] && v <= Temp_Table_V[i]) {
+float LTC_Voltage_to_Temperature(float v) {
+    for (uint8_t i = 0; i < sizeof(Temp_Table_V) / sizeof(float) - 1; i++) {
+        if (v <= Temp_Table_V[i] && v >= Temp_Table_V[i + 1]) {
             float t = Temp_Table_C[i] + (v - Temp_Table_V[i]) /
-                      (Temp_Table_V[i+1] - Temp_Table_V[i]) *
-                      (Temp_Table_C[i+1] - Temp_Table_C[i]);
-            return (int8_t)t;
+                      (Temp_Table_V[i + 1] - Temp_Table_V[i]) *
+                      (Temp_Table_C[i + 1] - Temp_Table_C[i]);
+            return t;
         }
     }
-    return -127; // fuera de rango
+    return -100.0f;  // fuera de rango
 }
 
 /*******************************************************************************
@@ -117,8 +147,7 @@ void LTC6811_SPI_Transfer(LTC6811_Typdef* LTC6811,uint8_t *tx, uint16_t len)
 
 	if (Status != HAL_OK) 
 	{
-    // Aquí va el código de manejo de error
-    MCU_Error_Handler(); // O lo que tú quieras hacer
+			LTC6811->Fail=TRUE;
 	}
 }
 
@@ -129,8 +158,7 @@ void LTC6811_SPI_Transfer_No_CS(LTC6811_Typdef* LTC6811,uint8_t *tx, uint16_t le
 
 	if (Status != HAL_OK) 
 	{
-    // Aquí va el código de manejo de error
-    MCU_Error_Handler(); // O lo que tú quieras hacer
+     LTC6811->Fail=TRUE;
 	}
 }
 /*******************************************************************************
@@ -144,13 +172,13 @@ void LTC6811_SPI_Transmit_Receive(LTC6811_Typdef* LTC6811, uint8_t *tx, uint8_t 
 		HAL_StatusTypeDef Status;
 
 		Status=HAL_SPI_Transmit(LTC6811->SPI_Handler, tx, len_tx, SPI_MAX_DELAY);
-    Status=HAL_SPI_Receive(LTC6811->SPI_Handler, rx, len_rx, SPI_MAX_DELAY  );
+    Status=HAL_SPI_Receive(LTC6811->SPI_Handler, rx, len_rx, SPI_MAX_DELAY);
 
     HAL_GPIO_WritePin(LTC6811->CS_PORT, LTC6811->CS_PIN, GPIO_PIN_SET);
 
     if (Status != HAL_OK)
     {
-        MCU_Error_Handler(); // Manejo de error
+        LTC6811->Fail=TRUE;
     }
 }
 
@@ -237,6 +265,10 @@ void LTC_Active_Even_Balancing(LTC6811_Typdef* LTC6811)
 			LTC6811_Write_CFG(LTC6811);
 			LTC6811->Balancing=EVEN_BALANCING;
 		}
+		else
+		{
+        LTC6811->Fail=TRUE;
+		}
 }
 	
 /*******************************************************************************
@@ -255,6 +287,10 @@ void LTC_Active_Odd_Balancing(LTC6811_Typdef* LTC6811)
 			LTC6811_Write_CFG(LTC6811);
 			LTC6811->Balancing=ODD_BALANCING;
 		}
+		else
+		{
+        LTC6811->Fail=TRUE;
+		}
 }
 	
 /*******************************************************************************
@@ -272,6 +308,11 @@ void LTC_Disable_Balancing(LTC6811_Typdef* LTC6811)
         LTC6811_Write_CFG(LTC6811);
         LTC6811->Balancing = NO_BALANCING;
     }
+		else
+		{
+        LTC6811->Fail=TRUE;
+		}
+			
 }
 
 /*******************************************************************************
@@ -342,52 +383,116 @@ void LTC_Read_All_Voltages(LTC6811_Typdef *LTC6811, uint16_t *voltages)
     }
 }
 
- void LTC6811_Measure_Temperatures_and_Voltages(LTC6811_Typdef* LTC6811, uint8_t* TempArray,float* VoltajeArray) 
+
+/*******************************************************************************
+********************************************************************************
+***************									LTC Measure (UNUSED)			     	 ***************	
+********************************************************************************
+*******************************************************************************/
+/**
+ * @brief Mide las temperaturas y voltajes de las celdas conectadas a dos LTC6811
+ * 
+ * Esta función activa el balanceo de celdas de manera alterna (pares/impares), 
+ * mide los voltajes de las 12 celdas por LTC, convierte las lecturas a temperaturas 
+ * (para las celdas pares en una pasada y las impares en la otra) y almacena 
+ * los resultados en los arreglos TempArray y VoltajeArray.
+ *
+ * @param[in,out] Control_Unit   Puntero a la unidad de control que contiene el estado de los dos LTC6811.
+ * @param[out]    TempArray      Arreglo de 24 elementos donde se guardan temperaturas codificadas. 
+ *                               Las primeras 12 son del LTC6811_1, las últimas 12 del LTC6811_2.
+ * @param[out]    VoltajeArray   Arreglo de 24 elementos donde se guardan voltajes. 
+ *                               Misma distribución que TempArray.
+ */
+void LTC6811_Measure_Temperatures_and_Voltages(Control_Unit_TypeDef* Control_Unit)
 {
-	  uint16_t voltages[12];
-		LTC6811_Wake_Up(LTC6811);
-		HAL_Delay(1); 
-    // --- Celdas Pares ---
-    LTC_Active_Even_Balancing(LTC6811);  // Activa balanceo par
-    HAL_Delay(5);                        // Espera estabilización shunt
-    LTC6811_Start_ADC_Conv(LTC6811);     // Inicia conversión ADC
-    HAL_Delay(3);                        // Espera conversión
-    LTC_Read_All_Voltages(LTC6811, voltages);
+    uint16_t voltages_1[12]; // Voltajes de las 12 celdas del LTC6811_1
+    uint16_t voltages_2[12]; // Voltajes de las 12 celdas del LTC6811_2
 
-    // Convierte celdas pares (índices 1,3,5,7,9,11)
-    for (int i = 1; i < 12; i += 2) {
-        float v = voltages[i];
-        int8_t temp = LTC_Voltage_to_Temperature(v);
-        TempArray[i] = LTC6811_Enconde_Temp(temp);
+    // Despierta ambos LTC6811
+    LTC6811_Wake_Up(&Control_Unit->Status.LTC6811_1);
+    LTC6811_Wake_Up(&Control_Unit->Status.LTC6811_2);
+    HAL_Delay(1); 
+
+    // === Medición de celdas pares ===
+    // Activa el balanceo de celdas pares
+    LTC_Active_Even_Balancing(&Control_Unit->Status.LTC6811_1);
+    LTC_Active_Even_Balancing(&Control_Unit->Status.LTC6811_2);
+    HAL_Delay(5); // Permite estabilización
+
+    // Inicia conversión ADC en ambos LTC
+    LTC6811_Start_ADC_Conv(&Control_Unit->Status.LTC6811_1);
+    LTC6811_Start_ADC_Conv(&Control_Unit->Status.LTC6811_2);
+    HAL_Delay(3); // Espera la finalización de la conversión
+
+    // Lee los voltajes
+    LTC_Read_All_Voltages(&Control_Unit->Status.LTC6811_1, voltages_1);
+    LTC_Read_All_Voltages(&Control_Unit->Status.LTC6811_2, voltages_2);
+
+    // Convertir voltajes pares a temperaturas (índices impares)
+    for (int i = 1; i < 12; i += 2) 
+		{
+        Control_Unit->Status.Temperatures[i].Readed_Value = LTC_Voltage_to_Temperature(voltages_1[i]);
+        Control_Unit->Status.Temperatures[i+12].Readed_Value = LTC_Voltage_to_Temperature(voltages_2[i]);
     }
+
+    // Guardar voltajes de celdas impares (índices pares)
+    for (int i = 0; i < 12; i += 2) 
+		{
+        Control_Unit->Status.Voltages[i] = voltages_1[i];
+        Control_Unit->Status.Voltages[i + 12] = voltages_2[i];
+    }
+
 		
-		// Convierte celdas pares (índices 1,3,5,7,9,11)
-    for (int i = 0; i < 12; i += 2) {
-        float v = voltages[i];
-        VoltajeArray[i]=v;
-    }
+    // Desactiva balanceo
+    LTC_Disable_Balancing(&Control_Unit->Status.LTC6811_1);
+    LTC_Disable_Balancing(&Control_Unit->Status.LTC6811_2);
+    HAL_Delay(5);
 
-    // --- Celdas Impares ---
-    LTC_Active_Odd_Balancing(LTC6811);   // Activa balanceo impar
-    HAL_Delay(5);                        // Espera estabilización shunt
-    LTC6811_Start_ADC_Conv(LTC6811);     // Inicia conversión ADC
-    HAL_Delay(3);                        // Espera conversión
-    LTC_Read_All_Voltages(LTC6811, voltages);
-
-    // Convierte celdas impares (índices 0,2,4,6,8,10)
-    for (int i = 0; i < 12; i += 2) {
-        float v = voltages[i];
-        int8_t temp = LTC_Voltage_to_Temperature(v);
-        TempArray[i] = LTC6811_Enconde_Temp(temp);
-    }
 		
-		for (int i = 1; i < 12; i += 2) {
-        float v = voltages[i];
-        VoltajeArray[i]=v;
+		if(Control_Unit->Status.LTC6811_1.Fail==TRUE || Control_Unit->Status.LTC6811_2.Fail==TRUE)
+		{
+			Control_Unit->State=LTC6811_FAIL_MODE;
+		}
+		
+    // === Medición de celdas impares ===
+		// Activa el balanceo de celdas impares
+    LTC_Active_Odd_Balancing(&Control_Unit->Status.LTC6811_1);
+    LTC_Active_Odd_Balancing(&Control_Unit->Status.LTC6811_2);
+    HAL_Delay(5);
+
+		// Inicia conversión ADC en ambos LTC
+    LTC6811_Start_ADC_Conv(&Control_Unit->Status.LTC6811_1);
+    LTC6811_Start_ADC_Conv(&Control_Unit->Status.LTC6811_2);
+    HAL_Delay(3);
+
+    // Lee los voltajes
+    LTC_Read_All_Voltages(&Control_Unit->Status.LTC6811_1, voltages_1);
+    LTC_Read_All_Voltages(&Control_Unit->Status.LTC6811_2, voltages_2);
+
+    // Convertir voltajes impares a temperatura (índices pares)
+    for (int i = 0; i < 12; i += 2) 
+		{
+        Control_Unit->Status.Temperatures[i].Readed_Value = LTC_Voltage_to_Temperature(voltages_1[i]);
+        Control_Unit->Status.Temperatures[i+12].Readed_Value = LTC_Voltage_to_Temperature(voltages_2[i]);
     }
 
-    // Desactiva balanceo al final (opcional)
-    LTC_Disable_Balancing(LTC6811);
+    // Guardar voltajes de celdas pares (índices impares)
+    for (int i = 1; i < 12; i += 2) 
+		{
+        Control_Unit->Status.Voltages[i] = voltages_1[i];
+        Control_Unit->Status.Voltages[i + 12] = voltages_2[i];
+    }
+
+		
+		
+    // Desactiva balanceo al final (por seguridad)
+    LTC_Disable_Balancing(&Control_Unit->Status.LTC6811_1);
+    LTC_Disable_Balancing(&Control_Unit->Status.LTC6811_2);
+		
+		if(Control_Unit->Status.LTC6811_1.Fail==TRUE || Control_Unit->Status.LTC6811_2.Fail==TRUE)
+		{
+			Control_Unit->State=LTC6811_FAIL_MODE;
+		}
 }
 
 

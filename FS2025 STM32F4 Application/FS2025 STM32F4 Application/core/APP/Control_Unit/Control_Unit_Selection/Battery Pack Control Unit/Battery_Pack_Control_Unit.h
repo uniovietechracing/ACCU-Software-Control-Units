@@ -32,6 +32,7 @@
 #include "State_LEDs.h"
 #include "Can_Bus.h"
 #include "LTC6811.h"
+#include <math.h>
 
 #define STM32F4_MCU
 
@@ -41,7 +42,7 @@
 ********************************************************************************
 *******************************************************************************/
 void Battery_Pack_Control_Unit_MCU_Init(void);
-void Battery_Pack_Control_Unit_Init_Temps(Control_Unit_TypeDef* Control_Unit);
+void Battery_Pack_Control_Unit_Init_Values(Control_Unit_TypeDef* Control_Unit);
 void Battery_Pack_Control_Unit_Init(Control_Unit_TypeDef* Control_Unit);
 
 /*******************************************************************************

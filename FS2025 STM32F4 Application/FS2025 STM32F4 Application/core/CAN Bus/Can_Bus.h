@@ -106,19 +106,7 @@
 	#define BPCU_CANCEL_SENSOR_3_DEF 		0x442	//Active/Cancel sensor
 	#define BPCU_REBOOT_DEF							0x509 //Reboot
 #endif
-/*******************************************************************************
-********************************************************************************
-***************								CAN MESSAGES                       ***************	
-********************************************************************************
-*******************************************************************************/
-typedef enum
-{
-	BPCU_STATUS=BPCU_STATUS_DEF,
-	BPCU_TEMP=BPCU_TEMP_DEF,
-	BPCU_CANCEL_SENSOR=BPCU_CANCEL_SENSOR_DEF,
-	BPCU_REBOOT=BPCU_REBOOT_DEF,
 
-} CAN_Messages_Enum;
 
 
 

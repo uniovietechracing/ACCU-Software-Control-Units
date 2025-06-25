@@ -99,10 +99,7 @@ typedef struct
 {
 	Timer_10ms_TypeDef Status_Send_Timer;
 	Timer_10ms_TypeDef Temp_Send_Timer;
-	Timer_10ms_TypeDef Temp_Timeout_Timer;
 	Timer_10ms_TypeDef Init_State_Timer;
-	Timer_10ms_TypeDef Stabilize_Temp_Timer;
-	Timer_10ms_TypeDef Read_Temp_Timer;
 
 } Control_Unit_Time_TypeDef;
 
@@ -113,11 +110,12 @@ typedef struct
 *******************************************************************************/
 typedef struct
 {
-	int8_t Actual_Value;
-	int8_t Last_Value;
+	float Actual_Value;
+	float Readed_Value;
+	uint8_t Cont_Fail;
 	BoolTypeDef Failed;
 	BoolTypeDef Disabled;
-	BoolTypeDef Out_of_Range;
+	BoolTypeDef Hot;
 	
 } Temperatures_Typedef;
 
@@ -140,7 +138,36 @@ typedef struct {
     uint16_t CS_PIN;
 		uint8_t Config[6];
     Balancing_Status_TypeDef Balancing;
+		BoolTypeDef Fail;
 } LTC6811_Typdef;
+
+/*******************************************************************************
+********************************************************************************
+***************									Estructura CAN_MESSAGE				   ***************
+********************************************************************************
+*******************************************************************************/
+typedef enum
+{
+	SEND_TEMP_1=0,
+	SEND_TEMP_2,
+	SEND_TEMP_3,
+	SEND_TEMP_4,
+	SEND_VOLT_1,
+	SEND_VOLT_2,
+	SEND_VOLT_3
+} CAN_Message_TypeDef;
+
+/*******************************************************************************
+********************************************************************************
+***************											 Read Status				  			 ***************
+********************************************************************************
+*******************************************************************************/
+typedef enum
+{
+	IDLE,
+	READ_RECEIVED,
+	READING
+} Read_Temperatures_Status_TypeDef;
 /*******************************************************************************
 ********************************************************************************
 ***************									  STATUS Struct			        		 ***************
@@ -150,12 +177,13 @@ typedef struct
 {
 	float Voltages[24];
 	Temperatures_Typedef Temperatures[24];
+	uint8_t Temperatures_Hot;
 	uint8_t Temperatures_Failed;
-	uint8_t Temperatures_Out_of_Range;
 	Control_Unit_Time_TypeDef Timing;
-	uint8_t Temperature_Message;
+	CAN_Message_TypeDef CAN_Message;
 	LTC6811_Typdef LTC6811_1;
 	LTC6811_Typdef LTC6811_2;
+	Read_Temperatures_Status_TypeDef Read_Temperatures;
 
 } Control_Unit_Status_Typdef;
 
@@ -169,7 +197,9 @@ typedef enum
 {
 	INIT,
 	NORMAL_OPERATION,
-	FAIL_MODE
+	LTC6811_FAIL_MODE,
+	TEMP_FAIL_MODE,
+	TEMP_PLUS_60_FAIL_MODE
 } Control_Unit_State_Typdef;
 
 /*******************************************************************************
