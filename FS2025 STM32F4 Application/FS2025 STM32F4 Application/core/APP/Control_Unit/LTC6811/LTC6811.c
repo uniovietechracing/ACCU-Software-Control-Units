@@ -575,7 +575,7 @@ void LTC6811_Measure_Temperatures_and_Voltages(Control_Unit_TypeDef* Control_Uni
     LTC_Disable_Balancing(&Control_Unit->Status.LTC6811_2);
     HAL_Delay(5);
 
-		
+		//Si ha fallado algo dejamos de medir
 		if(Control_Unit->Status.LTC6811_1.Fail==TRUE || Control_Unit->Status.LTC6811_2.Fail==TRUE)
 		{
 			Control_Unit->State=LTC6811_FAIL_MODE;
@@ -617,6 +617,8 @@ void LTC6811_Measure_Temperatures_and_Voltages(Control_Unit_TypeDef* Control_Uni
     LTC_Disable_Balancing(&Control_Unit->Status.LTC6811_1);
     LTC_Disable_Balancing(&Control_Unit->Status.LTC6811_2);
 		
+		
+		//Si ha fallado algo dejamos de medir
 		if(Control_Unit->Status.LTC6811_1.Fail==TRUE || Control_Unit->Status.LTC6811_2.Fail==TRUE)
 		{
 			Control_Unit->State=LTC6811_FAIL_MODE;

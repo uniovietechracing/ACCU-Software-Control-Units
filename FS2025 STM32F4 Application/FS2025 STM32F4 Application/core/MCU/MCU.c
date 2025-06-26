@@ -212,6 +212,92 @@ void MCU_WDT_Refresh(void)
 	#endif
 }
 
+/*******************************************************************************
+********************************************************************************
+***************         	 	MCU Read Byte Flash 			    		 *****************	
+********************************************************************************
+********************************************************************************
+  * @brief  Reads a byte from flash memory 
+	* @param	address Address to be read
+  * @retval value stored at specified address
+  */
+uint8_t	MCU_Flash_Read_Byte	(uint32_t address)
+{
+	#ifdef STM32F4_MCU
+		return STM32F4_Flash_Read_Byte	(address);
+	#endif 	
+}
+
+/*******************************************************************************
+********************************************************************************
+***************         	 	MCU Read Word Flash 			    		 *****************	
+********************************************************************************
+********************************************************************************
+  * @brief  Reads a word from flash memory 
+	* @param	address Address to be read
+  * @retval value stored at specified address
+  */
+uint32_t	MCU_Flash_Read_Word	(uint32_t address)
+{
+	#ifdef STM32F4_MCU
+		return STM32F4_Flash_Read_Word	(address);
+	#endif 	
+}
+
+/*******************************************************************************
+********************************************************************************
+***************         	 	MCU Write Byte Flash 			    		 *****************	
+********************************************************************************
+********************************************************************************
+  * @brief  Writes a byte to flash memory 
+	* @param	address Address to be written
+	*	@param	data Data to be written
+  * @retval NOTHING
+  */
+void	MCU_Flash_Program_Byte	(uint32_t address, uint8_t data)
+{
+	#ifdef STM32F4_MCU
+		STM32F4_Flash_Program_Byte	(address,data);
+	#endif 	
+}
+
+
+/*******************************************************************************
+********************************************************************************
+***************         	 	MCU Write Word Flash 			    		 *****************	
+********************************************************************************
+********************************************************************************
+  * @brief  Writes a word to flash memory 
+	* @param	address Address to be written
+	*	@param	data Data to be written
+  * @retval NOTHING
+  */
+void	MCU_Flash_Program_Word	(uint32_t address, uint32_t data)
+{
+	#ifdef STM32F4_MCU
+		STM32F4_Flash_Program_Word	(address,data);
+	#endif 	
+}
+
+
+/*******************************************************************************
+********************************************************************************
+***************         	 MCU Erase Sector Flash			    		 *****************	
+********************************************************************************
+********************************************************************************
+  * @brief  Writes a word to flash memory 
+	* @param	sector Sector to be erased
+  * @retval NOTHING
+  */
+void 	MCU_Flash_Erase_Sector	(uint32_t sector)
+{
+	#ifdef STM32F4_MCU
+		STM32F4_Flash_Erase_Sector	(sector);
+	#endif 	
+}
+
+
+
 	/*****************************************************************************
 	** 																END OF FILE																**			
 	******************************************************************************

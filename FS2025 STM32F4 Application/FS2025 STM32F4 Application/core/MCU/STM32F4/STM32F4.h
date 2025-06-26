@@ -118,6 +118,19 @@ void STM32F4_CAN1_Send	(CAN_TxHeaderTypeDef* CAN_Header, uint8_t* Data , uint32_
 
 
 
+
+/*******************************************************************************
+********************************************************************************
+***************											FLASH                  		   ***************	
+********************************************************************************
+*******************************************************************************/
+uint32_t	STM32F4_Flash_Read_Word			(uint32_t address);
+uint8_t		STM32F4_Flash_Read_Byte			(uint32_t address);
+void			STM32F4_Flash_Program_Byte	(uint32_t address, uint8_t data);
+void			STM32F4_Flash_Program_Word	(uint32_t address, uint32_t data);
+void 			STM32F4_Flash_Erase_Sector	(uint32_t sector);
+
+
 #endif
 
 	/*****************************************************************************

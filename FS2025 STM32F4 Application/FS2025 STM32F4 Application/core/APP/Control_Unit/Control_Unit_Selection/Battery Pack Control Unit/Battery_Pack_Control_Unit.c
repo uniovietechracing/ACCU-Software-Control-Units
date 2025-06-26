@@ -40,8 +40,52 @@ void Battery_Pack_Control_Unit_MCU_Init(void)
 	//General MCU Initiliatation
 	MCU_Init();
 	LTC6811_SPI_Init();
-	
+}
 
+/*******************************************************************************
+********************************************************************************
+***************					Deviece Initialization Function	    		  **************	
+********************************************************************************
+********************************************************************************
+  * @brief  Initializes Device Parameters from Flash stored values
+  */
+void Battery_Pack_Control_Unit_Device_Init(Device_TypeDef* Device_Data)
+{
+	Device_Data->Reboot = FALSE;
+	
+	Device_Data->Unique_ID[0] = MCU_Flash_Read_Byte(Address_Unique_ID_B0);
+	Device_Data->Unique_ID[1] = MCU_Flash_Read_Byte(Address_Unique_ID_B1);
+	Device_Data->Unique_ID[2] = MCU_Flash_Read_Byte(Address_Unique_ID_B2);
+	Device_Data->Unique_ID[3] = MCU_Flash_Read_Byte(Address_Unique_ID_B3);
+	
+	Device_Data->Device = MCU_Flash_Read_Byte(Address_Device);
+	Device_Data->Version = MCU_Flash_Read_Byte(Address_APP0_Version);
+}
+
+/*******************************************************************************
+********************************************************************************
+***************					Deviece Initialization Function	    		  **************	
+********************************************************************************
+********************************************************************************
+  * @brief  Initializes Device Parameters from Flash stored values
+  */
+void Battery_Pack_Control_Unit_Read_Memory_Init(Control_Unit_TypeDef* Control_Unit)
+{
+	uint32_t Activated_Sensors= MCU_Flash_Read_Word(Address_APP_BPCU_Activated_Sensors);
+	
+	for(uint8_t i=0; i<24 ; i++)
+	{
+		uint8_t bit_state = (Activated_Sensors >> i) & 0x01;
+		if(bit_state)
+		{
+			Control_Unit->Status.Temperatures[i].Disabled=FALSE;
+		}
+		else
+		{
+			Control_Unit->Status.Temperatures[i].Disabled=TRUE;
+		}
+		
+	}
 }
 /*******************************************************************************
 ********************************************************************************
@@ -50,6 +94,7 @@ void Battery_Pack_Control_Unit_MCU_Init(void)
 *******************************************************************************/
 void Battery_Pack_Control_Unit_Init_Values(Control_Unit_TypeDef* Control_Unit)
 {
+	Battery_Pack_Control_Unit_Read_Memory_Init(Control_Unit);
 	for(unsigned char i=0; i<24; i++)
 	{
 		Control_Unit->Status.Temperatures[i].Actual_Value=25.0f;
@@ -449,17 +494,201 @@ void Battery_Pack_Control_Unit_Main_Task(Control_Unit_TypeDef* Control_Unit)
 	Battery_Pack_Control_State_Machine_Task(Control_Unit);
 	Battery_Pack_Control_Interrupt_Task(Control_Unit);
 }
+
 	
+	
+
+/*******************************************************************************
+********************************************************************************
+***************										Cancel Sensors 1        		   ***************	
+********************************************************************************
+*******************************************************************************/
+void Battery_Pack_Control_Unit_Cancel_Sensors_1 (Control_Unit_TypeDef* Control_Unit)
+{
+	BoolTypeDef Changed=FALSE;
+	for(uint8_t i=0; i<8;i++)
+	{
+		if (Control_Unit->Rx_Message.Data[i]==0x01)
+		{
+			Control_Unit->Status.Temperatures[i].Disabled=FALSE;
+			Changed=TRUE;
+		}
+		
+		if (Control_Unit->Rx_Message.Data[i]==0x02)
+		{
+				Control_Unit->Status.Temperatures[i].Disabled=TRUE;
+				Changed=TRUE;
+		}
+	}
+	
+	if(Changed==TRUE)
+	{
+			uint32_t Activated_Sensors= MCU_Flash_Read_Word(Address_APP_BPCU_Activated_Sensors);
+			uint32_t New_Activated_Sensors= Activated_Sensors;
+			for(uint8_t i=0; i<24 ; i++)
+			{
+					uint8_t bit_state = (Activated_Sensors >> i) & 0x01;
+					if(bit_state== 0x00 && Control_Unit->Status.Temperatures[i].Disabled==0x00)
+					{
+							//cambiar el bit i de 0 a 1
+							New_Activated_Sensors |= (1UL << i);
+
+					}
+					else 	if(bit_state== 0x01 && Control_Unit->Status.Temperatures[i].Disabled==0x01)
+					{
+							//cambiar el bit i de 1 a 0
+							New_Activated_Sensors &= ~(1UL << i);
+					}
+			}
+			// Si cambió el contenido, graba nueva configuración en Flash
+      if (New_Activated_Sensors != Activated_Sensors)
+      {
+            MCU_Flash_Program_Word(Address_APP_BPCU_Activated_Sensors, New_Activated_Sensors);
+      }
+	}
+}
+
+/*******************************************************************************
+********************************************************************************
+***************										Cancel Sensors 2        		   ***************	
+********************************************************************************
+*******************************************************************************/
+void Battery_Pack_Control_Unit_Cancel_Sensors_2 (Control_Unit_TypeDef* Control_Unit)
+{
+	BoolTypeDef Changed=FALSE;
+	for(uint8_t i=0; i<8;i++)
+	{
+		if (Control_Unit->Rx_Message.Data[i]==0x01)
+		{
+			Control_Unit->Status.Temperatures[i+8].Disabled=FALSE;
+			Changed=TRUE;
+		}
+		
+		if (Control_Unit->Rx_Message.Data[i]==0x02)
+		{
+				Control_Unit->Status.Temperatures[i+8].Disabled=TRUE;
+				Changed=TRUE;
+		}
+	}
+	
+	if(Changed==TRUE)
+	{
+			uint32_t Activated_Sensors= MCU_Flash_Read_Word(Address_APP_BPCU_Activated_Sensors);
+			uint32_t New_Activated_Sensors= Activated_Sensors;
+			for(uint8_t i=0; i<24 ; i++)
+			{
+					uint8_t bit_state = (Activated_Sensors >> i) & 0x01;
+					if(bit_state== 0x00 && Control_Unit->Status.Temperatures[i].Disabled==0x00)
+					{
+							//cambiar el bit i de 0 a 1
+							New_Activated_Sensors |= (1UL << i);
+
+					}
+					else 	if(bit_state== 0x01 && Control_Unit->Status.Temperatures[i].Disabled==0x01)
+					{
+							//cambiar el bit i de 1 a 0
+							New_Activated_Sensors &= ~(1UL << i);
+					}
+			}
+			// Si cambió el contenido, graba nueva configuración en Flash
+      if (New_Activated_Sensors != Activated_Sensors)
+      {
+            MCU_Flash_Program_Word(Address_APP_BPCU_Activated_Sensors, New_Activated_Sensors);
+      }
+	}
+}
+
+/*******************************************************************************
+********************************************************************************
+***************										Cancel Sensors 3        		   ***************	
+********************************************************************************
+*******************************************************************************/
+void Battery_Pack_Control_Unit_Cancel_Sensors_3 (Control_Unit_TypeDef* Control_Unit)
+{
+	BoolTypeDef Changed=FALSE;
+	for(uint8_t i=0; i<8;i++)
+	{
+		if (Control_Unit->Rx_Message.Data[i]==0x01)
+		{
+			Control_Unit->Status.Temperatures[i+16].Disabled=FALSE;
+			Changed=TRUE;
+		}
+		
+		if (Control_Unit->Rx_Message.Data[i]==0x02)
+		{
+				Control_Unit->Status.Temperatures[i+16].Disabled=TRUE;
+				Changed=TRUE;
+		}
+	}
+	
+	if(Changed==TRUE)
+	{
+			uint32_t Activated_Sensors= MCU_Flash_Read_Word(Address_APP_BPCU_Activated_Sensors);
+			uint32_t New_Activated_Sensors= Activated_Sensors;
+			for(uint8_t i=0; i<24 ; i++)
+			{
+					uint8_t bit_state = (Activated_Sensors >> i) & 0x01;
+					if(bit_state== 0x00 && Control_Unit->Status.Temperatures[i].Disabled==0x00)
+					{
+							//cambiar el bit i de 0 a 1
+							New_Activated_Sensors |= (1UL << i);
+
+					}
+					else 	if(bit_state== 0x01 && Control_Unit->Status.Temperatures[i].Disabled==0x01)
+					{
+							//cambiar el bit i de 1 a 0
+							New_Activated_Sensors &= ~(1UL << i);
+					}
+			}
+			// Si cambió el contenido, graba nueva configuración en Flash
+      if (New_Activated_Sensors != Activated_Sensors)
+      {
+            MCU_Flash_Program_Word(Address_APP_BPCU_Activated_Sensors, New_Activated_Sensors);
+      }
+	}
+}
+
+/*******************************************************************************
+********************************************************************************
+***************										 CAN 1 INTERRUPT        		   ***************	
+********************************************************************************
+*******************************************************************************/
 void Battery_Pack_Control_Unit_CAN1_Interrupt(Control_Unit_TypeDef* Control_Unit)
 {
 	switch(Control_Unit->Rx_Message.Header.StdId)
 	{
 		case BPCU_INIT_MEASURE_DEF:
-			if(Control_Unit->Status.Read_Temperatures==IDLE && Control_Unit->State!=INIT && Control_Unit->State!=LTC6811_FAIL_MODE)
+			if(Control_Unit->Status.Read_Temperatures==IDLE && Control_Unit->State!=INIT && Control_Unit->State!=LTC6811_FAIL_MODE && 
+				Control_Unit->Rx_Message.Header.DLC==0x01 && Control_Unit->Rx_Message.Data[0]==0x01)
 			{
 				Control_Unit->Status.Read_Temperatures=READ_RECEIVED;
 			}
 		break;
+			
+			
+		case BPCU_CANCEL_SENSOR_1_DEF:
+			if(Control_Unit->Rx_Message.Header.DLC==0x08)
+			{
+				Battery_Pack_Control_Unit_Cancel_Sensors_1(Control_Unit);
+			}
+		break;
+			
+			
+		case BPCU_CANCEL_SENSOR_2_DEF:
+			if(Control_Unit->Rx_Message.Header.DLC==0x08)
+			{
+				Battery_Pack_Control_Unit_Cancel_Sensors_2(Control_Unit);
+			}
+		break;
+			
+			
+		case BPCU_CANCEL_SENSOR_3_DEF:
+			if(Control_Unit->Rx_Message.Header.DLC==0x08)
+			{
+				Battery_Pack_Control_Unit_Cancel_Sensors_3(Control_Unit);
+			}
+		break;
+
 	}
 }
 

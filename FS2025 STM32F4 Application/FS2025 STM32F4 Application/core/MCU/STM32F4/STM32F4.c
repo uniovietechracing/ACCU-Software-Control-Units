@@ -465,6 +465,126 @@ void STM32F4_WDT_Refresh (void)
 }
 
 
+
+/***************************************************************************************************************************************************************
+****************************************************************************************************************************************************************
+****************************************************************************************************************************************************************
+***************									FLASH FUNCTIONS				 			 		************************************************************************************************
+****************************************************************************************************************************************************************
+****************************************************************************************************************************************************************
+****************************************************************************************************************************************************************/
+
+
+/*******************************************************************************
+********************************************************************************
+***************								STM32F4 Read Word	            		****************	
+********************************************************************************
+********************************************************************************
+	* @brief	Reads a word of flash memory at specified address
+	* @param 	address Address to program
+  * @retval word read
+  */
+uint32_t	STM32F4_Flash_Read_Word	(uint32_t address)
+{
+	return *(volatile uint32_t*)address;
+}
+
+/*******************************************************************************
+********************************************************************************
+***************								STM32F4 Read Byte	            		****************	
+********************************************************************************
+********************************************************************************
+	* @brief	Reads a byte of flash memory at specified address
+	* @param 	address Address to program
+  * @retval byte read
+  */
+uint8_t	STM32F4_Flash_Read_Byte	(uint32_t address)
+{
+	return *(volatile uint8_t*)address;
+}
+
+/*******************************************************************************
+********************************************************************************
+***************					STM32F4 FLASH Program Byte	            ****************	
+********************************************************************************
+********************************************************************************
+	* @brief	Programs a byte of flash memory at specified address
+	* @param 	address Address to program
+	* @param 	data Data to be programmed
+  * @retval NOTHING
+  */
+void	STM32F4_Flash_Program_Byte	(uint32_t address, uint8_t data)
+{
+	//Unlock Flash to perform any operation
+	HAL_FLASH_Unlock(); //Should return HAL Status, maybe implement check
+	
+	if (HAL_FLASH_Program(FLASH_TYPEPROGRAM_BYTE, address, data) != HAL_OK)
+  {
+    STM32F4_Error_Handler();
+  }
+	
+	//Lock Flash after operation end
+	HAL_FLASH_Lock();
+}
+
+/*******************************************************************************
+********************************************************************************
+***************					STM32F4 FLASH Program Word	            ****************	
+********************************************************************************
+********************************************************************************
+	* @brief	Programs a Word (32bit) of flash memory at specified address
+	* @param 	address Address to program
+	* @param 	data Data to be programmed
+  * @retval NOTHING
+  */
+void	STM32F4_Flash_Program_Word	(uint32_t address, uint32_t data)
+{
+	//Unlock Flash to perform any operation
+	HAL_FLASH_Unlock(); //Should return HAL Status, maybe implement check
+	
+	if (HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, address, data) != HAL_OK)
+  {
+		STM32F4_Error_Handler();
+  }
+	
+	//Lock Flash after operation end
+	HAL_FLASH_Lock();
+}
+
+/*******************************************************************************
+********************************************************************************
+***************					STM32F4 FLASH Erase Sector	            ****************	
+********************************************************************************
+********************************************************************************
+	* @brief	Erases flash sector
+	* @param 	sector Sector to be erased
+  * @retval NOTHING
+	*/
+void 	STM32F4_Flash_Erase_Sector	(uint32_t sector)
+{
+	FLASH_EraseInitTypeDef Flash_Erase_InitStruct;
+	uint32_t SectorError;
+	
+	//Unlock Flash to perform any operation
+	HAL_FLASH_Unlock(); 		//Should return HAL Status, maybe implement check
+	
+	// Erase Struct Structure
+  Flash_Erase_InitStruct.TypeErase = FLASH_TYPEERASE_SECTORS;		// Sector Erase
+  Flash_Erase_InitStruct.VoltageRange = FLASH_VOLTAGE_RANGE_3; 	//2.7V to 3.6V
+  Flash_Erase_InitStruct.Sector = sector; 											// Sector to erase
+  Flash_Erase_InitStruct.NbSectors = 1;   											// Erase a single sector
+	
+	// Erase Flash Sector
+	if (HAL_FLASHEx_Erase(&Flash_Erase_InitStruct, &SectorError) != HAL_OK) 
+	{
+		STM32F4_Error_Handler(); 
+  }
+	
+	//Sector error mangement??
+	
+	//Lock Flash after operation end
+	HAL_FLASH_Lock();
+}
 	/*****************************************************************************
 	** 																END OF FILE																**			
 	******************************************************************************

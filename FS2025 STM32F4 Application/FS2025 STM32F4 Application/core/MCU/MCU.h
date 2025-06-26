@@ -90,7 +90,48 @@ void MCU_CAN1_Send(CAN_TxHeaderTypeDef* CAN_Header, uint8_t* Data , uint32_t* Ma
 
 
 
+/*******************************************************************************
+********************************************************************************
+***************					 			FLASH Memory Structure	          ****************	
+********************************************************************************
+*******************************************************************************/
+/*******************************************************************************
+********************************************************************************
+***************					STM32F4 FLASH Memory Structure          ****************	
+********************************************************************************
+*******************************************************************************/
+
+#define STM32F4_FLASH_BASE 0x08000000U
+
+#define STM32F4_FLASH_SECTOR_1 STM32F4_FLASH_BASE
+#define STM32F4_FLASH_SECTOR_2 0x08004000U
+#define STM32F4_FLASH_SECTOR_3 0x08008000U
+#define STM32F4_FLASH_SECTOR_4 0x08010000U
+#define STM32F4_FLASH_SECTOR_5 0x08020000U
+#define STM32F4_FLASH_SECTOR_6 0x08040000U
+#define STM32F4_FLASH_SECTOR_7 0x08060000U
+
+#define MCU_ADDRESS_BOOTLOADER 						STM32F4_FLASH_SECTOR_1
+#define MCU_ADDRESS_BOOTLOADER_DATA 			STM32F4_FLASH_SECTOR_2 
+#define MCU_ADDRESS_BOOTLOADER_DATA_BKUP	STM32F4_FLASH_SECTOR_3 
+#define MCU_ADDRESS_APP										STM32F4_FLASH_SECTOR_5 
+#define MCU_ADDRESS_APP_BKUP							STM32F4_FLASH_SECTOR_6 
+
+
+/*******************************************************************************
+********************************************************************************
+***************									MCU FLASH                   		****************	
+********************************************************************************
+*******************************************************************************/
+uint32_t	MCU_Flash_Read_Word	(uint32_t address);									/* [NEW FS25 Untested] */
+uint8_t		MCU_Flash_Read_Byte	(uint32_t address);									/* [NEW FS25 Untested] */
+void	MCU_Flash_Program_Byte	(uint32_t address, uint8_t data);		/* [NEW FS25 Untested] */
+void	MCU_Flash_Program_Word	(uint32_t address, uint32_t data);	/* [NEW FS25 Untested] */
+void 	MCU_Flash_Erase_Sector	(uint32_t sector);									/* [NEW FS25 Untested] */
+
+
 #endif
+
 
 	/*****************************************************************************
 	** 																END OF FILE																**			

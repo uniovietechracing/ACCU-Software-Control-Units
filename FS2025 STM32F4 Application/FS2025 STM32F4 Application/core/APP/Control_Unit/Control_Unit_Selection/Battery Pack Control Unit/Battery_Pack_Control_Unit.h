@@ -32,6 +32,7 @@
 #include "State_LEDs.h"
 #include "Can_Bus.h"
 #include "LTC6811.h"
+#include "MCU.h"
 #include <math.h>
 
 #define STM32F4_MCU
@@ -90,6 +91,30 @@ void Battery_Pack_Control_Unit_CAN1_Interrupt(Control_Unit_TypeDef* Control_Unit
 *******************************************************************************/
 void Battery_Pack_Control_Unit_Main_Task(Control_Unit_TypeDef* Control_Unit);
 
+
+/*******************************************************************************
+********************************************************************************
+***************										Memory MAP	      		 				 ***************	
+********************************************************************************
+*******************************************************************************/
+typedef enum
+{
+	Address_Unique_ID_B0 								= 0x1FFF7800,
+	Address_Unique_ID_B1,
+	Address_Unique_ID_B2,
+	Address_Unique_ID_B3,
+	Address_Bootloader_Stay_Condition 	= (0x08004000U),
+	Address_Device,
+	Address_Bootloader_Version,
+	
+	Address_APP0_Version 								= (0x08004000U + 8),
+	Address_APP0_Address 								= (0x08004000U + 12),
+	Address_APP0_CRC 										= (0x08004000U + 16),
+	Address_APP0_Code_Length						= (0x08004000U + 20),
+	
+	Address_APP_BPCU_Activated_Sensors  = (0x08004000U +24) 
+	
+} Device_Addresses_Enum;
 
 #endif
 	/*****************************************************************************
