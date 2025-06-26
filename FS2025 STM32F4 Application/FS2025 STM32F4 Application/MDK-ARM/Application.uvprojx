@@ -207,7 +207,7 @@
             <Ro2Chk>0</Ro2Chk>
             <Ro3Chk>0</Ro3Chk>
             <Ir1Chk>1</Ir1Chk>
-            <Ir2Chk>1</Ir2Chk>
+            <Ir2Chk>0</Ir2Chk>
             <Ra1Chk>0</Ra1Chk>
             <Ra2Chk>0</Ra2Chk>
             <Ra3Chk>0</Ra3Chk>
@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F405xx</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;..\core;..\core\APP;..\core\CAN Bus;..\core\Common_Functions;..\core\MCU;..\core\MCU\STM32F4;..\core\Task Manager;..\core\TypeDefs;..\core\MCU\STM32F4;..\core\APP\Control_Unit;..\core\APP\Control_Unit\Control_Unit_Selection;..\core\APP\Control_Unit\Control_Unit_Selection\Front Control Unit;..\core\APP\Control_Unit\Control_Unit_Selection\Rear Control Unit;..\core\APP\Control_Unit\Control_Unit_Selection\Rear Control Unit Power Distribution;..\core\APP\Control_Unit\Control_Unit_Selection\SDC Charger;..\core\APP\Control_Unit\Control_Unit_Selection\Accu Master;..\core\MCU\Simulated_Eeprom;..\core\TypeDefs;..\core\APP\Control_Unit\Control_Unit_Selection\Battery Pack Control Unit;..\core\APP\Control_Unit\State_LEDs;..\Drivers\STM32F4xx_HAL_Driver\Inc;..\core\APP\Control_Unit\LTC6811</IncludePath>
+              <IncludePath>../Core/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;..\core;..\core\APP;..\core\CAN Bus;..\core\Common_Functions;..\core\MCU;..\core\MCU\STM32F4;..\core\Task Manager;..\core\TypeDefs;..\core\MCU\STM32F4;..\core\APP\Control_Unit;..\core\APP\Control_Unit\Control_Unit_Selection;..\core\MCU\Simulated_Eeprom;..\core\TypeDefs;..\core\APP\Control_Unit\Control_Unit_Selection\Battery Pack Control Unit;..\core\APP\Control_Unit\State_LEDs;..\Drivers\STM32F4xx_HAL_Driver\Inc;..\core\APP\Control_Unit\LTC6811</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>

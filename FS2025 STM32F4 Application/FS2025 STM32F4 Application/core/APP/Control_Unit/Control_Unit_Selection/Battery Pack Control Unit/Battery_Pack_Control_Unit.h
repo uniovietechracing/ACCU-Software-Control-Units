@@ -112,7 +112,7 @@ typedef enum
 	Address_APP0_CRC 										= (0x08004000U + 16),
 	Address_APP0_Code_Length						= (0x08004000U + 20),
 	
-	Address_APP_BPCU_Activated_Sensors  = (0x08004000U +24) 
+	Address_APP_BPCU_Activated_Sensors  = (0x08008000U) 
 	
 } Device_Addresses_Enum;
 
