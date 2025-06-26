@@ -628,13 +628,13 @@ void Battery_Pack_Control_Unit_Cancel_Sensors_3 (Control_Unit_TypeDef* Control_U
 			for(uint8_t i=0; i<24 ; i++)
 			{
 					uint8_t bit_state = (Activated_Sensors >> i) & 0x01;
-					if(bit_state== 0x00 && Control_Unit->Status.Temperatures[i].Disabled==0x00)
+					if(bit_state== 0 && Control_Unit->Status.Temperatures[i].Disabled==FALSE)
 					{
 							//cambiar el bit i de 0 a 1
 							New_Activated_Sensors |= (1UL << i);
 
 					}
-					else 	if(bit_state== 0x01 && Control_Unit->Status.Temperatures[i].Disabled==0x01)
+					else 	if(bit_state== 1 && Control_Unit->Status.Temperatures[i].Disabled==0x01)
 					{
 							//cambiar el bit i de 1 a 0
 							New_Activated_Sensors &= ~(1UL << i);

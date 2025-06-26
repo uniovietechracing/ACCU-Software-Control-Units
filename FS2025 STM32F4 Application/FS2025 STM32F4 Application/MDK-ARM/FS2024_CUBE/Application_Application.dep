@@ -2,7 +2,7 @@ Dependencies for Project 'Application', Target 'Application': (DO NOT MODIFY !)
 CompilerVersion: 6210000::V6.21::ARMCLANG
 F (..\Core\APP\main.c)(0x685CF1B7)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -Oz -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ../core -I ../core/APP -I "../core/CAN Bus" -I ../core/Common_Functions -I ../core/MCU -I ../core/MCU/STM32F4 -I "../core/Task Manager" -I ../core/TypeDefs -I ../core/MCU/STM32F4 -I ../core/APP/Control_Unit -I ../core/APP/Control_Unit/Control_Unit_Selection -I "../core/APP/Control_Unit/Control_Unit_Selection/Front Control Unit" -I "../core/APP/Control_Unit/Control_Unit_Selection/Rear Control Unit" -I "../core/APP/Control_Unit/Control_Unit_Selection/Rear Control Unit Power Distribution" -I "../core/APP/Control_Unit/Control_Unit_Selection/SDC Charger" -I "../core/APP/Control_Unit/Control_Unit_Selection/Accu Master" -I ../core/MCU/Simulated_Eeprom -I ../core/TypeDefs -I "../core/APP/Control_Unit/Control_Unit_Selection/Battery Pack Control Unit" -I ../core/APP/Control_Unit/State_LEDs -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../core/APP/Control_Unit/LTC6811-IC:/Users/d.rodriguez/AppData/Local/Arm/Packs/Keil/STM32F4xx_DFP/2.17.1/Drivers/CMSIS/Device/ST/STM32F4xx/Include-D__UVISION_VERSION="539" -DSTM32F405xx -DUSE_HAL_DRIVER -DSTM32F405xx-o fs2024_cube/main.o -MD)
 I (..\core\APP\Control_Unit\Control_Unit.h)(0x685CF1B7)
-I (..\core\APP\Control_Unit\Control_Unit_Selection\Control_Unit_Selection.h)(0x685CF1B7)
+I (..\core\APP\Control_Unit\Control_Unit_Selection\Control_Unit_Selection.h)(0x685D27A1)
 I (..\core\APP\Control_Unit\Control_Unit_Selection\Battery Pack Control Unit\Battery_Pack_Control_Unit.h)(0x685D1437)
 I (..\core\APP\Control_Unit\State_LEDs\State_LEDs.hB.\core\MCU\MCU.h)(0x00000000)
 I (..\core\MCU\STM32F4\STM32F4.h)(0x685D13C1)
@@ -52,9 +52,9 @@ I (..\core\APP\Control_Unit\LTC6811\LTC6811.h)(0x685D06C4)
 I (C:\Program Files (x86)\Keil\ARM\ARMCLANG\include\string.h)(0x656A1282)
 I (C:\Program Files (x86)\Keil\ARM\ARMCLANG\include\math.h)(0x656A1282)
 F (..\core\APP\Control_Unit\Control_Unit.h)(0x685CF1B7)()
-F (..\core\APP\Control_Unit\Control_Unit.c)(0x685CF1B7)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -Oz -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ../core -I ../core/APP -I "../core/CAN Bus" -I ../core/Common_Functions -I ../core/MCU -I ../core/MCU/STM32F4 -I "../core/Task Manager" -I ../core/TypeDefs -I ../core/MCU/STM32F4 -I ../core/APP/Control_Unit -I ../core/APP/Control_Unit/Control_Unit_Selection -I "../core/APP/Control_Unit/Control_Unit_Selection/Front Control Unit" -I "../core/APP/Control_Unit/Control_Unit_Selection/Rear Control Unit" -I "../core/APP/Control_Unit/Control_Unit_Selection/Rear Control Unit Power Distribution" -I "../core/APP/Control_Unit/Control_Unit_Selection/SDC Charger" -I "../core/APP/Control_Unit/Control_Unit_Selection/Accu Master" -I ../core/MCU/Simulated_Eeprom -I ../core/TypeDefs -I "../core/APP/Control_Unit/Control_Unit_Selection/Battery Pack Control Unit" -I ../core/APP/Control_Unit/State_LEDs -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../core/APP/Control_Unit/LTC6811-IC:/Users/d.rodriguez/AppData/Local/Arm/Packs/Keil/STM32F4xx_DFP/2.17.1/Drivers/CMSIS/Device/ST/STM32F4xx/Include-D__UVISION_VERSION="539" -DSTM32F405xx -DUSE_HAL_DRIVER -DSTM32F405xx-o fs2024_cube/control_unit.o -MD)
+F (..\core\APP\Control_Unit\Control_Unit.c)(0x685D27A1)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -Oz -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ../core -I ../core/APP -I "../core/CAN Bus" -I ../core/Common_Functions -I ../core/MCU -I ../core/MCU/STM32F4 -I "../core/Task Manager" -I ../core/TypeDefs -I ../core/MCU/STM32F4 -I ../core/APP/Control_Unit -I ../core/APP/Control_Unit/Control_Unit_Selection -I "../core/APP/Control_Unit/Control_Unit_Selection/Front Control Unit" -I "../core/APP/Control_Unit/Control_Unit_Selection/Rear Control Unit" -I "../core/APP/Control_Unit/Control_Unit_Selection/Rear Control Unit Power Distribution" -I "../core/APP/Control_Unit/Control_Unit_Selection/SDC Charger" -I "../core/APP/Control_Unit/Control_Unit_Selection/Accu Master" -I ../core/MCU/Simulated_Eeprom -I ../core/TypeDefs -I "../core/APP/Control_Unit/Control_Unit_Selection/Battery Pack Control Unit" -I ../core/APP/Control_Unit/State_LEDs -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../core/APP/Control_Unit/LTC6811-IC:/Users/d.rodriguez/AppData/Local/Arm/Packs/Keil/STM32F4xx_DFP/2.17.1/Drivers/CMSIS/Device/ST/STM32F4xx/Include-D__UVISION_VERSION="539" -DSTM32F405xx -DUSE_HAL_DRIVER -DSTM32F405xx-o fs2024_cube/control_unit.o -MD)
 I (..\core\APP\Control_Unit\Control_Unit.h)(0x685CF1B7)
-I (..\core\APP\Control_Unit\Control_Unit_Selection\Control_Unit_Selection.h)(0x685CF1B7)
+I (..\core\APP\Control_Unit\Control_Unit_Selection\Control_Unit_Selection.h)(0x685D27A1)
 I (..\core\APP\Control_Unit\Control_Unit_Selection\Battery Pack Control Unit\Battery_Pack_Control_Unit.h)(0x685D1437)
 I (..\core\APP\Control_Unit\State_LEDs\State_LEDs.hB.\core\MCU\MCU.h)(0x00000000)
 I (..\core\MCU\STM32F4\STM32F4.h)(0x685D13C1)
@@ -103,7 +103,7 @@ I (..\core\TypeDefs\Typedefs.h\.\core\CAN Bus\Can_Bus.h)(0x00000000)
 I (..\core\APP\Control_Unit\LTC6811\LTC6811.h)(0x685D06C4)
 I (C:\Program Files (x86)\Keil\ARM\ARMCLANG\include\string.h)(0x656A1282)
 I (C:\Program Files (x86)\Keil\ARM\ARMCLANG\include\math.h)(0x656A1282)
-F (..\core\APP\Control_Unit\Control_Unit_Selection\Battery Pack Control Unit\Battery_Pack_Control_Unit.c)(0x685D1309)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -Oz -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ../core -I ../core/APP -I "../core/CAN Bus" -I ../core/Common_Functions -I ../core/MCU -I ../core/MCU/STM32F4 -I "../core/Task Manager" -I ../core/TypeDefs -I ../core/MCU/STM32F4 -I ../core/APP/Control_Unit -I ../core/APP/Control_Unit/Control_Unit_Selection -I "../core/APP/Control_Unit/Control_Unit_Selection/Front Control Unit" -I "../core/APP/Control_Unit/Control_Unit_Selection/Rear Control Unit" -I "../core/APP/Control_Unit/Control_Unit_Selection/Rear Control Unit Power Distribution" -I "../core/APP/Control_Unit/Control_Unit_Selection/SDC Charger" -I "../core/APP/Control_Unit/Control_Unit_Selection/Accu Master" -I ../core/MCU/Simulated_Eeprom -I ../core/TypeDefs -I "../core/APP/Control_Unit/Control_Unit_Selection/Battery Pack Control Unit" -I ../core/APP/Control_Unit/State_LEDs -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../core/APP/Control_Unit/LTC6811-IC:/Users/d.rodriguez/AppData/Local/Arm/Packs/Keil/STM32F4xx_DFP/2.17.1/Drivers/CMSIS/Device/ST/STM32F4xx/Include-D__UVISION_VERSION="539" -DSTM32F405xx -DUSE_HAL_DRIVER -DSTM32F405xx-o fs2024_cube/battery_pack_control_unit.o -MD)
+F (..\core\APP\Control_Unit\Control_Unit_Selection\Battery Pack Control Unit\Battery_Pack_Control_Unit.c)(0x685D1625)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -Oz -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ../core -I ../core/APP -I "../core/CAN Bus" -I ../core/Common_Functions -I ../core/MCU -I ../core/MCU/STM32F4 -I "../core/Task Manager" -I ../core/TypeDefs -I ../core/MCU/STM32F4 -I ../core/APP/Control_Unit -I ../core/APP/Control_Unit/Control_Unit_Selection -I "../core/APP/Control_Unit/Control_Unit_Selection/Front Control Unit" -I "../core/APP/Control_Unit/Control_Unit_Selection/Rear Control Unit" -I "../core/APP/Control_Unit/Control_Unit_Selection/Rear Control Unit Power Distribution" -I "../core/APP/Control_Unit/Control_Unit_Selection/SDC Charger" -I "../core/APP/Control_Unit/Control_Unit_Selection/Accu Master" -I ../core/MCU/Simulated_Eeprom -I ../core/TypeDefs -I "../core/APP/Control_Unit/Control_Unit_Selection/Battery Pack Control Unit" -I ../core/APP/Control_Unit/State_LEDs -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../core/APP/Control_Unit/LTC6811-IC:/Users/d.rodriguez/AppData/Local/Arm/Packs/Keil/STM32F4xx_DFP/2.17.1/Drivers/CMSIS/Device/ST/STM32F4xx/Include-D__UVISION_VERSION="539" -DSTM32F405xx -DUSE_HAL_DRIVER -DSTM32F405xx-o fs2024_cube/battery_pack_control_unit.o -MD)
 I (..\core\APP\Control_Unit\Control_Unit_Selection\Battery Pack Control Unit\Battery_Pack_Control_Unit.h)(0x685D1437)
 I (..\core\APP\Control_Unit\State_LEDs\State_LEDs.hB.\core\MCU\MCU.h)(0x00000000)
 I (..\core\MCU\STM32F4\STM32F4.h)(0x685D13C1)
@@ -146,7 +146,7 @@ I (..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_rtc_ex.h)(0x685CF1B7)
 I (..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_spi.h)(0x685CF1B7)
 I (..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_tim.h)(0x685CF1B7)
 I (..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_tim_ex.h)(0x685CF1B7)
-I (..\core\APP\Control_Unit\Control_Unit_Selection\Control_Unit_Selection.h)(0x685CF1B7)
+I (..\core\APP\Control_Unit\Control_Unit_Selection\Control_Unit_Selection.h)(0x685D27A1)
 I (..\core\Common_Functions\Common_Functions.h)(0x685CF1B7)
 I (C:\Program Files (x86)\Keil\ARM\ARMCLANG\include\stdio.h)(0x656A1282)
 I (..\core\TypeDefs\Typedefs.h\.\core\CAN Bus\Can_Bus.h)(0x00000000)
@@ -155,7 +155,7 @@ I (..\core\APP\Control_Unit\LTC6811\LTC6811.h)(0x685D06C4)
 I (C:\Program Files (x86)\Keil\ARM\ARMCLANG\include\string.h)(0x656A1282)
 I (C:\Program Files (x86)\Keil\ARM\ARMCLANG\include\math.h)(0x656A1282)
 F (..\core\APP\Control_Unit\Control_Unit_Selection\Battery Pack Control Unit\Battery_Pack_Control_Unit.h)(0x685D1437)()
-F (..\core\APP\Control_Unit\Control_Unit_Selection\Control_Unit_Selection.h)(0x685CF1B7)()
+F (..\core\APP\Control_Unit\Control_Unit_Selection\Control_Unit_Selection.h)(0x685D27A1)()
 F (..\core\APP\Control_Unit\State_LEDs\State_LEDs.c)(0x685CF1B7)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -Oz -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ../core -I ../core/APP -I "../core/CAN Bus" -I ../core/Common_Functions -I ../core/MCU -I ../core/MCU/STM32F4 -I "../core/Task Manager" -I ../core/TypeDefs -I ../core/MCU/STM32F4 -I ../core/APP/Control_Unit -I ../core/APP/Control_Unit/Control_Unit_Selection -I "../core/APP/Control_Unit/Control_Unit_Selection/Front Control Unit" -I "../core/APP/Control_Unit/Control_Unit_Selection/Rear Control Unit" -I "../core/APP/Control_Unit/Control_Unit_Selection/Rear Control Unit Power Distribution" -I "../core/APP/Control_Unit/Control_Unit_Selection/SDC Charger" -I "../core/APP/Control_Unit/Control_Unit_Selection/Accu Master" -I ../core/MCU/Simulated_Eeprom -I ../core/TypeDefs -I "../core/APP/Control_Unit/Control_Unit_Selection/Battery Pack Control Unit" -I ../core/APP/Control_Unit/State_LEDs -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../core/APP/Control_Unit/LTC6811-IC:/Users/d.rodriguez/AppData/Local/Arm/Packs/Keil/STM32F4xx_DFP/2.17.1/Drivers/CMSIS/Device/ST/STM32F4xx/Include-D__UVISION_VERSION="539" -DSTM32F405xx -DUSE_HAL_DRIVER -DSTM32F405xx-o fs2024_cube/state_leds.o -MD)
 I (..\core\APP\Control_Unit\State_LEDs\State_LEDs.h)(0x685CF1B7)
 I (..\core\MCU\STM32F4\STM32F4.h)(0x685D13C1)
@@ -198,7 +198,7 @@ I (..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_rtc_ex.h)(0x685CF1B7)
 I (..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_spi.h)(0x685CF1B7)
 I (..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_tim.h)(0x685CF1B7)
 I (..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_tim_ex.h)(0x685CF1B7)
-I (..\core\APP\Control_Unit\Control_Unit_Selection\Control_Unit_Selection.h)(0x685CF1B7)
+I (..\core\APP\Control_Unit\Control_Unit_Selection\Control_Unit_Selection.h)(0x685D27A1)
 I (..\core\APP\Control_Unit\Control_Unit_Selection\Battery Pack Control Unit\Battery_Pack_Control_Unit.h)(0x685D1437)
 I (..\core\CAN Bus\Can_Bus.hC.\core\TypeDefs\TypeDefs.h)(0x00000000)
 I (..\core\Common_Functions\Common_Functions.h)(0x685CF1B7)
@@ -250,10 +250,10 @@ I (..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_rtc_ex.h)(0x685CF1B7)
 I (..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_spi.h)(0x685CF1B7)
 I (..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_tim.h)(0x685CF1B7)
 I (..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_tim_ex.h)(0x685CF1B7)
-I (..\core\APP\Control_Unit\Control_Unit_Selection\Control_Unit_Selection.h)(0x685CF1B7)
+I (..\core\APP\Control_Unit\Control_Unit_Selection\Control_Unit_Selection.h)(0x685D27A1)
 I (..\core\APP\Control_Unit\Control_Unit_Selection\Battery Pack Control Unit\Battery_Pack_Control_Unit.h)(0x685D1437)
 I (..\core\APP\Control_Unit\State_LEDs\State_LEDs.h)(0x685CF1B7)
-I (..\core\TypeDefs\Typedefs.h)(0x685D1309)
+I (..\core\TypeDefs\Typedefs.h)(0x685D27A1)
 I (..\core\Common_Functions\Common_Functions.h)(0x685CF1B7)
 I (C:\Program Files (x86)\Keil\ARM\ARMCLANG\include\stdio.h)(0x656A1282)
 I (..\core\CAN Bus\Can_Bus.hi.\core\APP\Control_Unit\Control_Unit.h)(0x00000000)
@@ -262,7 +262,7 @@ I (C:\Program Files (x86)\Keil\ARM\ARMCLANG\include\string.h)(0x656A1282)
 F (..\core\APP\Control_Unit\LTC6811\LTC6811.h)(0x685D06C4)()
 F (..\Core\CAN Bus\Can_Bus.c)(0x685CF1B7)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -Oz -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ../core -I ../core/APP -I "../core/CAN Bus" -I ../core/Common_Functions -I ../core/MCU -I ../core/MCU/STM32F4 -I "../core/Task Manager" -I ../core/TypeDefs -I ../core/MCU/STM32F4 -I ../core/APP/Control_Unit -I ../core/APP/Control_Unit/Control_Unit_Selection -I "../core/APP/Control_Unit/Control_Unit_Selection/Front Control Unit" -I "../core/APP/Control_Unit/Control_Unit_Selection/Rear Control Unit" -I "../core/APP/Control_Unit/Control_Unit_Selection/Rear Control Unit Power Distribution" -I "../core/APP/Control_Unit/Control_Unit_Selection/SDC Charger" -I "../core/APP/Control_Unit/Control_Unit_Selection/Accu Master" -I ../core/MCU/Simulated_Eeprom -I ../core/TypeDefs -I "../core/APP/Control_Unit/Control_Unit_Selection/Battery Pack Control Unit" -I ../core/APP/Control_Unit/State_LEDs -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../core/APP/Control_Unit/LTC6811-IC:/Users/d.rodriguez/AppData/Local/Arm/Packs/Keil/STM32F4xx_DFP/2.17.1/Drivers/CMSIS/Device/ST/STM32F4xx/Include-D__UVISION_VERSION="539" -DSTM32F405xx -DUSE_HAL_DRIVER -DSTM32F405xx-o fs2024_cube/can_bus.o -MD)
 I (..\Core\CAN Bus\Can_Bus.h)(0x685CF1B7)
-I (..\core\APP\Control_Unit\Control_Unit_Selection\Control_Unit_Selection.h)(0x685CF1B7)
+I (..\core\APP\Control_Unit\Control_Unit_Selection\Control_Unit_Selection.h)(0x685D27A1)
 I (..\core\APP\Control_Unit\Control_Unit_Selection\Battery Pack Control Unit\Battery_Pack_Control_Unit.h)(0x685D1437)
 I (..\core\APP\Control_Unit\State_LEDs\State_LEDs.hB.\core\MCU\MCU.h)(0x00000000)
 I (..\core\MCU\STM32F4\STM32F4.h)(0x685D13C1)
@@ -312,7 +312,7 @@ I (C:\Program Files (x86)\Keil\ARM\ARMCLANG\include\string.h)(0x656A1282)
 I (C:\Program Files (x86)\Keil\ARM\ARMCLANG\include\math.h)(0x656A1282)
 I (..\core\APP\Control_Unit\Control_Unit.h)(0x685CF1B7)
 F (..\Core\CAN Bus\Can_Bus.h)(0x685CF1B7)()
-F (..\Core\TypeDefs\TypeDefs.h)(0x685D1309)()
+F (..\Core\TypeDefs\TypeDefs.h)(0x685D27A1)()
 F (..\Core\Common_Functions\Common_Functions.c)(0x685CF1B7)(-xc -std=c99 --target=arm-arm-none-eabi -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -c-fno-rtti -funsigned-char -fshort-enums -fshort-wchar-gdwarf-4 -Oz -ffunction-sections -Wno-packed -Wno-missing-variable-declarations -Wno-missing-prototypes -Wno-missing-noreturn -Wno-sign-conversion -Wno-nonportable-include-path -Wno-reserved-id-macro -Wno-unused-macros -Wno-documentation-unknown-command -Wno-documentation -Wno-license-management -Wno-parentheses-equality -Wno-reserved-identifier -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ../core -I ../core/APP -I "../core/CAN Bus" -I ../core/Common_Functions -I ../core/MCU -I ../core/MCU/STM32F4 -I "../core/Task Manager" -I ../core/TypeDefs -I ../core/MCU/STM32F4 -I ../core/APP/Control_Unit -I ../core/APP/Control_Unit/Control_Unit_Selection -I "../core/APP/Control_Unit/Control_Unit_Selection/Front Control Unit" -I "../core/APP/Control_Unit/Control_Unit_Selection/Rear Control Unit" -I "../core/APP/Control_Unit/Control_Unit_Selection/Rear Control Unit Power Distribution" -I "../core/APP/Control_Unit/Control_Unit_Selection/SDC Charger" -I "../core/APP/Control_Unit/Control_Unit_Selection/Accu Master" -I ../core/MCU/Simulated_Eeprom -I ../core/TypeDefs -I "../core/APP/Control_Unit/Control_Unit_Selection/Battery Pack Control Unit" -I ../core/APP/Control_Unit/State_LEDs -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../core/APP/Control_Unit/LTC6811-IC:/Users/d.rodriguez/AppData/Local/Arm/Packs/Keil/STM32F4xx_DFP/2.17.1/Drivers/CMSIS/Device/ST/STM32F4xx/Include-D__UVISION_VERSION="539" -DSTM32F405xx -DUSE_HAL_DRIVER -DSTM32F405xx-o fs2024_cube/common_functions.o -MD)
 I (..\Core\Common_Functions\Common_Functions.h)(0x685CF1B7)
 I (C:\Program Files (x86)\Keil\ARM\ARMCLANG\include\stdio.h)(0x656A1282)
@@ -358,10 +358,10 @@ I (..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_rtc_ex.h)(0x685CF1B7)
 I (..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_spi.h)(0x685CF1B7)
 I (..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_tim.h)(0x685CF1B7)
 I (..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_tim_ex.h)(0x685CF1B7)
-I (..\core\APP\Control_Unit\Control_Unit_Selection\Control_Unit_Selection.h)(0x685CF1B7)
+I (..\core\APP\Control_Unit\Control_Unit_Selection\Control_Unit_Selection.h)(0x685D27A1)
 I (..\core\APP\Control_Unit\Control_Unit_Selection\Battery Pack Control Unit\Battery_Pack_Control_Unit.h)(0x685D1437)
 I (..\core\APP\Control_Unit\State_LEDs\State_LEDs.h)(0x685CF1B7)
-I (..\core\TypeDefs\Typedefs.h)(0x685D1309)
+I (..\core\TypeDefs\Typedefs.h)(0x685D27A1)
 I (..\core\Common_Functions\Common_Functions.h)(0x685CF1B7)
 I (C:\Program Files (x86)\Keil\ARM\ARMCLANG\include\stdio.h)(0x656A1282)
 I (..\core\CAN Bus\Can_Bus.hi.\core\APP\Control_Unit\Control_Unit.h)(0x00000000)
@@ -410,7 +410,7 @@ I (..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_rtc_ex.h)(0x685CF1B7)
 I (..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_spi.h)(0x685CF1B7)
 I (..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_tim.h)(0x685CF1B7)
 I (..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_tim_ex.h)(0x685CF1B7)
-I (..\core\APP\Control_Unit\Control_Unit_Selection\Control_Unit_Selection.h)(0x685CF1B7)
+I (..\core\APP\Control_Unit\Control_Unit_Selection\Control_Unit_Selection.h)(0x685D27A1)
 I (..\core\APP\Control_Unit\Control_Unit_Selection\Battery Pack Control Unit\Battery_Pack_Control_Unit.h)(0x685D1437)
 I (..\core\APP\Control_Unit\State_LEDs\State_LEDs.hB.\core\MCU\MCU.h)(0x00000000)
 I (..\core\Common_Functions\Common_Functions.H)(0x685CF1B7)
@@ -461,7 +461,7 @@ I (..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_rtc_ex.h)(0x685CF1B7)
 I (..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_spi.h)(0x685CF1B7)
 I (..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_tim.h)(0x685CF1B7)
 I (..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_tim_ex.h)(0x685CF1B7)
-I (..\core\APP\Control_Unit\Control_Unit_Selection\Control_Unit_Selection.h)(0x685CF1B7)
+I (..\core\APP\Control_Unit\Control_Unit_Selection\Control_Unit_Selection.h)(0x685D27A1)
 I (..\core\APP\Control_Unit\Control_Unit_Selection\Battery Pack Control Unit\Battery_Pack_Control_Unit.h)(0x685D1437)
 I (..\core\APP\Control_Unit\State_LEDs\State_LEDs.hB.\core\MCU\MCU.h)(0x00000000)
 I (..\core\Common_Functions\Common_Functions.H)(0x685CF1B7)
@@ -514,7 +514,7 @@ I (..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_rtc_ex.h)(0x685CF1B7)
 I (..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_spi.h)(0x685CF1B7)
 I (..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_tim.h)(0x685CF1B7)
 I (..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_tim_ex.h)(0x685CF1B7)
-I (..\core\APP\Control_Unit\Control_Unit_Selection\Control_Unit_Selection.h)(0x685CF1B7)
+I (..\core\APP\Control_Unit\Control_Unit_Selection\Control_Unit_Selection.h)(0x685D27A1)
 I (..\core\APP\Control_Unit\Control_Unit_Selection\Battery Pack Control Unit\Battery_Pack_Control_Unit.h)(0x685D1437)
 I (..\core\APP\Control_Unit\State_LEDs\State_LEDs.hB.\core\MCU\MCU.h)(0x00000000)
 I (..\core\Common_Functions\Common_Functions.H)(0x685CF1B7)
