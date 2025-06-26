@@ -141,8 +141,13 @@ float LTC_Voltage_to_Temperature(float v) {
 void LTC6811_SPI_Transfer(LTC6811_Typdef* LTC6811,uint8_t *tx, uint16_t len) 
 {
 	HAL_GPIO_WritePin(LTC6811->CS_PORT, LTC6811->CS_PIN, GPIO_PIN_RESET);
+	// Espera corta antes de transmisión SPI
+	for (volatile int i = 0; i < 500; i++) __NOP();
 	HAL_StatusTypeDef Status;
 	Status = HAL_SPI_Transmit(LTC6811->SPI_Handler, tx, len, SPI_MAX_DELAY);  // Timeout de 100 ms
+	
+	// Espera corta antes de liberar CS
+	for (volatile int i = 0; i < 500; i++) __NOP();
 	HAL_GPIO_WritePin(LTC6811->CS_PORT, LTC6811->CS_PIN, GPIO_PIN_SET);
 
 	if (Status != HAL_OK) 
@@ -169,14 +174,19 @@ void LTC6811_SPI_Transfer_No_CS(LTC6811_Typdef* LTC6811,uint8_t *tx, uint16_t le
 void LTC6811_SPI_Transmit_Receive(LTC6811_Typdef* LTC6811, uint8_t *tx, uint8_t *rx, uint16_t len_tx, uint16_t len_rx)
 {
     HAL_GPIO_WritePin(LTC6811->CS_PORT, LTC6811->CS_PIN, GPIO_PIN_RESET);
-		HAL_StatusTypeDef Status;
+		// Espera corta antes de transmisión SPI
+		for (volatile int i = 0; i < 500; i++) __NOP();
+	
+		HAL_StatusTypeDef Status,Status1;
 
 		Status=HAL_SPI_Transmit(LTC6811->SPI_Handler, tx, len_tx, SPI_MAX_DELAY);
-    Status=HAL_SPI_Receive(LTC6811->SPI_Handler, rx, len_rx, SPI_MAX_DELAY);
-
+    Status1=HAL_SPI_Receive(LTC6811->SPI_Handler, rx, len_rx, SPI_MAX_DELAY);
+	
+		// Espera corta antes de liberar CS
+		for (volatile int i = 0; i < 500; i++) __NOP();
     HAL_GPIO_WritePin(LTC6811->CS_PORT, LTC6811->CS_PIN, GPIO_PIN_SET);
 
-    if (Status != HAL_OK)
+    if (Status != HAL_OK || Status1!=HAL_OK)
     {
         LTC6811->Fail=TRUE;
     }
@@ -203,6 +213,26 @@ uint16_t LTC6811_PEC15_Calc(uint8_t *data, uint8_t len) {
     }
     return (remainder >> 1);
 }
+
+BoolTypeDef LTC6811_Read_CFG(LTC6811_Typdef* LTC6811, uint8_t* config_out)
+{
+    uint8_t cmd[4] = { 0x02, 0x00, 0xB2, 0x2B }; // RDCFG + PEC15
+    uint8_t rx[8] = {0};
+
+    LTC6811_SPI_Transmit_Receive(LTC6811, cmd, rx, 4, 8);
+
+    // Verificación de PEC recibido
+    uint16_t received_pec = (rx[6] << 8) | rx[7];
+    uint16_t calc_pec = LTC6811_PEC15_Calc(rx, 6);
+
+    if (received_pec != calc_pec) {
+        return FALSE;
+    }
+
+    // Copia configuración si todo está bien
+    memcpy(config_out, rx, 6);
+    return TRUE;
+}
 /*******************************************************************************
 ********************************************************************************
 ***************								Wake Up						      	  	   ***************	
@@ -210,7 +240,16 @@ uint16_t LTC6811_PEC15_Calc(uint8_t *data, uint8_t len) {
 *******************************************************************************/
 void LTC6811_Wake_Up(LTC6811_Typdef* LTC6811) 
 {
-    LTC6811_SPI_Transfer(LTC6811, 0x00, 1);
+    uint8_t wake_frame[2] = { 0x00, 0x00 }; // 2 bytes a 0 para asegurar actividad
+    LTC6811_SPI_Transfer(LTC6811, wake_frame, 2);
+		
+		// Intenta leer el registro de configuración
+    uint8_t cfg[6];
+    if (LTC6811_Read_CFG(LTC6811, cfg)==FALSE) 
+		{
+        LTC6811->Fail = TRUE;
+		}
+
 }
 
 /*******************************************************************************
@@ -218,27 +257,69 @@ void LTC6811_Wake_Up(LTC6811_Typdef* LTC6811)
 ***************								WRITE CFG					      	  	   ***************	
 ********************************************************************************
 *******************************************************************************/
-void LTC6811_Write_CFG(LTC6811_Typdef* LTC6811) {
-    // Comando WRCFG con su PEC15 ya calculado
-    uint8_t cmd[4] = { 0x00, 0x01, 0x3D, 0x6E }; 
-
-    // Calculamos PEC15 para los 6 bytes de configuración
+void LTC6811_Write_CFG(LTC6811_Typdef* LTC6811) 
+{
+    // Paso 1: Calcula PEC15 de los 6 bytes de configuración
     uint16_t pec = LTC6811_PEC15_Calc(LTC6811->Config, 6);
 
-    // Preparamos paquete de 6 bytes + 2 de PEC
-    uint8_t config_pec[8];
-    memcpy(config_pec, LTC6811->Config, 6);
-    config_pec[6] = (pec >> 8) & 0xFF;
-    config_pec[7] = pec & 0xFF;
-		
+    // Paso 2: Arma el paquete completo: WRCFG (4) + Config (6) + PEC (2) = 12 bytes
+    uint8_t tx[12];
+
+    // Comando WRCFG con su PEC15
+    tx[0] = 0x00;
+    tx[1] = 0x01;
+    tx[2] = 0x3D; // PEC15 MSB para 0x0001
+    tx[3] = 0x6E; // PEC15 LSB
+
+    // Configuración
+    memcpy(&tx[4], LTC6811->Config, 6);
+
+    // PEC15 de configuración
+    tx[10] = (pec >> 8) & 0xFF;
+    tx[11] = pec & 0xFF;
+
+    // Transmisión con CS bajo durante todo el mensaje
     HAL_GPIO_WritePin(LTC6811->CS_PORT, LTC6811->CS_PIN, GPIO_PIN_RESET);
-    // Enviar comando WRCFG
-    LTC6811_SPI_Transfer_No_CS(LTC6811, cmd, 4);
-    // Enviar datos de configuración + PEC
-    LTC6811_SPI_Transfer_No_CS(LTC6811, config_pec, 8);
-		HAL_GPIO_WritePin(LTC6811->CS_PORT, LTC6811->CS_PIN, GPIO_PIN_SET);
+    for (volatile int i = 0; i < 500; i++) __NOP();
+
+    HAL_StatusTypeDef status = HAL_SPI_Transmit(LTC6811->SPI_Handler, tx, 12, HAL_MAX_DELAY);
+
+    for (volatile int i = 0; i < 500; i++) __NOP();
+    HAL_GPIO_WritePin(LTC6811->CS_PORT, LTC6811->CS_PIN, GPIO_PIN_SET);
+
+    if (status != HAL_OK)
+		{
+        LTC6811->Fail = TRUE;
+		}
+
 }
 
+
+/*******************************************************************************
+********************************************************************************
+***************										wait ADC				      	  	   ***************	
+********************************************************************************
+*******************************************************************************/
+BoolTypeDef LTC6811_Wait_ADC_Completion(LTC6811_Typdef* LTC6811, uint16_t timeout_ms)
+{
+    uint8_t cmd[4] = { 0x07, 0x14, 0x65, 0xAF }; // PLADC + PEC15
+    uint8_t response[4] = {0};
+    uint8_t dummy_tx[4] = {0x00, 0x00, 0x00, 0x00};
+
+    uint32_t start = HAL_GetTick();
+
+    while ((HAL_GetTick() - start) < timeout_ms)
+    {
+        // Enviar comando PLADC y leer 4 bytes
+        LTC6811_SPI_Transmit_Receive(LTC6811, cmd, response, 4, 4);
+
+        // response[0] = status byte (otros son padding y PEC)
+        if (response[0] & 0x01)
+            return TRUE; // ADC terminó
+    }
+
+    return FALSE; // timeout
+}
 /*******************************************************************************
 ********************************************************************************
 ***************								START ADC				      	  	   ***************	
@@ -247,6 +328,10 @@ void LTC6811_Write_CFG(LTC6811_Typdef* LTC6811) {
 void LTC6811_Start_ADC_Conv(LTC6811_Typdef* LTC6811) {
     uint8_t cmd[4] = { 0x03, 0x60, 0xF4, 0x6C }; // ADCV: All cells
     LTC6811_SPI_Transfer(LTC6811, cmd, 4);
+		
+		if (!LTC6811_Wait_ADC_Completion(LTC6811, 5)) { // espera hasta 5 ms
+        LTC6811->Fail = TRUE; // ADC no respondió a tiempo
+    }
 }
 
 /*******************************************************************************
@@ -264,6 +349,18 @@ void LTC_Active_Even_Balancing(LTC6811_Typdef* LTC6811)
 			LTC6811->Config[5] = 0b00001010;
 			LTC6811_Write_CFG(LTC6811);
 			LTC6811->Balancing=EVEN_BALANCING;
+			
+			// Confirmación con RDCFG
+        uint8_t read_cfg[6];
+        if (LTC6811_Read_CFG(LTC6811, read_cfg)) {
+            if (read_cfg[4] == 0xAA && (read_cfg[5] & 0x0F) == 0x0A) {
+                LTC6811->Balancing = EVEN_BALANCING;
+            } else {
+                LTC6811->Fail = TRUE;
+            }
+        } else {
+            LTC6811->Fail = TRUE;
+        }
 		}
 		else
 		{
@@ -282,10 +379,22 @@ void LTC_Active_Odd_Balancing(LTC6811_Typdef* LTC6811)
 		{
 			memset(LTC6811->Config, 0, 6);
 			LTC6811->Config[0] = 0b00000001; // REFON = 1, ADCOPT = 0
-			LTC6811->Config[4] = 0b01010101; // DCC bits pares: 2,4,6,8,10,12
+			LTC6811->Config[4] = 0b01010101; // DCC bits impares
 			LTC6811->Config[5] = 0b00000101;
 			LTC6811_Write_CFG(LTC6811);
 			LTC6811->Balancing=ODD_BALANCING;
+			
+			// Confirmar que se aplicó correctamente
+        uint8_t read_cfg[6];
+        if (LTC6811_Read_CFG(LTC6811, read_cfg)) {
+            if (read_cfg[4] == 0x55 && (read_cfg[5] & 0x0F) == 0x05) {
+                LTC6811->Balancing = ODD_BALANCING;
+            } else {
+                LTC6811->Fail = TRUE;
+            }
+        } else {
+            LTC6811->Fail = TRUE;
+        }		
 		}
 		else
 		{
@@ -307,6 +416,24 @@ void LTC_Disable_Balancing(LTC6811_Typdef* LTC6811)
         // DCC bits en 0 => desactiva todo el balanceo
         LTC6811_Write_CFG(LTC6811);
         LTC6811->Balancing = NO_BALANCING;
+			
+			// Paso 2: Leer de vuelta para verificar que se aplicó correctamente
+        uint8_t read_cfg[6] = {0};
+        if (LTC6811_Read_CFG(LTC6811, read_cfg))
+        {
+            // Comprobamos que DCC bits (bytes 4 y 5) están en 0
+            if (read_cfg[4] == 0x00 && (read_cfg[5] & 0x0F) == 0x00) {
+                // Confirmación OK
+                LTC6811->Balancing = NO_BALANCING;
+            } else {
+                // DCC no está apagado ? posible fallo
+                LTC6811->Fail = TRUE;
+            }
+        }
+        else {
+            // Error de comunicación
+            LTC6811->Fail = TRUE;
+        }
     }
 		else
 		{
@@ -348,38 +475,38 @@ BoolTypeDef LTC6811_Read_Cell_Block(LTC6811_Typdef* LTC6811,uint8_t cmd1, uint8_
 ***************									Read_Voltages				     		 		***************	
 ********************************************************************************
 *******************************************************************************/
-void LTC_Read_All_Voltages(LTC6811_Typdef *LTC6811, uint16_t *voltages) 
+void LTC_Read_All_Voltages(LTC6811_Typdef *LTC6811, float *voltages) 
 {
+    const struct {
+        uint8_t cmd1;
+        uint8_t cmd2;
+        uint8_t index;
+    } blocks[] = {
+        {0x04, 0x00, 0}, // RDCVA: C1–C3
+        {0x06, 0x00, 3}, // RDCVB: C4–C6
+        {0x08, 0x00, 6}, // RDCVC: C7–C9
+        {0x0A, 0x00, 9}  // RDCVD: C10–C12
+    };
+
     uint16_t buf[3];
 
-    LTC6811_Start_ADC_Conv(LTC6811);
+    for (int i = 0; i < 4; i++) {
+        BoolTypeDef success = FALSE;
 
-    // RDCVA: C1, C2, C3
-    if(LTC6811_Read_Cell_Block(LTC6811,0x04, 0x00, buf)) {
-        voltages[0] = buf[0] * 0.0001f; // C1
-        voltages[1] = buf[1] * 0.0001f; // C2
-        voltages[2] = buf[2] * 0.0001f; // C3
-    }
+        // Hasta 2 intentos
+        for (int attempt = 0; attempt < 2; attempt++) {
+            if (LTC6811_Read_Cell_Block(LTC6811, blocks[i].cmd1, blocks[i].cmd2, buf)) {
+                voltages[blocks[i].index + 0] = buf[0] * 0.0001f;
+                voltages[blocks[i].index + 1] = buf[1] * 0.0001f;
+                voltages[blocks[i].index + 2] = buf[2] * 0.0001f;
+                success = TRUE;
+                break;
+            }
+        }
 
-    // RDCVB: C4, C5, C6
-    if(LTC6811_Read_Cell_Block(LTC6811,0x06, 0x00, buf)) {
-        voltages[3] = buf[0] * 0.0001f; // C4
-        voltages[4] = buf[1] * 0.0001f; // C5
-        voltages[5] = buf[2] * 0.0001f; // C6
-    }
-
-    // RDCVC: C7, C8, C9
-    if(LTC6811_Read_Cell_Block(LTC6811,0x08, 0x00, buf)) {
-        voltages[6] = buf[0] * 0.0001f; // C7
-        voltages[7] = buf[1] * 0.0001f; // C8
-        voltages[8] = buf[2] * 0.0001f; // C9
-    }
-
-    // RDCVD: C10, C11, C12
-    if(LTC6811_Read_Cell_Block(LTC6811,0x0A, 0x00, buf)) {
-        voltages[9] = buf[0] * 0.0001f;  // C10
-        voltages[10] = buf[1] * 0.0001f; // C11
-        voltages[11] = buf[2] * 0.0001f; // C12
+        if (!success) {
+            LTC6811->Fail = TRUE;
+        }
     }
 }
 
@@ -405,8 +532,8 @@ void LTC_Read_All_Voltages(LTC6811_Typdef *LTC6811, uint16_t *voltages)
  */
 void LTC6811_Measure_Temperatures_and_Voltages(Control_Unit_TypeDef* Control_Unit)
 {
-    uint16_t voltages_1[12]; // Voltajes de las 12 celdas del LTC6811_1
-    uint16_t voltages_2[12]; // Voltajes de las 12 celdas del LTC6811_2
+    float voltages_1[12]; // Voltajes de las 12 celdas del LTC6811_1
+    float voltages_2[12]; // Voltajes de las 12 celdas del LTC6811_2
 
     // Despierta ambos LTC6811
     LTC6811_Wake_Up(&Control_Unit->Status.LTC6811_1);
@@ -452,6 +579,7 @@ void LTC6811_Measure_Temperatures_and_Voltages(Control_Unit_TypeDef* Control_Uni
 		if(Control_Unit->Status.LTC6811_1.Fail==TRUE || Control_Unit->Status.LTC6811_2.Fail==TRUE)
 		{
 			Control_Unit->State=LTC6811_FAIL_MODE;
+			return;
 		}
 		
     // === Medición de celdas impares ===

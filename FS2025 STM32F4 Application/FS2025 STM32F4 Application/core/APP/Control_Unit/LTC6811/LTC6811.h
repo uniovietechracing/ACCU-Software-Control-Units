@@ -86,7 +86,7 @@ BoolTypeDef LTC6811_Read_Cell_Block(LTC6811_Typdef* LTC6811,uint8_t cmd1, uint8_
 ***************									Funciones de Lectura			     	 ***************	
 ********************************************************************************
 *******************************************************************************/
-void LTC_Read_All_Voltages(LTC6811_Typdef *LTC6811, uint16_t *voltages); 
+void LTC_Read_All_Voltages(LTC6811_Typdef *LTC6811, float *voltages); 
 
 
 /*******************************************************************************
