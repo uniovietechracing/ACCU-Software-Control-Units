@@ -659,8 +659,7 @@ void Battery_Pack_Control_Read_Task(Control_Unit_TypeDef* Control_Unit)
         LTC6811_Measure_Temperatures_and_Voltages(Control_Unit);
 
         // Verifica que ambas cadenas de medición estén funcionando correctamente
-        if (Control_Unit->Status.LTC6811_1.Fail == FALSE &&
-            Control_Unit->Status.LTC6811_2.Fail == FALSE)
+        if (Control_Unit->Status.LTC6811_1.Fail == FALSE )//&& Control_Unit->Status.LTC6811_2.Fail == FALSE)
         {
             // Evalúa temperaturas medidas para verificar límites seguros
             Battery_Pack_Control_Unit_Check_Temperatures(Control_Unit);

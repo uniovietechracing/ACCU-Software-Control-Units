@@ -60,7 +60,7 @@ const int8_t Temp_Table_C[] = {
 void LTC6811_SPI_Init()
 {
     MCU_SPI1_Init();  ///< Inicializa SPI1 (asociado al LTC6811_1)
-    MCU_SPI2_Init();  ///< Inicializa SPI2 (asociado al LTC6811_2)
+    //MCU_SPI2_Init();  ///< Inicializa SPI2 (asociado al LTC6811_1)
 }
 
 
@@ -90,28 +90,22 @@ void LTC6811_Init(Control_Unit_TypeDef* Control_Unit)
     Control_Unit->Status.LTC6811_1.CS_PIN      = GPIO_PIN_4;
 
     // Asignar configuración SPI y pines CS para LTC6811_2
-    Control_Unit->Status.LTC6811_2.SPI_Handler = &STM32_SPI2;
-    Control_Unit->Status.LTC6811_2.CS_PORT     = GPIOA;
-    Control_Unit->Status.LTC6811_2.CS_PIN      = GPIO_PIN_15;
+    //Control_Unit->Status.LTC6811_2.SPI_Handler = &STM32_SPI2;
+    //Control_Unit->Status.LTC6811_2.CS_PORT     = GPIOA;
+    //Control_Unit->Status.LTC6811_2.CS_PIN      = GPIO_PIN_15;
 
     // Resetear indicadores de fallo
     Control_Unit->Status.LTC6811_1.Fail = FALSE;
-    Control_Unit->Status.LTC6811_2.Fail = FALSE;
+    //Control_Unit->Status.LTC6811_2.Fail = FALSE;
 
     // Despertar ambos LTC6811
     LTC6811_Wake_Up(&Control_Unit->Status.LTC6811_1);
-    LTC6811_Wake_Up(&Control_Unit->Status.LTC6811_2);
+    //LTC6811_Wake_Up(&Control_Unit->Status.LTC6811_2);
     HAL_Delay(1); // Pequeña espera para estabilización
 
     // Desactivar balanceo de celdas en ambos dispositivos
     LTC_Disable_Balancing(&Control_Unit->Status.LTC6811_1);
-    LTC_Disable_Balancing(&Control_Unit->Status.LTC6811_2);
-
-    // Verificar si alguno falló, y actualizar el estado del sistema
-    if (Control_Unit->Status.LTC6811_1.Fail == TRUE || Control_Unit->Status.LTC6811_2.Fail == TRUE)
-    {
-        Control_Unit->State = LTC6811_FAIL_MODE;
-    }
+    //LTC_Disable_Balancing(&Control_Unit->Status.LTC6811_2);
 }
 
 
@@ -241,7 +235,7 @@ void LTC6811_SPI_Transfer(LTC6811_Typdef* LTC6811, uint8_t *tx, uint16_t len)
 
     // Enviar los datos por SPI
     HAL_StatusTypeDef Status;
-    Status = HAL_SPI_Transmit(LTC6811->SPI_Handler, tx, len, SPI_MAX_DELAY);  // Tiempo máximo de espera indefinido
+    Status = HAL_SPI_Transmit(LTC6811->SPI_Handler, tx, len, SPI_MAX_DELAY);
 
     // Pequeño retardo antes de liberar CS
     for (volatile int i = 0; i < 500; i++) __NOP();
@@ -888,46 +882,46 @@ void LTC6811_Measure_Temperatures_and_Voltages(Control_Unit_TypeDef* Control_Uni
 
     // Despierta ambos LTC6811
     LTC6811_Wake_Up(&Control_Unit->Status.LTC6811_1);
-    LTC6811_Wake_Up(&Control_Unit->Status.LTC6811_2);
+    //LTC6811_Wake_Up(&Control_Unit->Status.LTC6811_2);
     HAL_Delay(1); 
 
     // === Medición de celdas pares ===
     // Activa el balanceo de celdas pares
     LTC_Active_Even_Balancing(&Control_Unit->Status.LTC6811_1);
-    LTC_Active_Even_Balancing(&Control_Unit->Status.LTC6811_2);
+    //LTC_Active_Even_Balancing(&Control_Unit->Status.LTC6811_2);
     HAL_Delay(5); // Permite estabilización
 
     // Inicia conversión ADC en ambos LTC
     LTC6811_Start_ADC_Conv(&Control_Unit->Status.LTC6811_1);
-    LTC6811_Start_ADC_Conv(&Control_Unit->Status.LTC6811_2);
+    //LTC6811_Start_ADC_Conv(&Control_Unit->Status.LTC6811_2);
     HAL_Delay(3); // Espera la finalización de la conversión
 
     // Lee los voltajes
     LTC_Read_All_Voltages(&Control_Unit->Status.LTC6811_1, voltages_1);
-    LTC_Read_All_Voltages(&Control_Unit->Status.LTC6811_2, voltages_2);
+    //LTC_Read_All_Voltages(&Control_Unit->Status.LTC6811_2, voltages_2);
 
     // Convertir voltajes pares a temperaturas (índices impares)
     for (int i = 1; i < 12; i += 2) 
 		{
         Control_Unit->Status.Temperatures[i].Readed_Value = LTC_Voltage_to_Temperature(voltages_1[i]);
-        Control_Unit->Status.Temperatures[i+12].Readed_Value = LTC_Voltage_to_Temperature(voltages_2[i]);
+        //Control_Unit->Status.Temperatures[i+12].Readed_Value = LTC_Voltage_to_Temperature(voltages_2[i]);
     }
 
     // Guardar voltajes de celdas impares (índices pares)
     for (int i = 0; i < 12; i += 2) 
 		{
         Control_Unit->Status.Voltages[i] = voltages_1[i];
-        Control_Unit->Status.Voltages[i + 12] = voltages_2[i];
+        //Control_Unit->Status.Voltages[i + 12] = voltages_2[i];
     }
 
 		
     // Desactiva balanceo
     LTC_Disable_Balancing(&Control_Unit->Status.LTC6811_1);
-    LTC_Disable_Balancing(&Control_Unit->Status.LTC6811_2);
+    //LTC_Disable_Balancing(&Control_Unit->Status.LTC6811_2);
     HAL_Delay(5);
 
 		//Si ha fallado algo dejamos de medir
-		if(Control_Unit->Status.LTC6811_1.Fail==TRUE || Control_Unit->Status.LTC6811_2.Fail==TRUE)
+		if(Control_Unit->Status.LTC6811_1.Fail==TRUE)// || Control_Unit->Status.LTC6811_2.Fail==TRUE)
 		{
 			Control_Unit->State=LTC6811_FAIL_MODE;
 			return;
@@ -936,41 +930,41 @@ void LTC6811_Measure_Temperatures_and_Voltages(Control_Unit_TypeDef* Control_Uni
     // === Medición de celdas impares ===
 		// Activa el balanceo de celdas impares
     LTC_Active_Odd_Balancing(&Control_Unit->Status.LTC6811_1);
-    LTC_Active_Odd_Balancing(&Control_Unit->Status.LTC6811_2);
+    //LTC_Active_Odd_Balancing(&Control_Unit->Status.LTC6811_2);
     HAL_Delay(5);
 
 		// Inicia conversión ADC en ambos LTC
     LTC6811_Start_ADC_Conv(&Control_Unit->Status.LTC6811_1);
-    LTC6811_Start_ADC_Conv(&Control_Unit->Status.LTC6811_2);
+    //LTC6811_Start_ADC_Conv(&Control_Unit->Status.LTC6811_2);
     HAL_Delay(3);
 
     // Lee los voltajes
     LTC_Read_All_Voltages(&Control_Unit->Status.LTC6811_1, voltages_1);
-    LTC_Read_All_Voltages(&Control_Unit->Status.LTC6811_2, voltages_2);
+    //LTC_Read_All_Voltages(&Control_Unit->Status.LTC6811_2, voltages_2);
 
     // Convertir voltajes impares a temperatura (índices pares)
     for (int i = 0; i < 12; i += 2) 
 		{
         Control_Unit->Status.Temperatures[i].Readed_Value = LTC_Voltage_to_Temperature(voltages_1[i]);
-        Control_Unit->Status.Temperatures[i+12].Readed_Value = LTC_Voltage_to_Temperature(voltages_2[i]);
+        //Control_Unit->Status.Temperatures[i+12].Readed_Value = LTC_Voltage_to_Temperature(voltages_2[i]);
     }
 
     // Guardar voltajes de celdas pares (índices impares)
     for (int i = 1; i < 12; i += 2) 
 		{
         Control_Unit->Status.Voltages[i] = voltages_1[i];
-        Control_Unit->Status.Voltages[i + 12] = voltages_2[i];
+        //Control_Unit->Status.Voltages[i + 12] = voltages_2[i];
     }
 
 		
 		
     // Desactiva balanceo al final (por seguridad)
     LTC_Disable_Balancing(&Control_Unit->Status.LTC6811_1);
-    LTC_Disable_Balancing(&Control_Unit->Status.LTC6811_2);
+    //LTC_Disable_Balancing(&Control_Unit->Status.LTC6811_2);
 		
 		
 		//Si ha fallado algo dejamos de medir
-		if(Control_Unit->Status.LTC6811_1.Fail==TRUE || Control_Unit->Status.LTC6811_2.Fail==TRUE)
+		if(Control_Unit->Status.LTC6811_1.Fail==TRUE)// || Control_Unit->Status.LTC6811_2.Fail==TRUE)
 		{
 			Control_Unit->State=LTC6811_FAIL_MODE;
 		}
