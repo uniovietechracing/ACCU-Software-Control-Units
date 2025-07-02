@@ -48,5 +48,7 @@ fs2024_cube/state_leds.o: \
   C:\Program\ Files\ (x86)\Keil\ARM\ARMCLANG\include\stdio.h \
   ..\core\APP\Control_Unit\Control_Unit.h \
   ..\core\APP\Control_Unit\LTC6811\LTC6811.h \
-  C:\Program\ Files\ (x86)\Keil\ARM\ARMCLANG\include\string.h \
+  C:\Program\ Files\ (x86)\Keil\ARM\ARMCLANG\include\stdbool.h \
+  ..\core\APP\Control_Unit\LTC6811\LTC681x.h \
+  ..\core\APP\Control_Unit\LTC6811\LT_SPI.h \
   C:\Program\ Files\ (x86)\Keil\ARM\ARMCLANG\include\math.h

@@ -47,5 +47,7 @@ fs2024_cube/control_unit.o: ..\core\APP\Control_Unit\Control_Unit.c \
   C:\Program\ Files\ (x86)\Keil\ARM\ARMCLANG\include\stdio.h \
   ..\core\TypeDefs\Typedefs.h ..\core\CAN\ Bus\Can_Bus.h \
   ..\core\APP\Control_Unit\LTC6811\LTC6811.h \
-  C:\Program\ Files\ (x86)\Keil\ARM\ARMCLANG\include\string.h \
+  C:\Program\ Files\ (x86)\Keil\ARM\ARMCLANG\include\stdbool.h \
+  ..\core\APP\Control_Unit\LTC6811\LTC681x.h \
+  ..\core\APP\Control_Unit\LTC6811\LT_SPI.h \
   C:\Program\ Files\ (x86)\Keil\ARM\ARMCLANG\include\math.h

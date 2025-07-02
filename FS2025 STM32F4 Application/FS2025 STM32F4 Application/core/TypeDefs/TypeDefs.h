@@ -132,15 +132,6 @@ typedef enum
 } Balancing_Status_TypeDef;
 
 
-typedef struct {
-    SPI_HandleTypeDef *SPI_Handler;
-    GPIO_TypeDef *CS_PORT;
-    uint16_t CS_PIN;
-		uint8_t Config[6];
-    Balancing_Status_TypeDef Balancing;
-		BoolTypeDef Fail;
-} LTC6811_Typdef;
-
 /*******************************************************************************
 ********************************************************************************
 ***************									Estructura CAN_MESSAGE				   ***************

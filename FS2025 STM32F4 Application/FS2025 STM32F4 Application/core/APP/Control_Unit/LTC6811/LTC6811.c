@@ -1,979 +1,508 @@
-/**
-  ******************************************************************************
-  * @file           : LTC6811.h
-  * @brief          : LTC6811 header file
-  ******************************************************************************
-  * @attention
-  *
-  * (c) 2024 Uniovi E-tech Racing.
-  * 
-  *
-  ******************************************************************************  
-  ******************************************************************************
-																Version Control
-	******************************************************************************
-	******************************************************************************		
-  Version | dd mmm yyyy |       Who        | Description of changes
-  ========|=============|==================|====================================
-    1.0   | 01 MAR 2023 | Diego Rodríguez  | Creation
-	========|=============|==================|====================================
-	
-  ******************************************************************************
-  ******************************************************************************
-  */
-	
+/*!
+LTC6811-1: Multicell Battery Monitor
+@verbatim
+  The LTC6811 is a 3rd generation multicell battery stack
+  monitor that measures up to 12 series connected battery
+  cells with a total measurement error of less than 1.2mV. The
+  cell measurement range of 0V to 5V makes the LTC6811
+  suitable for most battery chemistries. All 12 cell voltages
+  can be captured in 290uS, and lower data acquisition rates
+  can be selected for high noise reduction.
+
+  Using the LTC6811-1, multiple devices are connected in
+  a daisy-chain with one host processor connection for all
+  devices.
+@endverbatim
+
+http://www.linear.com/product/LTC6811-1
+
+http://www.linear.com/product/LTC6811-1#demoboards
+
+REVISION HISTORY
+$Revision: 7139 $
+$Date: 2017-06-01 13:55:14 -0700 (Thu, 01 Jun 2017) $
+
+Copyright (c) 2017, Linear Technology Corp.(LTC)
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+1. Redistributions of source code must retain the above copyright notice, this
+   list of conditions and the following disclaimer.
+2. Redistributions in binary form must reproduce the above copyright notice,
+   this list of conditions and the following disclaimer in the documentation
+   and/or other materials provided with the distribution.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+The views and conclusions contained in the software and documentation are those
+of the authors and should not be interpreted as representing official policies,
+either expressed or implied, of Linear Technology Corp.
+
+The Linear Technology Linduino is not affiliated with the official Arduino team.
+However, the Linduino is only possible because of the Arduino team's commitment
+to the open-source community.  Please, visit http://www.arduino.cc and
+http://store.arduino.cc , and consider a purchase that will help fund their
+ongoing work.
+
+Copyright 2017 Linear Technology Corp. (LTC)
+***********************************************************/
+
+//! @ingroup BMS
+//! @{
+//! @defgroup LTC6811-1 LTC6811-1: Multicell Battery Monitor
+//! @}
+
+/*! @file
+    @ingroup LTC6811-1
+    Library for LTC6811-1 Multicell Battery Monitor
+*/
+
+#include "stdint.h"
 #include "LTC6811.h"
+#include "LTC681x.h"
 
-/*******************************************************************************
-********************************************************************************
-***************										Tablas      	  			 			  ***************	
-********************************************************************************
-*******************************************************************************/
-// Tabla de conversión V -> °C (Vout de sensor vs temperatura)
-const float Temp_Table_V[] = {
-    2.44, 2.42, 2.40, 2.38, 2.35, 2.32, 2.27, 2.23, 2.17, 2.11,
-    2.05, 1.99, 1.92, 1.86, 1.80, 1.74, 1.68, 1.63, 1.59, 1.55,
-    1.51, 1.48, 1.45, 1.43, 1.40, 1.38, 1.37, 1.35, 1.34, 1.33,
-    1.32, 1.31, 1.30
-};
-
-const int8_t Temp_Table_C[] = {
-    -40, -35, -30, -25, -20, -15, -10,  -5,   0,   5,
-     10,  15,  20,  25,  30,  35,  40,  45,  50,  55,
-     60,  65,  70,  75,  80,  85,  90,  95, 100, 105,
-    110, 115, 120
-};
-/*******************************************************************************
-********************************************************************************
-***************									LTC6811 Init      	  			   ***************	
-********************************************************************************
-*******************************************************************************/
-/**
- * @brief Inicializa las interfaces SPI utilizadas por los dispositivos LTC6811.
- *
- * Esta función configura los periféricos SPI del microcontrolador asociados
- * a los dos LTC6811 (por ejemplo, `STM32_SPI1` y `STM32_SPI2`), llamando a las
- * funciones de inicialización correspondientes del MCU.
- *
- * Debe ser llamada antes de cualquier operación de comunicación SPI con los LTC6811.
- */
-void LTC6811_SPI_Init()
+void LTC6811_init_reg_limits(cell_asic* ic)
 {
-    MCU_SPI1_Init();  ///< Inicializa SPI1 (asociado al LTC6811_1)
-    MCU_SPI2_Init();  ///< Inicializa SPI2 (asociado al LTC6811_2)
+    ic->ic_reg.cell_channels=12;
+    ic->ic_reg.stat_channels=4;
+    ic->ic_reg.aux_channels=6;
+    ic->ic_reg.num_cv_reg=4;
+    ic->ic_reg.num_gpio_reg=2;
+    ic->ic_reg.num_stat_reg=3;
 }
 
 
-/*******************************************************************************
-********************************************************************************
-***************									LTC6811 TIMERS Init      	  	   ***************	
-********************************************************************************
-*******************************************************************************/
-/**
- * @brief Inicializa los dos dispositivos LTC6811 en la unidad de control.
- *
- * Esta función configura los pines y handlers SPI para los dos LTC6811 conectados
- * a la unidad de control, los despierta del modo de bajo consumo y desactiva 
- * el balanceo de celdas como medida de seguridad inicial.
- *
- * También verifica si alguno de los dispositivos falló durante la inicialización
- * (por ejemplo, error de comunicación), y si es así, cambia el estado global 
- * de la unidad de control a `LTC6811_FAIL_MODE`.
- *
- * @param[in,out] Control_Unit  Puntero a la estructura principal de control del sistema.
- */
-void LTC6811_Init(Control_Unit_TypeDef* Control_Unit)
+/*
+Starts cell voltage conversion
+*/
+void LTC6811_adcv(uint8_t n_ic,
+  uint8_t MD, //ADC Mode
+  uint8_t DCP, //Discharge Permit
+  uint8_t CH //Cell Channels to be measured
+)
 {
-    // Asignar configuración SPI y pines CS para LTC6811_1
-    Control_Unit->Status.LTC6811_1.SPI_Handler = &STM32_SPI1;
-    Control_Unit->Status.LTC6811_1.CS_PORT     = GPIOA;
-    Control_Unit->Status.LTC6811_1.CS_PIN      = GPIO_PIN_4;
+  LTC681x_adcv(n_ic,MD,DCP,CH);
+}
 
-    // Asignar configuración SPI y pines CS para LTC6811_2
-    Control_Unit->Status.LTC6811_2.SPI_Handler = &STM32_SPI2;
-    Control_Unit->Status.LTC6811_2.CS_PORT     = GPIOA;
-    Control_Unit->Status.LTC6811_2.CS_PIN      = GPIO_PIN_15;
+//Starts cell voltage and SOC conversion
+void LTC6811_adcvsc(uint8_t n_ic,
+  uint8_t MD, //ADC Mode
+  uint8_t DCP //Discharge Permit
+)
+{
+  LTC681x_adcvsc(n_ic,MD,DCP);
+}
 
-    // Resetear indicadores de fallo
-    Control_Unit->Status.LTC6811_1.Fail = FALSE;
-    Control_Unit->Status.LTC6811_2.Fail = FALSE;
+// Starts cell voltage  and GPIO 1&2 conversion
+void LTC6811_adcvax(uint8_t n_ic,
+  uint8_t MD, //ADC Mode
+  uint8_t DCP //Discharge Permit
+)
+{
+  LTC681x_adcvax(MD,DCP);
+}
 
-    // Despertar ambos LTC6811
-    LTC6811_Wake_Up(&Control_Unit->Status.LTC6811_1);
-    LTC6811_Wake_Up(&Control_Unit->Status.LTC6811_2);
-    HAL_Delay(1); // Pequeña espera para estabilización
+//Starts cell voltage overlap conversion
+void LTC6811_adol(uint8_t n_ic,
+  uint8_t MD, //ADC Mode
+  uint8_t DCP //Discharge Permit
+)
+{
+  LTC681x_adol(MD,DCP);
+}
 
-    // Desactivar balanceo de celdas en ambos dispositivos
-    LTC_Disable_Balancing(&Control_Unit->Status.LTC6811_1);
-    LTC_Disable_Balancing(&Control_Unit->Status.LTC6811_2);
+//Starts cell voltage self test conversion
+void LTC6811_cvst(uint8_t n_ic,
+  uint8_t MD, //ADC Mode
+  uint8_t ST //Self Test
+)
+{
+  LTC681x_cvst(MD,ST);
+}
 
-    // Verificar si alguno falló, y actualizar el estado del sistema
-    if (Control_Unit->Status.LTC6811_1.Fail == TRUE || Control_Unit->Status.LTC6811_2.Fail == TRUE)
+//Start an Auxiliary Register Self Test Conversion
+void LTC6811_axst(uint8_t n_ic,
+  uint8_t MD, //ADC Mode
+  uint8_t ST //Self Test
+)
+{
+  LTC681x_axst(MD,ST);
+}
+
+//Start a Status Register Self Test Conversion
+void LTC6811_statst(uint8_t n_ic,
+  uint8_t MD, //ADC Mode
+  uint8_t ST //Self Test
+)
+{
+  LTC681x_statst(MD,ST);
+}
+
+//Sends the poll adc command
+uint8_t LTC6811_pladc(uint8_t n_ic)
+{
+  return(LTC681x_pladc());
+}
+
+//This function will block operation until the ADC has finished it's conversion
+uint32_t LTC6811_pollAdc(uint8_t n_ic)
+{
+  return(LTC681x_pollAdc());
+}
+
+//Start a GPIO and Vref2 Conversion
+void LTC6811_adax(uint8_t n_ic,
+  uint8_t MD, //ADC Mode
+  uint8_t CHG //GPIO Channels to be measured)
+)
+{
+  LTC681x_adax(MD,CHG);
+}
+
+//Start an GPIO Redundancy test
+void LTC6811_adaxd(uint8_t n_ic,
+  uint8_t MD, //ADC Mode
+  uint8_t CHG //GPIO Channels to be measured)
+)
+{
+  LTC681x_adaxd(MD,CHG);
+}
+
+//Start a Status ADC Conversion
+void LTC6811_adstat(uint8_t n_ic,
+  uint8_t MD, //ADC Mode
+  uint8_t CHST //GPIO Channels to be measured
+)
+{
+  LTC681x_adstat(MD,CHST);
+}
+
+// Start a Status register redundancy test Conversion
+void LTC6811_adstatd(uint8_t n_ic,
+  uint8_t MD, //ADC Mode
+  uint8_t CHST //GPIO Channels to be measured
+)
+{
+  LTC681x_adstatd(MD,CHST);
+}
+
+
+// Start an open wire Conversion
+void LTC6811_adow(uint8_t n_ic,
+  uint8_t MD, //ADC Mode
+  uint8_t PUP //Discharge Permit
+)
+{
+  LTC681x_adow(MD,PUP);
+}
+
+// Reads and parses the LTC6811 cell voltage registers.
+uint8_t LTC6811_rdcv(uint8_t n_ic,uint8_t reg, // Controls which cell voltage register is read back.
+                     cell_asic* ic // Array of the parsed cell codes
+                    )
+{
+
+  int8_t pec_error = 0;
+  pec_error = LTC681x_rdcv(reg,total_ic,ic);
+  return(pec_error);
+}
+
+/*
+ The function is used
+ to read the  parsed GPIO codes of the LTC6811. This function will send the requested
+ read commands parse the data and store the gpio voltages in aux_codes variable
+*/
+int8_t LTC6811_rdaux(uint8_t n_ic,uint8_t reg, //Determines which GPIO voltage register is read back.
+                     cell_asic* ic//A two dimensional array of the gpio voltage codes.
+                    )
+{
+  int8_t pec_error = 0;
+  pec_error = LTC681x_rdaux(reg,total_ic,ic);
+  return (pec_error);
+}
+
+/*
+ Reads and parses the LTC6811 stat registers.
+ The function is used
+ to read the  parsed stat codes of the LTC6811. This function will send the requested
+ read commands parse the data and store the stat voltages in stat_codes variable
+*/
+int8_t LTC6811_rdstat(uint8_t n_ic,uint8_t reg, //Determines which Stat  register is read back.
+                      cell_asic* ic
+                     )
+{
+  int8_t pec_error = 0;
+  pec_error = LTC681x_rdstat(reg,total_ic,ic);
+  return (pec_error);
+}
+
+/*
+ The command clears the cell voltage registers and intiallizes
+ all values to 1. The register will read back hexadecimal 0xFF
+ after the command is sent.
+*/
+void LTC6811_clrcell(uint8_t n_ic)
+{
+  LTC681x_clrcell();
+}
+
+/*
+ The command clears the Auxiliary registers and initializes
+ all values to 1. The register will read back hexadecimal 0xFF
+ after the command is sent.
+*/
+void LTC6811_clraux(uint8_t n_ic)
+{
+  LTC681x_clraux();
+}
+
+/*
+ The command clears the Stat registers and intiallizes
+ all values to 1. The register will read back hexadecimal 0xFF
+ after the command is sent.
+
+*/
+void LTC6811_clrstat(uint8_t n_ic)
+{
+  LTC681x_clrstat();
+}
+
+/*
+ The command clears the Sctrl registers and initializes
+ all values to 0. The register will read back hexadecimal 0x00
+ after the command is sent.
+ */
+void LTC6811_clrsctrl(uint8_t n_ic)
+{
+  LTC681x_clrsctrl();
+}
+
+//Starts the Mux Decoder diagnostic self test
+void LTC6811_diagn(uint8_t n_ic)
+{
+  LTC681x_diagn();
+}
+
+/*
+ This command will write the configuration registers of the LTC6811-1s
+ connected in a daisy chain stack. The configuration is written in descending
+ order so the last device's configuration is written first.
+*/
+void LTC6811_wrcfg(uint8_t n_ic, //The number of ICs being written to
+                   cell_asic* ic //A two dimensional array of the configuration data that will be written
+                  )
+{
+  LTC681x_wrcfg(n_ic,ic);
+}
+
+
+/*
+Reads configuration registers of a LTC6811 daisy chain
+*/
+int8_t LTC6811_rdcfg(uint8_t total_ic, //Number of ICs in the system
+                     cell_asic* ic //A two dimensional array that the function stores the read configuration data.
+                    )
+{
+  int8_t pec_error = 0;
+  pec_error = LTC681x_rdcfg(total_ic,ic);
+  return(pec_error);
+}
+
+/*
+Writes the pwm registers of a LTC6811 daisy chain
+*/
+void LTC6811_wrpwm(uint8_t total_ic,
+                   uint8_t pwmReg,  //The number of ICs being written to
+                   cell_asic* ic //A two dimensional array of the configuration data that will be written
+                  )
+{
+  LTC681x_wrpwm(total_ic,pwmReg,ic);
+}
+
+
+/*
+Reads pwm registers of a LTC6811 daisy chain
+*/
+int8_t LTC6811_rdpwm(uint8_t total_ic, //Number of ICs in the system
+                     uint8_t pwmReg,
+                     cell_asic* ic //A two dimensional array that the function stores the read configuration data.
+                    )
+{
+  int8_t pec_error =0;
+  pec_error = LTC681x_rdpwm(total_ic,pwmReg,ic);
+  return(pec_error);
+}
+
+/*
+Writes the COMM registers of a LTC6811 daisy chain
+*/
+void LTC6811_wrcomm(uint8_t total_ic, //The number of ICs being written to
+                    cell_asic* ic //A two dimensional array of the comm data that will be written
+                   )
+{
+  LTC681x_wrcomm(total_ic,ic);
+}
+
+/*
+Reads COMM registers of a LTC6811 daisy chain
+*/
+int8_t LTC6811_rdcomm(uint8_t total_ic, //Number of ICs in the system
+                      cell_asic* ic //A two dimensional array that the function stores the read configuration data.
+                     )
+{
+  int8_t pec_error = 0;
+  LTC681x_rdcomm(total_ic, ic);
+  return(pec_error);
+}
+
+/*
+Shifts data in COMM register out over LTC6811 SPI/I2C port
+*/
+void LTC6811_stcomm()
+{
+  LTC681x_stcomm();
+}
+
+//Helper function to set discharge bit in CFG register
+void LTC6811_set_discharge(int Cell, uint8_t total_ic, cell_asic* ic)
+{
+  for (int i=0; i<total_ic; i++)
+  {
+    if (Cell<9)
     {
-        Control_Unit->State = LTC6811_FAIL_MODE;
+      ic[i].config.tx_data[4] = ic[i].config.tx_data[4] | (1<<(Cell-1));
     }
-}
-
-
-
-
-/*******************************************************************************
-********************************************************************************
-***************							 	Float Volt to UINT8      	  	     ***************	
-********************************************************************************
-*******************************************************************************/
-/**
- * @brief Codifica un voltaje en un valor entero de 8 bits con resolución de 10 mV.
- *
- * Esta función convierte un voltaje flotante en el rango [2.00 V, 4.55 V] a un valor
- * entero de 8 bits, con una resolución de 10 mV por unidad (0.01 V).
- *
- * Si el voltaje está fuera del rango, se limita (clampa) al valor más cercano permitido.
- * Se aplica redondeo para mejorar la precisión de la cuantización.
- *
- * Fórmula de codificación:
- * - `0` representa 2.00 V
- * - `1` representa 2.01 V
- * - ...
- * - `255` representa 4.55 V
- *
- * @param[in] volt  Voltaje en voltios a codificar.
- * @return Valor codificado como uint8_t (resolución de 10 mV).
- */
-uint8_t LTC6811_Encode_Volt_10mV(float volt) {
-    if (volt < 2.0f) volt = 2.0f;
-    if (volt > 4.55f) volt = 4.55f;
-
-    return (uint8_t)((volt - 2.0f) * 100.0f + 0.5f); // +0.5 para redondeo correcto
-}
-
-/*******************************************************************************
-********************************************************************************
-***************								INT8 Temp to UINT8      	  	   ***************	
-********************************************************************************
-*******************************************************************************/
-/**
- * @brief Codifica una temperatura flotante en un valor entero de 8 bits.
- *
- * Esta función convierte una temperatura en grados Celsius a un valor codificado 
- * de 8 bits (uint8_t), que representa temperaturas desde -20.0 °C hasta 107.5 °C 
- * con una resolución de 0.5 °C por unidad.
- *
- * Si la temperatura está fuera del rango [-20.0, 107.5], se limita al valor más cercano.
- * Se aplica un redondeo para que los pasos de 0.5 °C se traduzcan correctamente.
- *
- * Fórmula de codificación:
- * - `0` representa -20.0 °C
- * - `1` representa -19.5 °C
- * - ...
- * - `255` representa 107.5 °C
- *
- * @param[in] Temp  Temperatura en grados Celsius a codificar.
- * @return Valor codificado como uint8_t.
- */
-uint8_t LTC6811_Encode_Temp(float Temp) 
-{
-    if (Temp < -20.0f) Temp = -20.0f;
-    if (Temp > 107.5f) Temp = 107.5f;
-
-    return (uint8_t)((Temp + 20.0f) * 2.0f + 0.5f);  // +0.5 para redondeo
-}
-
-/*******************************************************************************
-********************************************************************************
-***************										Voltage to Temp	      	  	   ***************	
-********************************************************************************
-*******************************************************************************/
-/**
- * @brief Convierte un voltaje medido a temperatura usando interpolación lineal.
- *
- * Esta función busca convertir un valor de voltaje a su correspondiente temperatura
- * estimada utilizando dos tablas (`Temp_Table_V` y `Temp_Table_C`) que representan
- * una relación voltaje-temperatura.
- *
- * Se realiza una búsqueda secuencial en la tabla de voltajes (`Temp_Table_V`)
- * para encontrar el intervalo donde se encuentra el voltaje `v`, y luego se interpola
- * linealmente entre los puntos adyacentes para calcular la temperatura.
- *
- * Si el voltaje está fuera del rango de la tabla, se retorna -100.0 como indicador de error.
- *
- * @param[in] v  Voltaje en voltios a convertir.
- * @return Temperatura estimada en grados Celsius, o -100.0 si está fuera de rango.
- */
-float LTC_Voltage_to_Temperature(float v) {
-    for (uint8_t i = 0; i < sizeof(Temp_Table_V) / sizeof(float) - 1; i++) {
-        if (v <= Temp_Table_V[i] && v >= Temp_Table_V[i + 1]) {
-            float t = Temp_Table_C[i] + (v - Temp_Table_V[i]) /
-                      (Temp_Table_V[i + 1] - Temp_Table_V[i]) *
-                      (Temp_Table_C[i + 1] - Temp_Table_C[i]);
-            return t;
-        }
-    }
-    return -100.0f;  // fuera de rango
-}
-
-/*******************************************************************************
-********************************************************************************
-***************								SPI Send						      	  	   ***************	
-********************************************************************************
-*******************************************************************************/
-/**
- * @brief Transmite datos por SPI al LTC6811 controlando automáticamente el pin CS.
- *
- * Esta función activa el pin CS (bajándolo), transmite un bloque de datos al LTC6811
- * mediante SPI, y luego libera el CS (lo vuelve a subir). Se insertan pequeños retardos
- * antes y después de la transmisión para cumplir con los requisitos temporales del LTC6811.
- *
- * En caso de error durante la transmisión SPI, se marca la estructura `LTC6811` como fallida
- * estableciendo el campo `Fail = TRUE`.
- *
- * @param[in,out] LTC6811  Puntero a la estructura del LTC6811 con el handler SPI y pines asociados.
- * @param[in]     tx       Puntero al arreglo de datos que se desea transmitir.
- * @param[in]     len      Longitud del arreglo a transmitir, en bytes.
- */
-void LTC6811_SPI_Transfer(LTC6811_Typdef* LTC6811, uint8_t *tx, uint16_t len) 
-{
-    // Activar CS (bajo)
-    HAL_GPIO_WritePin(LTC6811->CS_PORT, LTC6811->CS_PIN, GPIO_PIN_RESET);
-
-    // Pequeño retardo antes de la transmisión SPI
-    for (volatile int i = 0; i < 500; i++) __NOP();
-
-    // Enviar los datos por SPI
-    HAL_StatusTypeDef Status;
-    Status = HAL_SPI_Transmit(LTC6811->SPI_Handler, tx, len, SPI_MAX_DELAY);  // Tiempo máximo de espera indefinido
-
-    // Pequeño retardo antes de liberar CS
-    for (volatile int i = 0; i < 500; i++) __NOP();
-    HAL_GPIO_WritePin(LTC6811->CS_PORT, LTC6811->CS_PIN, GPIO_PIN_SET);
-
-    // Si hubo error, marcar el fallo en la estructura
-    if (Status != HAL_OK) 
+    else if (Cell < 13)
     {
-        LTC6811->Fail = TRUE;
+      ic[i].config.tx_data[5] = ic[i].config.tx_data[5] | (1<<(Cell-9));
     }
+  }
 }
 
-/*******************************************************************************
-********************************************************************************
-***************								SPI Send no cs						      	 ***************	
-********************************************************************************
-*******************************************************************************/
-/**
- * @brief Transmite datos por SPI al LTC6811 sin controlar el pin CS (Chip Select).
- *
- * Esta función transmite un arreglo de bytes a través del bus SPI hacia el LTC6811,
- * pero no modifica el estado del pin CS. Se asume que CS ya está en el estado correcto 
- * (activo en bajo) y que será manejado externamente por otra función o secuencia.
- *
- * Es útil para operaciones donde el control de CS debe mantenerse a lo largo de múltiples transferencias.
- * Si la transmisión falla, se marca el campo `Fail` de la estructura `LTC6811` como `TRUE`.
- *
- * @param[in,out] LTC6811  Puntero a la estructura del LTC6811 con el handler SPI.
- * @param[in]     tx       Puntero al buffer de datos a transmitir.
- * @param[in]     len      Cantidad de bytes a transmitir.
- */
-void LTC6811_SPI_Transfer_No_CS(LTC6811_Typdef* LTC6811, uint8_t *tx, uint16_t len) 
+// Runs the Digital Filter Self Test
+int16_t LTC6811_run_cell_adc_st(uint8_t adc_reg,uint8_t total_ic, cell_asic* ic)
 {
-    HAL_StatusTypeDef Status;
+  int16_t error = 0;
+  error = LTC681x_run_cell_adc_st(adc_reg,total_ic,ic);
+  return(error);
+}
 
-    // Transmitir datos vía SPI (sin tocar el pin CS)
-    Status = HAL_SPI_Transmit(LTC6811->SPI_Handler, tx, len, SPI_MAX_DELAY);  // Espera indefinida (bloqueante)
+//runs the redundancy self test
+int16_t LTC6811_run_adc_redundancy_st(uint8_t adc_mode, uint8_t adc_reg, uint8_t total_ic, cell_asic* ic)
+{
+  int16_t error = 0;
+  LTC681x_run_adc_redundancy_st(adc_mode,adc_reg,total_ic,ic);
+  return(error);
+}
+//Runs the datasheet algorithm for open wire
+void LTC6811_run_openwire(uint8_t total_ic, cell_asic* ic)
+{
+  LTC681x_run_openwire(total_ic,ic);
+}
+// Runs the ADC overlap test for the IC
+uint16_t LTC6811_run_adc_overlap(uint8_t total_ic, cell_asic* ic)
+{
+  uint16_t error = 0;
+  LTC681x_run_adc_overlap(total_ic, ic);
+  return(error);
+}
 
-    // Si hubo error durante la transmisión, marcar fallo
-    if (Status != HAL_OK) 
+void LTC6811_max_min(uint8_t total_ic, cell_asic ic_cells[],
+                     cell_asic ic_min[],
+                     cell_asic ic_max[],
+                     cell_asic ic_delta[])
+{
+  for (int j=0; j < total_ic; j++)
+  {
+    for (int i = 0; i< 12; i++)
     {
-        LTC6811->Fail = TRUE;
+      if (ic_cells[j].cells.c_codes[i]>ic_max[j].cells.c_codes[i])ic_max[j].cells.c_codes[i]=ic_cells[j].cells.c_codes[i];
+      else if (ic_cells[j].cells.c_codes[i]<ic_min[j].cells.c_codes[i])ic_min[j].cells.c_codes[i]=ic_cells[j].cells.c_codes[i];
+      ic_delta[j].cells.c_codes[i] = ic_max[j].cells.c_codes[i] - ic_min[j].cells.c_codes[i];
     }
+  }
+
+
+
+
 }
-/*******************************************************************************
-********************************************************************************
-***************								SPI Send and Receive						 	 ***************	
-********************************************************************************
-*******************************************************************************/
-/**
- * @brief Realiza una transmisión SPI seguida de una recepción desde el LTC6811.
- *
- * Esta función baja el pin CS (Chip Select), transmite un bloque de datos por SPI,
- * luego recibe un bloque de respuesta, y finalmente libera el CS. Se insertan
- * retardos breves antes y después de la comunicación para cumplir con los requisitos 
- * de tiempo del LTC6811.
- *
- * En caso de que falle la transmisión o la recepción (según el estado de `HAL_SPI_Transmit`
- * o `HAL_SPI_Receive`), se marca el campo `Fail` de la estructura del LTC6811 como `TRUE`.
- *
- * @param[in,out] LTC6811  Puntero a la estructura con configuración del LTC6811 y su handler SPI.
- * @param[in]     tx       Puntero al buffer con los datos a transmitir.
- * @param[out]    rx       Puntero al buffer donde se almacenará la respuesta recibida.
- * @param[in]     len_tx   Longitud del bloque a transmitir, en bytes.
- * @param[in]     len_rx   Longitud del bloque a recibir, en bytes.
- */
-void LTC6811_SPI_Transmit_Receive(LTC6811_Typdef* LTC6811, uint8_t *tx, uint8_t *rx, uint16_t len_tx, uint16_t len_rx)
+
+void LTC6811_init_max_min(uint8_t total_ic, cell_asic* ic,cell_asic ic_max[],cell_asic ic_min[])
 {
-    // Activar CS (chip select bajo)
-    HAL_GPIO_WritePin(LTC6811->CS_PORT, LTC6811->CS_PIN, GPIO_PIN_RESET);
-
-    // Pequeño retardo antes de comenzar SPI
-    for (volatile int i = 0; i < 500; i++) __NOP();
-
-    // Transmitir datos por SPI
-    HAL_StatusTypeDef Status = HAL_SPI_Transmit(LTC6811->SPI_Handler, tx, len_tx, SPI_MAX_DELAY);
-    // Recibir datos por SPI
-    HAL_StatusTypeDef Status1 = HAL_SPI_Receive(LTC6811->SPI_Handler, rx, len_rx, SPI_MAX_DELAY);
-
-    // Pequeño retardo antes de liberar CS
-    for (volatile int i = 0; i < 500; i++) __NOP();
-    HAL_GPIO_WritePin(LTC6811->CS_PORT, LTC6811->CS_PIN, GPIO_PIN_SET);
-
-    // Marcar error si alguna operación SPI falló
-    if (Status != HAL_OK || Status1 != HAL_OK)
+  for (int j=0; j < total_ic; j++)
+  {
+    for (int i = 0; i< ic[j].ic_reg.cell_channels; i++)
     {
-        LTC6811->Fail = TRUE;
+      ic_max[j].cells.c_codes[i]=0;
+      ic_min[j].cells.c_codes[i]=0xFFFF;
     }
+  }
+
 }
 
-/*******************************************************************************
-********************************************************************************
-***************								  	 PEC Calc			 					 	 	 	 ***************	
-********************************************************************************
-*******************************************************************************/
-/**
- * @brief Calcula el código PEC15 (Packet Error Code) para un arreglo de datos.
- *
- * Esta función implementa el algoritmo de CRC-15 utilizado por el LTC6811 para proteger
- * los comandos y respuestas SPI. El cálculo se basa en un polinomio estándar (0x4599)
- * y un seed inicial de 0x0010 (16 decimal).
- *
- * Se usa para verificar la integridad de los datos transmitidos o recibidos
- * (comandos, configuración, lectura de celdas, etc.).
- *
- * @param[in]  data   Puntero al arreglo de datos sobre el cual se calculará el PEC.
- * @param[in]  len    Longitud del arreglo de datos (en bytes).
- *
- * @return El código PEC15 resultante (15 bits, retornado en un entero de 16 bits).
- */
-uint16_t LTC6811_PEC15_Calc(uint8_t *data, uint8_t len) {
-    uint16_t remainder = 16;     // Valor inicial del registro (seed = 0x0010)
-    uint16_t POLY = 0x4599;      // Polinomio generador para PEC15
-
-    for (uint8_t i = 0; i < len; i++) {
-        remainder ^= (uint16_t)data[i] << 7; // Alinear el byte con el MSB del registro
-        for (uint8_t bit = 0; bit < 8; bit++) {
-            // Verifica si el bit más significativo (bit 14) está en 1
-            if (remainder & 0x4000) {
-                remainder = (remainder << 1) ^ POLY; // Aplica XOR con el polinomio
-            } else {
-                remainder <<= 1; // Desplaza a la izquierda sin aplicar XOR
-            }
-        }
-    }
-
-    return (remainder >> 1); // El PEC15 es de 15 bits (descarta el LSB extra)
-}
-
-/*******************************************************************************
-********************************************************************************
-***************								Read Config					      	  	  ***************	
-********************************************************************************
-*******************************************************************************/
-/**
- * @brief Lee el registro de configuración (CFGR) del LTC6811 y verifica la integridad con PEC.
- *
- * Esta función envía el comando `RDCFG` al LTC6811 para leer sus 6 bytes de configuración.
- * Después de recibir los 8 bytes (6 de datos + 2 de PEC), se calcula el código de comprobación
- * PEC15 sobre los datos recibidos y se compara con el PEC incluido en la respuesta.
- *
- * Si la verificación es correcta, se copia la configuración en `config_out`. Si el PEC no
- * coincide, se considera un error de comunicación y no se copia nada.
- *
- * @param[in,out] LTC6811     Puntero a la estructura del LTC6811 con la configuración de SPI.
- * @param[out]    config_out  Arreglo de 6 bytes donde se almacenará la configuración leída.
- *
- * @retval TRUE   Si la lectura y verificación PEC fueron exitosas.
- * @retval FALSE  Si la verificación PEC falló (posible corrupción de datos).
- */
-BoolTypeDef LTC6811_Read_CFG(LTC6811_Typdef* LTC6811, uint8_t* config_out)
+//Helper function that increments PEC counters
+void LTC6811_check_pec(uint8_t total_ic,uint8_t reg, cell_asic* ic)
 {
-    uint8_t cmd[4] = { 0x02, 0x00, 0xB2, 0x2B }; // Comando RDCFG con su PEC15
-    uint8_t rx[8] = {0};                         // 6 bytes de datos + 2 bytes de PEC
-
-    // Enviar comando y recibir respuesta del LTC6811
-    LTC6811_SPI_Transmit_Receive(LTC6811, cmd, rx, 4, 8);
-
-    // Verificar PEC recibido
-    uint16_t received_pec = (rx[6] << 8) | rx[7];
-    uint16_t calc_pec = LTC6811_PEC15_Calc(rx, 6);
-
-    if (received_pec != calc_pec) {
-        // Error de verificación de integridad
-        return FALSE;
-    }
-
-    // Copiar la configuración válida al arreglo de salida
-    memcpy(config_out, rx, 6);
-    return TRUE;
+  LTC681x_check_pec(total_ic,reg,ic);
 }
-/*******************************************************************************
-********************************************************************************
-***************								Wake Up						      	  	  	 ***************	
-********************************************************************************
-*******************************************************************************/
-/**
- * @brief Despierta al LTC6811 del modo de bajo consumo (Sleep).
- *
- * Esta función envía un "wake-up frame" (dos bytes en cero) por SPI
- * para generar actividad en el bus, lo cual saca al LTC6811 de su modo 
- * de bajo consumo. Luego intenta verificar la comunicación leyendo 
- * el registro de configuración (CFGR).
- *
- * Si no se puede leer correctamente el registro CFGR, se marca
- * la estructura con `Fail = TRUE`, indicando un posible fallo en la activación.
- *
- * @param[in,out] LTC6811  Puntero a la estructura del dispositivo LTC6811.
- */
-void LTC6811_Wake_Up(LTC6811_Typdef* LTC6811) 
+
+//Helper Function to reset PEC counters
+void LTC6811_reset_crc_count(uint8_t total_ic, cell_asic* ic)
 {
-    uint8_t wake_frame[2] = { 0x00, 0x00 }; // Wake-up frame estándar (2 bytes a 0)
-    LTC6811_SPI_Transfer(LTC6811, wake_frame, 2);    // Enviar el frame para generar actividad en el bus SPI
-
-    // Verificar que el dispositivo esté activo leyendo su configuración
-    uint8_t cfg[6];
-    if (LTC6811_Read_CFG(LTC6811, cfg) == FALSE) 
-    {
-        // Error en la comunicación posterior al intento de activación
-        LTC6811->Fail = TRUE;
-    }
+  LTC681x_reset_crc_count(total_ic,ic);
 }
 
-/*******************************************************************************
-********************************************************************************
-***************								WRITE CFG					      	  	  	 ***************	
-********************************************************************************
-*******************************************************************************/
-/**
- * @brief Escribe la configuración del LTC6811 (registro CFGR).
- *
- * Esta función envía el comando `WRCFG` al LTC6811 para escribir los 6 bytes
- * de configuración del registro CFGR, seguidos de su correspondiente código 
- * de verificación PEC15. El comando se transmite con el pin CS en estado bajo 
- * durante toda la transferencia para cumplir con el protocolo del LTC6811.
- *
- * Si ocurre un error durante la transmisión SPI, se activa el indicador `Fail`.
- *
- * @param[in,out] LTC6811  Puntero a la estructura que contiene la configuración
- *                         y el manejador SPI del dispositivo LTC6811.
- */
-void LTC6811_Write_CFG(LTC6811_Typdef* LTC6811) 
+//Helper function to intialize CFG variables.
+void LTC6811_init_cfg(uint8_t total_ic, cell_asic* ic)
 {
-    // Paso 1: Calcular el PEC15 para los 6 bytes de configuración
-    uint16_t pec = LTC6811_PEC15_Calc(LTC6811->Config, 6);
-
-    // Paso 2: Preparar el paquete completo de 12 bytes
-    uint8_t tx[12];
-
-    // Bytes de comando WRCFG con su PEC15 (fijo para 0x0001)
-    tx[0] = 0x00;
-    tx[1] = 0x01;
-    tx[2] = 0x3D; // PEC15 MSB para 0x0001
-    tx[3] = 0x6E; // PEC15 LSB
-
-    // Copiar los 6 bytes de configuración CFGR[0-5]
-    memcpy(&tx[4], LTC6811->Config, 6);
-
-    // Añadir PEC15 calculado para los datos de configuración
-    tx[10] = (pec >> 8) & 0xFF;
-    tx[11] = pec & 0xFF;
-
-    // Mantener CS en bajo durante toda la transmisión
-    HAL_GPIO_WritePin(LTC6811->CS_PORT, LTC6811->CS_PIN, GPIO_PIN_RESET);
-    for (volatile int i = 0; i < 500; i++) __NOP(); // pequeño retardo
-
-    // Transmitir los 12 bytes por SPI
-    HAL_StatusTypeDef status = HAL_SPI_Transmit(LTC6811->SPI_Handler, tx, 12, HAL_MAX_DELAY);
-
-    for (volatile int i = 0; i < 500; i++) __NOP(); // retardo posterior
-    HAL_GPIO_WritePin(LTC6811->CS_PORT, LTC6811->CS_PIN, GPIO_PIN_SET); // liberar CS
-
-    // Si hubo error en la transmisión SPI, marcar fallo
-    if (status != HAL_OK)
-    {
-        LTC6811->Fail = TRUE;
-    }
+  LTC681x_init_cfg(total_ic,ic);
 }
-
-
-/*******************************************************************************
-********************************************************************************
-***************										wait ADC				      	  	   ***************	
-********************************************************************************
-*******************************************************************************/
-/**
- * @brief Espera a que finalice la conversión ADC del LTC6811.
- *
- * Esta función envía repetidamente el comando `PLADC` al LTC6811 para consultar
- * el estado del ADC, dentro del límite de tiempo especificado en milisegundos.
- * El primer byte de la respuesta contiene un bit de estado: si el bit 0 está en 1,
- * indica que la conversión ha finalizado.
- *
- * Si el bit no se activa antes de que expire el tiempo, se considera un fallo.
- *
- * @param[in,out] LTC6811      Puntero a la estructura de configuración del LTC6811.
- * @param[in]     timeout_ms   Tiempo máximo de espera en milisegundos.
- *
- * @retval TRUE  Si el ADC completó la conversión dentro del tiempo.
- * @retval FALSE Si se agotó el tiempo de espera sin que el ADC finalizara.
- */
-BoolTypeDef LTC6811_Wait_ADC_Completion(LTC6811_Typdef* LTC6811, uint16_t timeout_ms)
+//Helper function to set CFGR variable
+void LTC6811_set_cfgr(uint8_t nIC, cell_asic* ic, bool refon, bool adcopt, bool gpio[5],bool dcc[12])
 {
-    // Comando PLADC (Poll ADC), seguido de su CRC PEC15
-    uint8_t cmd[4] = { 0x07, 0x14, 0x65, 0xAF };
-    uint8_t response[4] = {0};             // Donde se almacenará la respuesta
-    uint8_t dummy_tx[4] = {0x00, 0x00, 0x00, 0x00}; // TX dummy para recibir datos
-
-    uint32_t start = HAL_GetTick();        // Marcar el inicio del tiempo
-
-    while ((HAL_GetTick() - start) < timeout_ms)
-    {
-        // Transmitir PLADC y recibir 4 bytes de respuesta
-        LTC6811_SPI_Transmit_Receive(LTC6811, cmd, response, 4, 4);
-
-        // Verificar el bit de estado en el primer byte
-        if (response[0] & 0x01)
-            return TRUE; // Conversión ADC completada
-    }
-
-    return FALSE; // Timeout alcanzado sin respuesta positiva
+  LTC681x_set_cfgr_refon(nIC,ic,refon);
+  LTC681x_set_cfgr_adcopt(nIC,ic,adcopt);
+  LTC681x_set_cfgr_gpio(nIC,ic,gpio);
+  LTC681x_set_cfgr_dis(nIC,ic,dcc);
 }
-/*******************************************************************************
-********************************************************************************
-***************								START ADC				      	  	   		 ***************	
-********************************************************************************
-*******************************************************************************/
-/**
- * @brief Inicia una conversión ADC para todas las celdas en el LTC6811.
- *
- * Esta función envía el comando `ADCV` al LTC6811 para iniciar la conversión 
- * de todos los voltajes de celda (modo normal, todas las celdas al mismo tiempo).
- * Luego espera hasta 5 ms a que la conversión se complete utilizando la función
- * `LTC6811_Wait_ADC_Completion`.
- *
- * Si el ADC no finaliza dentro del tiempo esperado, se marca la estructura del LTC
- * con el indicador de fallo (`Fail = TRUE`).
- *
- * @param[in,out] LTC6811  Puntero a la estructura del LTC6811 que contiene su estado y configuración.
- */
-void LTC6811_Start_ADC_Conv(LTC6811_Typdef* LTC6811) {
-    // Comando ADCV (All cells, normal mode, discharge disabled)
-    uint8_t cmd[4] = { 0x03, 0x60, 0xF4, 0x6C }; 
-
-    // Enviar comando por SPI
-    LTC6811_SPI_Transfer(LTC6811, cmd, 4);
-
-    // Esperar hasta 5 ms por la finalización del ADC
-    if (!LTC6811_Wait_ADC_Completion(LTC6811, 5)) {
-        // Error: el ADC no respondió a tiempo
-        LTC6811->Fail = TRUE;
-    }
-}
-/*******************************************************************************
-********************************************************************************
-***************								Activar balanceo par				     	 ***************	
-********************************************************************************
-*******************************************************************************/
-/**
- * @brief Activa el balanceo de celdas pares en un LTC6811.
- *
- * Esta función configura el LTC6811 para activar el balanceo de celdas pares 
- * (C2, C4, C6, C8, C10, C12) utilizando los bits DCC (Discharge Cell Control).
- * También habilita el regulador de referencia interno (`REFON = 1`) necesario 
- * para operar el circuito de descarga.
- *
- * Después de aplicar la configuración, se verifica que haya sido correctamente 
- * escrita mediante una lectura de vuelta de los registros de configuración.
- * Si la verificación falla o no hay comunicación, se marca la estructura con 
- * `Fail = TRUE`.
- *
- * @param[in,out] LTC6811  Puntero a la estructura de estado del LTC6811.
- */
-void LTC_Active_Even_Balancing(LTC6811_Typdef* LTC6811) 
+//Helper function to set the REFON bit
+void LTC6811_set_cfgr_refon(uint8_t nIC, cell_asic* ic, bool refon)
 {
-    // Verifica si ya está activado el balanceo de pares
-    if (LTC6811->Balancing != EVEN_BALANCING)
-    {
-        // Limpiar configuración anterior
-        memset(LTC6811->Config, 0, 6);
-
-        // REFON = 1 permite que el regulador interno esté activo
-        LTC6811->Config[0] = 0b00000001;
-
-        // Activar balanceo para celdas pares: 2, 4, 6, 8, 10, 12
-        LTC6811->Config[4] = 0b10101010; // Bits para C2 a C8
-        LTC6811->Config[5] = 0b00001010; // Bits para C10 y C12
-
-        // Aplicar la configuración al LTC6811
-        LTC6811_Write_CFG(LTC6811);
-        LTC6811->Balancing = EVEN_BALANCING;
-
-        // Verificación de la configuración con lectura RDCFG
-        uint8_t read_cfg[6];
-        if (LTC6811_Read_CFG(LTC6811, read_cfg)) {
-            if (read_cfg[4] == 0xAA && (read_cfg[5] & 0x0F) == 0x0A) {
-                LTC6811->Balancing = EVEN_BALANCING;
-            } else {
-                // DCC bits no coinciden: error
-                LTC6811->Fail = TRUE;
-            }
-        } else {
-            // Fallo en la lectura
-            LTC6811->Fail = TRUE;
-        }
-    }
-    else
-    {
-        // Ya estaba en modo balanceo par: marcar como fallo si se repite
-        LTC6811->Fail = TRUE;
-    }
+  LTC681x_set_cfgr_refon(nIC,ic,refon);
 }
-	
-/*******************************************************************************
-********************************************************************************
-***************								Activar balanceo IMpar				     ***************	
-********************************************************************************
-*******************************************************************************/
-/**
- * @brief Activa el balanceo de celdas impares en un LTC6811.
- *
- * Esta función configura los bits DCC (Discharge Cell Control) para activar el balanceo
- * solo en las celdas impares (C1, C3, C5, ..., C11) del LTC6811. También enciende el regulador 
- * interno (`REFON = 1`) para permitir la operación del circuito de balanceo.
- *
- * Luego de escribir la configuración, se realiza una lectura de verificación para confirmar
- * que los bits DCC se hayan aplicado correctamente. Si ocurre un fallo en la comunicación
- * o los valores no coinciden, se activa el indicador de fallo (`Fail = TRUE`).
- *
- * @param[in,out] LTC6811   Puntero a la estructura del LTC6811 que contiene configuración
- *                          y estado del dispositivo.
- */
-void LTC_Active_Odd_Balancing(LTC6811_Typdef* LTC6811) 
+//Helper function to set the adcopt bit
+void LTC6811_set_cfgr_adcopt(uint8_t nIC, cell_asic* ic, bool adcopt)
 {
-    // Solo configurar si no está ya en modo de balanceo impar
-    if (LTC6811->Balancing != ODD_BALANCING)
-    {
-        // Limpiar configuración anterior
-        memset(LTC6811->Config, 0, 6);
-
-        // REFON = 1 para permitir el balanceo, ADCOPT = 0
-        LTC6811->Config[0] = 0b00000001;
-
-        // Activar DCC en celdas impares: C1, C3, C5, C7, C9, C11
-        LTC6811->Config[4] = 0b01010101; // C1 a C8
-        LTC6811->Config[5] = 0b00000101; // C9 a C12
-
-        // Aplicar configuración al LTC6811
-        LTC6811_Write_CFG(LTC6811);
-        LTC6811->Balancing = ODD_BALANCING;
-
-        // Verificación: leer configuración de vuelta
-        uint8_t read_cfg[6];
-        if (LTC6811_Read_CFG(LTC6811, read_cfg)) {
-            if (read_cfg[4] == 0x55 && (read_cfg[5] & 0x0F) == 0x05) {
-                // Confirmado: configuración aplicada
-                LTC6811->Balancing = ODD_BALANCING;
-            } else {
-                // Bits DCC no coinciden: posible error
-                LTC6811->Fail = TRUE;
-            }
-        } else {
-            // Error de comunicación al leer
-            LTC6811->Fail = TRUE;
-        }
-    }
-    else
-    {
-        // Ya estaba en balanceo impar: marcar como fallo si se intenta aplicar de nuevo
-        LTC6811->Fail = TRUE;
-    }
+  LTC681x_set_cfgr_adcopt(nIC,ic,adcopt);
 }
-	
-/*******************************************************************************
-********************************************************************************
-***************								Desactivar Balanceo				     		 ***************	
-********************************************************************************
-*******************************************************************************/
-/**
- * @brief Desactiva el balanceo de celdas en un LTC6811.
- *
- * Esta función limpia los bits DCC (Discharge Cell Control) en la configuración del LTC6811
- * para detener cualquier balanceo activo. También actualiza el estado interno `Balancing` y 
- * verifica que la configuración haya sido aplicada correctamente leyendo de vuelta los registros.
- *
- * Si se detecta un error de comunicación o un fallo al desactivar completamente el balanceo,
- * se establece el flag `Fail` dentro de la estructura del LTC.
- *
- * @param[in,out] LTC6811   Puntero a la estructura del LTC6811 que contiene la configuración
- *                          y estado actual del dispositivo.
- */
-void LTC_Disable_Balancing(LTC6811_Typdef* LTC6811)
+//Helper function to set GPIO bits
+void LTC6811_set_cfgr_gpio(uint8_t nIC, cell_asic* ic,bool gpio[5])
 {
-    // Solo procede si el balanceo está activo
-    if (LTC6811->Balancing != NO_BALANCING)
-    {
-        // Limpia la configuración: desactiva REFON, ADCOPT y todos los DCC
-        memset(LTC6811->Config, 0, 6);
-        LTC6811->Config[0] = 0b00000000; // REFON = 0, ADCOPT = 0
-
-        // Escribe la configuración al LTC6811
-        LTC6811_Write_CFG(LTC6811);
-
-        // Marca el estado interno como sin balanceo
-        LTC6811->Balancing = NO_BALANCING;
-
-        // Paso 2: Leer la configuración para verificar que se aplicó correctamente
-        uint8_t read_cfg[6] = {0};
-        if (LTC6811_Read_CFG(LTC6811, read_cfg))
-        {
-            // Verificar que los bits DCC (control de descarga) estén en cero
-            if (read_cfg[4] == 0x00 && (read_cfg[5] & 0x0F) == 0x00) {
-                // Confirmación: balanceo efectivamente desactivado
-                LTC6811->Balancing = NO_BALANCING;
-            } else {
-                // Los bits DCC aún están activos: posible error
-                LTC6811->Fail = TRUE;
-            }
-        }
-        else {
-            // Fallo en la comunicación al leer la configuración
-            LTC6811->Fail = TRUE;
-        }
-    }
-    else
-    {
-        // Ya estaba sin balanceo, pero algo no cuadra: marcar fallo
-        LTC6811->Fail = TRUE;
-    }
+  LTC681x_set_cfgr_gpio(nIC,ic,gpio);
 }
-
-/*******************************************************************************
-********************************************************************************
-***************								Read Cell Block				     		 		 ***************	
-********************************************************************************
-*******************************************************************************/
-/**
- * @brief Lee un bloque de 3 voltajes de celda del LTC6811 mediante SPI.
- *
- * Esta función envía un comando de lectura de celdas (RDCVx) al LTC6811,
- * recibe 6 bytes de datos (tres voltajes de 2 bytes cada uno) y verifica
- * la integridad de los datos mediante el código de detección de errores PEC15.
- * Si el PEC recibido no coincide con el calculado, se considera un error
- * de comunicación y no se actualiza el resultado.
- *
- * @param[in,out] LTC6811          Puntero a la estructura de configuración del LTC6811.
- * @param[in]     cmd1             Primer byte del comando RDCVx (ej: 0x04 para RDCVA).
- * @param[in]     cmd2             Segundo byte del comando RDCVx (usualmente 0x00).
- * @param[out]    cell_voltages    Puntero a un arreglo de 3 enteros de 16 bits donde
- *                                 se almacenarán los voltajes crudos (sin conversión).
- *
- * @return TRUE si la lectura fue exitosa y el PEC fue válido, FALSE si hubo error de comunicación.
- */
-BoolTypeDef LTC6811_Read_Cell_Block(LTC6811_Typdef* LTC6811,uint8_t cmd1, uint8_t cmd2, uint16_t *cell_voltages) 
+//Helper function to control discharge
+void LTC6811_set_cfgr_dis(uint8_t nIC, cell_asic* ic,bool dcc[12])
 {
-    uint8_t tx[2] = {cmd1, cmd2};         // Comando a enviar (2 bytes)
-    uint8_t rx[8] = {0};                  // Buffer de recepción: 6 datos + 2 bytes de PEC
-
-    // Calcular PEC para el comando
-    uint16_t pec = LTC6811_PEC15_Calc(tx, 2);
-    uint8_t cmd[4] = {cmd1, cmd2, (uint8_t)(pec >> 8), (uint8_t)(pec & 0xFF)};
-
-    // Enviar comando y recibir respuesta del LTC6811
-    LTC6811_SPI_Transmit_Receive(LTC6811, cmd, rx, sizeof(cmd), sizeof(rx));
-
-    // Extraer y verificar el PEC recibido
-    uint16_t received_pec = (rx[6] << 8) | rx[7];     // PEC recibido del LTC6811
-    uint16_t calc_pec = LTC6811_PEC15_Calc(rx, 6);    // PEC calculado de los 6 datos
-
-    if (received_pec != calc_pec) {
-        // Error de comunicación por discrepancia de PEC
-        return 0; // FALSE
-    }
-
-    // Si el PEC es válido, extraer los 3 voltajes crudos
-    cell_voltages[0] = rx[0] | (rx[1] << 8); // Celda X
-    cell_voltages[1] = rx[2] | (rx[3] << 8); // Celda X+1
-    cell_voltages[2] = rx[4] | (rx[5] << 8); // Celda X+2
-
-    return 1; // TRUE
+  LTC681x_set_cfgr_dis(nIC,ic,dcc);
 }
-
-
-/*******************************************************************************
-********************************************************************************
-***************              Read_Voltages                       ***************    
-********************************************************************************
-*******************************************************************************/
-/**
- * @brief Lee los voltajes de todas las celdas conectadas a un LTC6811.
- *
- * Esta función recorre los 4 bloques de lectura del LTC6811 (RDCVA, RDCVB, RDCVC y RDCVD),
- * correspondientes a las 12 celdas (3 por bloque), e intenta leer los valores dos veces
- * en caso de error. Si la lectura es exitosa, convierte el valor crudo a voltaje en voltios
- * y lo almacena en el arreglo proporcionado. Si falla, marca la estructura del LTC como fallida.
- *
- * @param[in,out] LTC6811       Puntero a la estructura de configuración y estado del LTC6811.
- * @param[out]    voltages      Arreglo de 12 elementos donde se almacenarán los voltajes leídos,
- *                              en el orden C1 a C12, expresados en voltios.
- */
-void LTC_Read_All_Voltages(LTC6811_Typdef *LTC6811, float *voltages) 
+//Helper Function to set uv value in CFG register
+void LTC6811_set_cfgr_uv(uint8_t nIC, cell_asic* ic,uint16_t uv)
 {
-    // Comandos de lectura de bloques de celdas y su índice inicial en el arreglo voltages
-    const struct {
-        uint8_t cmd1;  // Primer byte del comando
-        uint8_t cmd2;  // Segundo byte del comando
-        uint8_t index; // Índice base en el arreglo voltages
-    } blocks[] = {
-        {0x04, 0x00, 0}, // RDCVA: celdas C1–C3
-        {0x06, 0x00, 3}, // RDCVB: celdas C4–C6
-        {0x08, 0x00, 6}, // RDCVC: celdas C7–C9
-        {0x0A, 0x00, 9}  // RDCVD: celdas C10–C12
-    };
-
-    uint16_t buf[3];  // Buffer temporal para almacenar las lecturas de 3 celdas
-
-    for (int i = 0; i < 4; i++) {
-        BoolTypeDef success = FALSE;
-
-        // Se intenta leer hasta 2 veces por bloque en caso de falla
-        for (int attempt = 0; attempt < 2; attempt++) {
-            // Si la lectura es exitosa...
-            if (LTC6811_Read_Cell_Block(LTC6811, blocks[i].cmd1, blocks[i].cmd2, buf)) {
-                // Convertimos y almacenamos los valores de voltaje en el arreglo de salida
-                voltages[blocks[i].index + 0] = buf[0] * 0.0001f;  // celda 1
-                voltages[blocks[i].index + 1] = buf[1] * 0.0001f;  // celda 2
-                voltages[blocks[i].index + 2] = buf[2] * 0.0001f;  // celda 3
-                success = TRUE;
-                break;  // Salimos del bucle de reintento si fue exitoso
-            }
-        }
-
-        // Si después de 2 intentos no fue posible leer, se marca la falla
-        if (!success) {
-            LTC6811->Fail = TRUE;
-        }
-    }
+  LTC681x_set_cfgr_uv(nIC, ic, uv);
 }
-
-
-/*******************************************************************************
-********************************************************************************
-***************									LTC Measure (UNUSED)			     	 ***************	
-********************************************************************************
-*******************************************************************************/
-/**
- * @brief Mide las temperaturas y voltajes de las celdas conectadas a dos LTC6811
- * 
- * Esta función activa el balanceo de celdas de manera alterna (pares/impares), 
- * mide los voltajes de las 12 celdas por LTC, convierte las lecturas a temperaturas 
- * (para las celdas pares en una pasada y las impares en la otra) y almacena 
- * los resultados en los arreglos TempArray y VoltajeArray.
- *
- * @param[in,out] Control_Unit   Puntero a la unidad de control que contiene el estado de los dos LTC6811.
- * @param[out]    TempArray      Arreglo de 24 elementos donde se guardan temperaturas codificadas. 
- *                               Las primeras 12 son del LTC6811_1, las últimas 12 del LTC6811_2.
- * @param[out]    VoltajeArray   Arreglo de 24 elementos donde se guardan voltajes. 
- *                               Misma distribución que TempArray.
- */
-void LTC6811_Measure_Temperatures_and_Voltages(Control_Unit_TypeDef* Control_Unit)
+//helper function to set OV value in CFG register
+void LTC6811_set_cfgr_ov(uint8_t nIC, cell_asic* ic,uint16_t ov)
 {
-    float voltages_1[12]; // Voltajes de las 12 celdas del LTC6811_1
-    float voltages_2[12]; // Voltajes de las 12 celdas del LTC6811_2
-
-    // Despierta ambos LTC6811
-    LTC6811_Wake_Up(&Control_Unit->Status.LTC6811_1);
-    LTC6811_Wake_Up(&Control_Unit->Status.LTC6811_2);
-    HAL_Delay(1); 
-
-    // === Medición de celdas pares ===
-    // Activa el balanceo de celdas pares
-    LTC_Active_Even_Balancing(&Control_Unit->Status.LTC6811_1);
-    LTC_Active_Even_Balancing(&Control_Unit->Status.LTC6811_2);
-    HAL_Delay(5); // Permite estabilización
-
-    // Inicia conversión ADC en ambos LTC
-    LTC6811_Start_ADC_Conv(&Control_Unit->Status.LTC6811_1);
-    LTC6811_Start_ADC_Conv(&Control_Unit->Status.LTC6811_2);
-    HAL_Delay(3); // Espera la finalización de la conversión
-
-    // Lee los voltajes
-    LTC_Read_All_Voltages(&Control_Unit->Status.LTC6811_1, voltages_1);
-    LTC_Read_All_Voltages(&Control_Unit->Status.LTC6811_2, voltages_2);
-
-    // Convertir voltajes pares a temperaturas (índices impares)
-    for (int i = 1; i < 12; i += 2) 
-		{
-        Control_Unit->Status.Temperatures[i].Readed_Value = LTC_Voltage_to_Temperature(voltages_1[i]);
-        Control_Unit->Status.Temperatures[i+12].Readed_Value = LTC_Voltage_to_Temperature(voltages_2[i]);
-    }
-
-    // Guardar voltajes de celdas impares (índices pares)
-    for (int i = 0; i < 12; i += 2) 
-		{
-        Control_Unit->Status.Voltages[i] = voltages_1[i];
-        Control_Unit->Status.Voltages[i + 12] = voltages_2[i];
-    }
-
-		
-    // Desactiva balanceo
-    LTC_Disable_Balancing(&Control_Unit->Status.LTC6811_1);
-    LTC_Disable_Balancing(&Control_Unit->Status.LTC6811_2);
-    HAL_Delay(5);
-
-		//Si ha fallado algo dejamos de medir
-		if(Control_Unit->Status.LTC6811_1.Fail==TRUE || Control_Unit->Status.LTC6811_2.Fail==TRUE)
-		{
-			Control_Unit->State=LTC6811_FAIL_MODE;
-			return;
-		}
-		
-    // === Medición de celdas impares ===
-		// Activa el balanceo de celdas impares
-    LTC_Active_Odd_Balancing(&Control_Unit->Status.LTC6811_1);
-    LTC_Active_Odd_Balancing(&Control_Unit->Status.LTC6811_2);
-    HAL_Delay(5);
-
-		// Inicia conversión ADC en ambos LTC
-    LTC6811_Start_ADC_Conv(&Control_Unit->Status.LTC6811_1);
-    LTC6811_Start_ADC_Conv(&Control_Unit->Status.LTC6811_2);
-    HAL_Delay(3);
-
-    // Lee los voltajes
-    LTC_Read_All_Voltages(&Control_Unit->Status.LTC6811_1, voltages_1);
-    LTC_Read_All_Voltages(&Control_Unit->Status.LTC6811_2, voltages_2);
-
-    // Convertir voltajes impares a temperatura (índices pares)
-    for (int i = 0; i < 12; i += 2) 
-		{
-        Control_Unit->Status.Temperatures[i].Readed_Value = LTC_Voltage_to_Temperature(voltages_1[i]);
-        Control_Unit->Status.Temperatures[i+12].Readed_Value = LTC_Voltage_to_Temperature(voltages_2[i]);
-    }
-
-    // Guardar voltajes de celdas pares (índices impares)
-    for (int i = 1; i < 12; i += 2) 
-		{
-        Control_Unit->Status.Voltages[i] = voltages_1[i];
-        Control_Unit->Status.Voltages[i + 12] = voltages_2[i];
-    }
-
-		
-		
-    // Desactiva balanceo al final (por seguridad)
-    LTC_Disable_Balancing(&Control_Unit->Status.LTC6811_1);
-    LTC_Disable_Balancing(&Control_Unit->Status.LTC6811_2);
-		
-		
-		//Si ha fallado algo dejamos de medir
-		if(Control_Unit->Status.LTC6811_1.Fail==TRUE || Control_Unit->Status.LTC6811_2.Fail==TRUE)
-		{
-			Control_Unit->State=LTC6811_FAIL_MODE;
-		}
+  LTC681x_set_cfgr_ov( nIC, ic, ov);
 }
-
-

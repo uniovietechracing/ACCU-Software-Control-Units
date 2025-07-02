@@ -22,24 +22,586 @@ Dialog DLL:      TCM.DLL V1.56.4.0
  
 <h2>Project:</h2>
 C:\Users\d.rodriguez\Desktop\GitHub\ACCU-Software-Control-Units\FS2025 STM32F4 Application\FS2025 STM32F4 Application\MDK-ARM\Application.uvprojx
-Project File Date:  06/26/2025
+Project File Date:  07/02/2025
 
 <h2>Output:</h2>
 *** Using Compiler 'V6.21', folder: 'C:\Program Files (x86)\Keil\ARM\ARMCLANG\Bin'
 Build target 'Application'
+../Core/APP/main.c(30): warning: In file included from...
+../core/APP/Control_Unit\Control_Unit.h(32): warning: In file included from...
+../core/APP/Control_Unit/Control_Unit_Selection\Control_Unit_Selection.h(53): warning: In file included from...
+../core/APP/Control_Unit/Control_Unit_Selection/Battery Pack Control Unit\Battery_Pack_Control_Unit.h(32): warning: In file included from...
+../core/APP/Control_Unit/State_LEDs\State_LEDs.h(32): warning: In file included from...
+../core/MCU\MCU.h(98): error: expected ';' after top level declarator
+   98 | void MCU_us_Delay(uint32_t us)
+      |                               ^
+      |                               ;
+../Core/APP/main.c(30): warning: In file included from...
+../core/APP/Control_Unit\Control_Unit.h(32): warning: In file included from...
+../core/APP/Control_Unit/Control_Unit_Selection\Control_Unit_Selection.h(53): warning: In file included from...
+../core/APP/Control_Unit/Control_Unit_Selection/Battery Pack Control Unit\Battery_Pack_Control_Unit.h(32): warning: In file included from...
+../core/APP/Control_Unit/State_LEDs\State_LEDs.h(33): warning: In file included from...
+../core/TypeDefs\Typedefs.h(175): error: unknown type name 'LTC6811_Typdef'
+  175 |         LTC6811_Typdef LTC6811_1;
+      |         ^
+../core/TypeDefs\Typedefs.h(176): error: unknown type name 'LTC6811_Typdef'
+  176 |         LTC6811_Typdef LTC6811_2;
+      |         ^
+3 errors generated.
 compiling main.c...
-compiling stm32f4xx_it.c...
-compiling LTC6811.c...
-compiling MCU.c...
-compiling STM32F4.c...
+../core/APP/Control_Unit/Control_Unit.c(30): warning: In file included from...
+../core/APP/Control_Unit/Control_Unit.h(32): warning: In file included from...
+../core/APP/Control_Unit/Control_Unit_Selection\Control_Unit_Selection.h(53): warning: In file included from...
+../core/APP/Control_Unit/Control_Unit_Selection/Battery Pack Control Unit\Battery_Pack_Control_Unit.h(32): warning: In file included from...
+../core/APP/Control_Unit/State_LEDs\State_LEDs.h(32): warning: In file included from...
+../core/MCU\MCU.h(98): error: expected ';' after top level declarator
+   98 | void MCU_us_Delay(uint32_t us)
+      |                               ^
+      |                               ;
+../core/APP/Control_Unit/Control_Unit.c(30): warning: In file included from...
+../core/APP/Control_Unit/Control_Unit.h(32): warning: In file included from...
+../core/APP/Control_Unit/Control_Unit_Selection\Control_Unit_Selection.h(53): warning: In file included from...
+../core/APP/Control_Unit/Control_Unit_Selection/Battery Pack Control Unit\Battery_Pack_Control_Unit.h(32): warning: In file included from...
+../core/APP/Control_Unit/State_LEDs\State_LEDs.h(33): warning: In file included from...
+../core/TypeDefs\Typedefs.h(175): error: unknown type name 'LTC6811_Typdef'
+  175 |         LTC6811_Typdef LTC6811_1;
+      |         ^
+../core/TypeDefs\Typedefs.h(176): error: unknown type name 'LTC6811_Typdef'
+  176 |         LTC6811_Typdef LTC6811_2;
+      |         ^
+3 errors generated.
 compiling Control_Unit.c...
-compiling stm32f4xx_hal_msp.c...
+../core/APP/Control_Unit/LTC6811/LT_SPI.c(28): warning: In file included from...
+../core/APP/Control_Unit/LTC6811/LT_SPI.h(36): warning: In file included from...
+../core/MCU\MCU.h(33): warning: In file included from...
+../core/MCU/STM32F4\STM32F4.h(34): warning: In file included from...
+../core/APP/Control_Unit/Control_Unit_Selection\Control_Unit_Selection.h(53): warning: In file included from...
+../core/APP/Control_Unit/Control_Unit_Selection/Battery Pack Control Unit\Battery_Pack_Control_Unit.h(32): warning: In file included from...
+../core/APP/Control_Unit/State_LEDs\State_LEDs.h(33): warning: In file included from...
+../core/TypeDefs\Typedefs.h(175): error: unknown type name 'LTC6811_Typdef'
+  175 |         LTC6811_Typdef LTC6811_1;
+      |         ^
+../core/TypeDefs\Typedefs.h(176): error: unknown type name 'LTC6811_Typdef'
+  176 |         LTC6811_Typdef LTC6811_2;
+      |         ^
+../core/APP/Control_Unit/LTC6811/LT_SPI.c(28): warning: In file included from...
+../core/APP/Control_Unit/LTC6811/LT_SPI.h(36): warning: In file included from...
+../core/MCU\MCU.h(98): error: expected ';' after top level declarator
+   98 | void MCU_us_Delay(uint32_t us)
+      |                               ^
+      |                               ;
+3 errors generated.
+compiling LT_SPI.c...
+../core/APP/Control_Unit/State_LEDs/State_LEDs.c(25): warning: In file included from...
+../core/APP/Control_Unit/State_LEDs/State_LEDs.h(32): warning: In file included from...
+../core/MCU\MCU.h(33): warning: In file included from...
+../core/MCU/STM32F4\STM32F4.h(34): warning: In file included from...
+../core/APP/Control_Unit/Control_Unit_Selection\Control_Unit_Selection.h(53): warning: In file included from...
+../core/APP/Control_Unit/Control_Unit_Selection/Battery Pack Control Unit\Battery_Pack_Control_Unit.h(33): warning: In file included from...
+../core/CAN Bus\Can_Bus.h(34): warning: In file included from...
+../core/TypeDefs\TypeDefs.h(175): error: unknown type name 'LTC6811_Typdef'
+  175 |         LTC6811_Typdef LTC6811_1;
+      |         ^
+../core/TypeDefs\TypeDefs.h(176): error: unknown type name 'LTC6811_Typdef'
+  176 |         LTC6811_Typdef LTC6811_2;
+      |         ^
+../core/APP/Control_Unit/State_LEDs/State_LEDs.c(25): warning: In file included from...
+../core/APP/Control_Unit/State_LEDs/State_LEDs.h(32): warning: In file included from...
+../core/MCU\MCU.h(98): error: expected ';' after top level declarator
+   98 | void MCU_us_Delay(uint32_t us)
+      |                               ^
+      |                               ;
+3 errors generated.
 compiling State_LEDs.c...
+../Core/MCU/MCU.c(31): warning: In file included from...
+../Core/MCU/MCU.h(33): warning: In file included from...
+../core/MCU/STM32F4\STM32F4.h(34): warning: In file included from...
+../core/APP/Control_Unit/Control_Unit_Selection\Control_Unit_Selection.h(53): warning: In file included from...
+../core/APP/Control_Unit/Control_Unit_Selection/Battery Pack Control Unit\Battery_Pack_Control_Unit.h(32): warning: In file included from...
+../core/APP/Control_Unit/State_LEDs\State_LEDs.h(33): warning: In file included from...
+../core/TypeDefs\Typedefs.h(175): error: unknown type name 'LTC6811_Typdef'
+  175 |         LTC6811_Typdef LTC6811_1;
+      |         ^
+../core/TypeDefs\Typedefs.h(176): error: unknown type name 'LTC6811_Typdef'
+  176 |         LTC6811_Typdef LTC6811_2;
+      |         ^
+../Core/MCU/MCU.c(31): warning: In file included from...
+../Core/MCU/MCU.h(98): error: expected ';' after top level declarator
+   98 | void MCU_us_Delay(uint32_t us)
+      |                               ^
+      |                               ;
+3 errors generated.
+compiling MCU.c...
+../Core/CAN Bus/Can_Bus.c(29): warning: In file included from...
+../Core/CAN Bus/Can_Bus.h(33): warning: In file included from...
+../core/APP/Control_Unit/Control_Unit_Selection\Control_Unit_Selection.h(53): warning: In file included from...
+../core/APP/Control_Unit/Control_Unit_Selection/Battery Pack Control Unit\Battery_Pack_Control_Unit.h(32): warning: In file included from...
+../core/APP/Control_Unit/State_LEDs\State_LEDs.h(32): warning: In file included from...
+../core/MCU\MCU.h(98): error: expected ';' after top level declarator
+   98 | void MCU_us_Delay(uint32_t us)
+      |                               ^
+      |                               ;
+../Core/CAN Bus/Can_Bus.c(29): warning: In file included from...
+../Core/CAN Bus/Can_Bus.h(33): warning: In file included from...
+../core/APP/Control_Unit/Control_Unit_Selection\Control_Unit_Selection.h(53): warning: In file included from...
+../core/APP/Control_Unit/Control_Unit_Selection/Battery Pack Control Unit\Battery_Pack_Control_Unit.h(32): warning: In file included from...
+../core/APP/Control_Unit/State_LEDs\State_LEDs.h(33): warning: In file included from...
+../core/TypeDefs\Typedefs.h(175): error: unknown type name 'LTC6811_Typdef'
+  175 |         LTC6811_Typdef LTC6811_1;
+      |         ^
+../core/TypeDefs\Typedefs.h(176): error: unknown type name 'LTC6811_Typdef'
+  176 |         LTC6811_Typdef LTC6811_2;
+      |         ^
+3 errors generated.
+compiling Can_Bus.c...
+../Core/MCU/STM32F4/stm32f4xx_hal_msp.c(30): warning: In file included from...
+../Core/MCU/STM32F4/STM32F4.h(34): warning: In file included from...
+../core/APP/Control_Unit/Control_Unit_Selection\Control_Unit_Selection.h(53): warning: In file included from...
+../core/APP/Control_Unit/Control_Unit_Selection/Battery Pack Control Unit\Battery_Pack_Control_Unit.h(32): warning: In file included from...
+../core/APP/Control_Unit/State_LEDs\State_LEDs.h(32): warning: In file included from...
+../core/MCU\MCU.h(98): error: expected ';' after top level declarator
+   98 | void MCU_us_Delay(uint32_t us)
+      |                               ^
+      |                               ;
+../Core/MCU/STM32F4/stm32f4xx_hal_msp.c(30): warning: In file included from...
+../Core/MCU/STM32F4/STM32F4.h(34): warning: In file included from...
+../core/APP/Control_Unit/Control_Unit_Selection\Control_Unit_Selection.h(53): warning: In file included from...
+../core/APP/Control_Unit/Control_Unit_Selection/Battery Pack Control Unit\Battery_Pack_Control_Unit.h(32): warning: In file included from...
+../core/APP/Control_Unit/State_LEDs\State_LEDs.h(33): warning: In file included from...
+../core/TypeDefs\Typedefs.h(175): error: unknown type name 'LTC6811_Typdef'
+  175 |         LTC6811_Typdef LTC6811_1;
+      |         ^
+../core/TypeDefs\Typedefs.h(176): error: unknown type name 'LTC6811_Typdef'
+  176 |         LTC6811_Typdef LTC6811_2;
+      |         ^
+3 errors generated.
+compiling stm32f4xx_hal_msp.c...
+../core/APP/Control_Unit/LTC6811/LTC681x.c(45): warning: In file included from...
+../core/APP/Control_Unit/LTC6811/LTC681x.h(11): warning: In file included from...
+../core/APP/Control_Unit/LTC6811/LT_SPI.h(36): warning: In file included from...
+../core/MCU\MCU.h(33): warning: In file included from...
+../core/MCU/STM32F4\STM32F4.h(34): warning: In file included from...
+../core/APP/Control_Unit/Control_Unit_Selection\Control_Unit_Selection.h(53): warning: In file included from...
+../core/APP/Control_Unit/Control_Unit_Selection/Battery Pack Control Unit\Battery_Pack_Control_Unit.h(32): warning: In file included from...
+../core/APP/Control_Unit/State_LEDs\State_LEDs.h(33): warning: In file included from...
+../core/TypeDefs\Typedefs.h(175): error: unknown type name 'LTC6811_Typdef'
+  175 |         LTC6811_Typdef LTC6811_1;
+      |         ^
+../core/TypeDefs\Typedefs.h(176): error: unknown type name 'LTC6811_Typdef'
+  176 |         LTC6811_Typdef LTC6811_2;
+      |         ^
+../core/APP/Control_Unit/LTC6811/LTC681x.c(45): warning: In file included from...
+../core/APP/Control_Unit/LTC6811/LTC681x.h(11): warning: In file included from...
+../core/APP/Control_Unit/LTC6811/LT_SPI.h(36): warning: In file included from...
+../core/MCU\MCU.h(33): warning: In file included from...
+../core/MCU/STM32F4\STM32F4.h(34): warning: In file included from...
+../core/APP/Control_Unit/Control_Unit_Selection\Control_Unit_Selection.h(53): warning: In file included from...
+../core/APP/Control_Unit/Control_Unit_Selection/Battery Pack Control Unit\Battery_Pack_Control_Unit.h(34): warning: In file included from...
+../core/APP/Control_Unit/LTC6811\LTC6811.h(19): error: unknown type name 'cell_asic'
+   19 | void LTC6811_init_reg_limits(uint8_t total_ic, cell_asic ic[]);
+      |                                                ^
+../core/APP/Control_Unit/LTC6811\LTC6811.h(135): error: unknown type name 'cell_asic'
+  135 |                      cell_asic ic[] //!< array of the parsed cell codes from lowest to highest.
+      |                      ^
+../core/APP/Control_Unit/LTC6811\LTC6811.h(147): error: unknown type name 'cell_asic'
+  147 |                      cell_asic ic[] //!< A two dimensional array of the parsed gpio voltage codes
+      |                      ^
+../core/APP/Control_Unit/LTC6811\LTC6811.h(158): error: unknown type name 'cell_asic'
+  158 |                       cell_asic ic[]
+      |                       ^
+../core/APP/Control_Unit/LTC6811\LTC6811.h(180): error: unknown type name 'cell_asic'
+  180 |                    cell_asic ic[] //!< a two dimensional array of the configuration data that will be written
+      |                    ^
+../core/APP/Control_Unit/LTC6811\LTC6811.h(184): error: unknown type name 'cell_asic'
+  184 |                     cell_asic ic[] //!< a two dimensional array of the configuration data that will be written
+      |                     ^
+../core/APP/Control_Unit/LTC6811\LTC6811.h(192): error: unknown type name 'cell_asic'
+  192 |                      cell_asic ic[] //!< a two dimensional array that the function stores the read configuration data
+      |                      ^
+../core/APP/Control_Unit/LTC6811\LTC6811.h(196): error: unknown type name 'cell_asic'
+  196 |                       cell_asic ic[] //!< a two dimensional array that the function stores the read configuration data
+      |                       ^
+../core/APP/Control_Unit/LTC6811\LTC6811.h(202): error: unknown type name 'cell_asic'
+  202 |                    cell_asic ic[]
+      |                    ^
+../core/APP/Control_Unit/LTC6811\LTC6811.h(210): error: unknown type name 'cell_asic'
+  210 |                      cell_asic ic[] //!< a two dimensional array that the function stores the read pwm data
+      |                      ^
+../core/APP/Control_Unit/LTC6811\LTC6811.h(217): error: unknown type name 'cell_asic'
+  217 |                      cell_asic ic[]
+      |                      ^
+../core/APP/Control_Unit/LTC6811\LTC6811.h(228): error: unknown type name 'cell_asic'
+  228 |                        cell_asic ic[] //!< a two dimensional array that the function stores the read pwm data
+      |                        ^
+../core/APP/Control_Unit/LTC6811\LTC6811.h(241): error: unknown type name 'cell_asic'
+  241 |                     cell_asic ic[] //!< A two dimensional array of the comm data that will be written
+      |                     ^
+../core/APP/Control_Unit/LTC6811\LTC6811.h(253): error: unknown type name 'cell_asic'
+  253 |                       cell_asic ic[] //!< Two dimensional array that the function stores the read comm data.
+      |                       ^
+../core/APP/Control_Unit/LTC6811\LTC6811.h(268): error: unknown type name 'cell_asic'
+  268 |                            cell_asic ic[]);
+      |                            ^
+../core/APP/Control_Unit/LTC6811\LTC6811.h(273): error: unknown type name 'cell_asic'
+  273 |                                 cell_asic ic[]);
+      |                                 ^
+../core/APP/Control_Unit/LTC6811\LTC6811.h(279): error: unknown type name 'cell_asic'
+  279 |                                       cell_asic ic[]);
+      |                                       ^
+fatal error: too many errors emitted, stopping now [-ferror-limit=]
+20 errors generated.
+compiling LTC681x.c...
+../core/APP/Control_Unit/Control_Unit_Selection/Battery Pack Control Unit/Battery_Pack_Control_Unit.c(30): warning: In file included from...
+../core/APP/Control_Unit/Control_Unit_Selection/Battery Pack Control Unit/Battery_Pack_Control_Unit.h(32): warning: In file included from...
+../core/APP/Control_Unit/State_LEDs\State_LEDs.h(32): warning: In file included from...
+../core/MCU\MCU.h(98): error: expected ';' after top level declarator
+   98 | void MCU_us_Delay(uint32_t us)
+      |                               ^
+      |                               ;
+../core/APP/Control_Unit/Control_Unit_Selection/Battery Pack Control Unit/Battery_Pack_Control_Unit.c(30): warning: In file included from...
+../core/APP/Control_Unit/Control_Unit_Selection/Battery Pack Control Unit/Battery_Pack_Control_Unit.h(32): warning: In file included from...
+../core/APP/Control_Unit/State_LEDs\State_LEDs.h(33): warning: In file included from...
+../core/TypeDefs\Typedefs.h(175): error: unknown type name 'LTC6811_Typdef'
+  175 |         LTC6811_Typdef LTC6811_1;
+      |         ^
+../core/TypeDefs\Typedefs.h(176): error: unknown type name 'LTC6811_Typdef'
+  176 |         LTC6811_Typdef LTC6811_2;
+      |         ^
+../core/APP/Control_Unit/Control_Unit_Selection/Battery Pack Control Unit/Battery_Pack_Control_Unit.c(48): error: call to undeclared function 'LTC6811_SPI_Init'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+   48 |     LTC6811_SPI_Init();
+      |     ^
+../core/APP/Control_Unit/Control_Unit_Selection/Battery Pack Control Unit/Battery_Pack_Control_Unit.c(48): note: did you mean 'LTC6811_1_SPI_Write'?
+../core/APP/Control_Unit/LTC6811/LT_SPI.h(84): note: 'LTC6811_1_SPI_Write' declared here
+   84 | void LTC6811_1_SPI_Write(uint8_t data); //Bytes to be written on the SPI port
+      |      ^
+../core/APP/Control_Unit/Control_Unit_Selection/Battery Pack Control Unit/Battery_Pack_Control_Unit.c(146): error: call to undeclared function 'LTC6811_Init'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+  146 |     LTC6811_Init(Control_Unit);
+      |     ^
+../core/APP/Control_Unit/Control_Unit_Selection/Battery Pack Control Unit/Battery_Pack_Control_Unit.c(205): error: call to undeclared function 'LTC6811_Encode_Temp'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+  205 |         LTC6811_Encode_Temp(Control_Unit->Status.Temperatures[base + i].Actual_Value);
+      |         ^
+../core/APP/Control_Unit/Control_Unit_Selection/Battery Pack Control Unit/Battery_Pack_Control_Unit.c(244): error: call to undeclared function 'LTC6811_Encode_Volt_10mV'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+  244 |                         LTC6811_Encode_Volt_10mV(Control_Unit->Status.Voltages[base_index + i]);
+      |                         ^
+../core/APP/Control_Unit/Control_Unit_Selection/Battery Pack Control Unit/Battery_Pack_Control_Unit.c(659): error: call to undeclared function 'LTC6811_Measure_Temperatures_and_Voltages'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+  659 |         LTC6811_Measure_Temperatures_and_Voltages(Control_Unit);
+      |         ^
+8 errors generated.
 compiling Battery_Pack_Control_Unit.c...
-linking...
-Program Size: Code=13188 RO-data=620 RW-data=12 ZI-data=2628  
-FromELF: creating hex file...
-"FS2024_CUBE\Application.axf" - 0 Error(s), 0 Warning(s).
+../core/APP/Control_Unit/LTC6811/LTC6811.c(72): warning: In file included from...
+../core/APP/Control_Unit/LTC6811/LTC6811.h(11): warning: In file included from...
+../core/APP/Control_Unit/LTC6811/LTC681x.h(11): warning: In file included from...
+../core/APP/Control_Unit/LTC6811/LT_SPI.h(36): warning: In file included from...
+../core/MCU\MCU.h(33): warning: In file included from...
+../core/MCU/STM32F4\STM32F4.h(34): warning: In file included from...
+../core/APP/Control_Unit/Control_Unit_Selection\Control_Unit_Selection.h(53): warning: In file included from...
+../core/APP/Control_Unit/Control_Unit_Selection/Battery Pack Control Unit\Battery_Pack_Control_Unit.h(32): warning: In file included from...
+../core/APP/Control_Unit/State_LEDs\State_LEDs.h(33): warning: In file included from...
+../core/TypeDefs\Typedefs.h(175): error: unknown type name 'LTC6811_Typdef'
+  175 |         LTC6811_Typdef LTC6811_1;
+      |         ^
+../core/TypeDefs\Typedefs.h(176): error: unknown type name 'LTC6811_Typdef'
+  176 |         LTC6811_Typdef LTC6811_2;
+      |         ^
+../core/APP/Control_Unit/LTC6811/LTC6811.c(72): warning: In file included from...
+../core/APP/Control_Unit/LTC6811/LTC6811.h(11): warning: In file included from...
+../core/APP/Control_Unit/LTC6811/LTC681x.h(11): warning: In file included from...
+../core/APP/Control_Unit/LTC6811/LT_SPI.h(36): warning: In file included from...
+../core/MCU\MCU.h(98): error: expected ';' after top level declarator
+   98 | void MCU_us_Delay(uint32_t us)
+      |                               ^
+      |                               ;
+../core/APP/Control_Unit/LTC6811/LTC6811.c(98): error: too few arguments to function call, expected 4, have 3
+   98 |   LTC681x_adcv(MD,DCP,CH);
+      |   ~~~~~~~~~~~~          ^
+../core/APP/Control_Unit/LTC6811/LTC681x.h(180): note: 'LTC681x_adcv' declared here
+  180 | void LTC681x_adcv(uint8_t n_ic,
+      |      ^            ~~~~~~~~~~~~~
+  181 |                                                                         uint8_t MD, //!< ADC Conversion Mode
+      |                                                                         ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  182 |                   uint8_t DCP, //!< Controls if Discharge is permitted during conversion
+      |                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  183 |                   uint8_t CH //!< Sets which Cell channels are converted
+      |                   ~~~~~~~~~~
+../core/APP/Control_Unit/LTC6811/LTC6811.c(107): error: too few arguments to function call, expected 3, have 2
+  107 |   LTC681x_adcvsc(MD,DCP);
+      |   ~~~~~~~~~~~~~~       ^
+../core/APP/Control_Unit/LTC6811/LTC681x.h(205): note: 'LTC681x_adcvsc' declared here
+  205 | void LTC681x_adcvsc(
+      |      ^
+  206 |         uint8_t n_ic,
+      |         ~~~~~~~~~~~~~
+  207 |   uint8_t MD, //!< ADC Conversion Mode
+      |   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  208 |   uint8_t DCP //!< Controls if Discharge is permitted during conversion
+      |   ~~~~~~~~~~~
+../core/APP/Control_Unit/LTC6811/LTC6811.c(116): error: too few arguments to function call, expected 3, have 2
+  116 |   LTC681x_adcvax(MD,DCP);
+      |   ~~~~~~~~~~~~~~       ^
+../core/APP/Control_Unit/LTC6811/LTC681x.h(188): note: 'LTC681x_adcvax' declared here
+  188 | void LTC681x_adcvax(
+      |      ^
+  189 |         uint8_t n_ic,
+      |         ~~~~~~~~~~~~~
+  190 |   uint8_t MD, //!< ADC Conversion Mode
+      |   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  191 |   uint8_t DCP //!< Controls if Discharge is permitted during conversion
+      |   ~~~~~~~~~~~
+../core/APP/Control_Unit/LTC6811/LTC6811.c(125): error: too few arguments to function call, expected 3, have 2
+  125 |   LTC681x_adol(MD,DCP);
+      |   ~~~~~~~~~~~~       ^
+../core/APP/Control_Unit/LTC6811/LTC681x.h(212): note: 'LTC681x_adol' declared here
+  212 | void LTC681x_adol(
+      |      ^
+  213 |         uint8_t n_ic,
+      |         ~~~~~~~~~~~~~
+  214 |   uint8_t MD, //!< ADC Conversion Mode
+      |   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  215 |   uint8_t DCP //!< Discharge permitted during conversion
+      |   ~~~~~~~~~~~
+../core/APP/Control_Unit/LTC6811/LTC6811.c(134): error: too few arguments to function call, expected 3, have 2
+  134 |   LTC681x_cvst(MD,ST);
+      |   ~~~~~~~~~~~~      ^
+../core/APP/Control_Unit/LTC6811/LTC681x.h(197): note: 'LTC681x_cvst' declared here
+  197 | void LTC681x_cvst(
+      |      ^
+  198 |         uint8_t n_ic,
+      |         ~~~~~~~~~~~~~
+  199 |   uint8_t MD, //!< ADC Conversion Mode
+      |   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  200 |   uint8_t ST //!< Self Test Mode
+      |   ~~~~~~~~~~
+../core/APP/Control_Unit/LTC6811/LTC6811.c(143): error: too few arguments to function call, expected 3, have 2
+  143 |   LTC681x_axst(MD,ST);
+      |   ~~~~~~~~~~~~      ^
+../core/APP/Control_Unit/LTC6811/LTC681x.h(245): note: 'LTC681x_axst' declared here
+  245 | void LTC681x_axst(
+      |      ^
+  246 |         uint8_t n_ic,
+      |         ~~~~~~~~~~~~~
+  247 |   uint8_t MD, //!< ADC Conversion Mode
+      |   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  248 |   uint8_t ST //!< Sets if self test 1 or 2 is run
+      |   ~~~~~~~~~~
+../core/APP/Control_Unit/LTC6811/LTC6811.c(152): error: too few arguments to function call, expected 3, have 2
+  152 |   LTC681x_statst(MD,ST);
+      |   ~~~~~~~~~~~~~~      ^
+../core/APP/Control_Unit/LTC6811/LTC681x.h(272): note: 'LTC681x_statst' declared here
+  272 | void LTC681x_statst(
+      |      ^
+  273 |         uint8_t n_ic,
+      |         ~~~~~~~~~~~~~
+  274 |   uint8_t MD, //!< ADC Conversion Mode
+      |   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  275 |   uint8_t ST //!< Sets if self test 1 or 2 is run
+      |   ~~~~~~~~~~
+../core/APP/Control_Unit/LTC6811/LTC6811.c(158): error: too few arguments to function call, single argument 'n_ic' was not specified
+  158 |   return(LTC681x_pladc());
+      |          ~~~~~~~~~~~~~ ^
+../core/APP/Control_Unit/LTC6811/LTC681x.h(169): note: 'LTC681x_pladc' declared here
+  169 | uint8_t LTC681x_pladc(uint8_t n_ic);
+      |         ^             ~~~~~~~~~~~~
+../core/APP/Control_Unit/LTC6811/LTC6811.c(164): error: too few arguments to function call, single argument 'n_ic' was not specified
+  164 |   return(LTC681x_pollAdc());
+      |          ~~~~~~~~~~~~~~~ ^
+../core/APP/Control_Unit/LTC6811/LTC681x.h(173): note: 'LTC681x_pollAdc' declared here
+  173 | uint32_t LTC681x_pollAdc(uint8_t n_ic);
+      |          ^               ~~~~~~~~~~~~
+../core/APP/Control_Unit/LTC6811/LTC6811.c(173): error: too few arguments to function call, expected 3, have 2
+  173 |   LTC681x_adax(MD,CHG);
+      |   ~~~~~~~~~~~~       ^
+../core/APP/Control_Unit/LTC6811/LTC681x.h(229): note: 'LTC681x_adax' declared here
+  229 | void LTC681x_adax(
+      |      ^
+  230 |         uint8_t n_ic,
+      |         ~~~~~~~~~~~~~
+  231 |   uint8_t MD, //!< ADC Conversion Mode
+      |   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  232 |   uint8_t CHG //!< Sets which GPIO channels are converted
+      |   ~~~~~~~~~~~
+../core/APP/Control_Unit/LTC6811/LTC6811.c(182): error: too few arguments to function call, expected 3, have 2
+  182 |   LTC681x_adaxd(MD,CHG);
+      |   ~~~~~~~~~~~~~       ^
+../core/APP/Control_Unit/LTC6811/LTC681x.h(237): note: 'LTC681x_adaxd' declared here
+  237 | void LTC681x_adaxd(
+      |      ^
+  238 |         uint8_t n_ic,
+      |         ~~~~~~~~~~~~~
+  239 |   uint8_t MD, //!< ADC Conversion Mode
+      |   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  240 |   uint8_t CHG //!< Sets which GPIO channels are converted
+      |   ~~~~~~~~~~~
+../core/APP/Control_Unit/LTC6811/LTC6811.c(191): error: too few arguments to function call, expected 3, have 2
+  191 |   LTC681x_adstat(MD,CHST);
+      |   ~~~~~~~~~~~~~~        ^
+../core/APP/Control_Unit/LTC6811/LTC681x.h(255): note: 'LTC681x_adstat' declared here
+  255 | void LTC681x_adstat(
+      |      ^
+  256 |         uint8_t n_ic,
+      |         ~~~~~~~~~~~~~
+  257 |   uint8_t MD, //!< ADC Conversion Mode
+      |   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  258 |   uint8_t CHST //!< Sets which Stat channels are converted
+      |   ~~~~~~~~~~~~
+../core/APP/Control_Unit/LTC6811/LTC6811.c(200): error: too few arguments to function call, expected 3, have 2
+  200 |   LTC681x_adstatd(MD,CHST);
+      |   ~~~~~~~~~~~~~~~        ^
+../core/APP/Control_Unit/LTC6811/LTC681x.h(263): note: 'LTC681x_adstatd' declared here
+  263 | void LTC681x_adstatd(
+      |      ^
+  264 |         uint8_t n_ic,
+      |         ~~~~~~~~~~~~~
+  265 |   uint8_t MD, //!< ADC Mode
+      |   ~~~~~~~~~~~~~~~~~~~~~~~~~
+  266 |   uint8_t CHST //!< Sets which Status channels are converted
+      |   ~~~~~~~~~~~~
+../core/APP/Control_Unit/LTC6811/LTC6811.c(210): error: too few arguments to function call, expected 3, have 2
+  210 |   LTC681x_adow(MD,PUP);
+      |   ~~~~~~~~~~~~       ^
+../core/APP/Control_Unit/LTC6811/LTC681x.h(220): note: 'LTC681x_adow' declared here
+  220 | void LTC681x_adow(
+      |      ^
+  221 |         uint8_t n_ic,
+      |         ~~~~~~~~~~~~~
+  222 |   uint8_t MD, //!< ADC Conversion Mode
+      |   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  223 |   uint8_t PUP //!< Controls if Discharge is permitted during conversion
+      |   ~~~~~~~~~~~
+../core/APP/Control_Unit/LTC6811/LTC6811.c(263): error: too few arguments to function call, single argument 'n_ic' was not specified
+  263 |   LTC681x_clrcell();
+      |   ~~~~~~~~~~~~~~~ ^
+../core/APP/Control_Unit/LTC6811/LTC681x.h(314): note: 'LTC681x_clrcell' declared here
+  314 | void LTC681x_clrcell(uint8_t n_ic);
+      |      ^               ~~~~~~~~~~~~
+../core/APP/Control_Unit/LTC6811/LTC6811.c(273): error: too few arguments to function call, single argument 'n_ic' was not specified
+  273 |   LTC681x_clraux();
+      |   ~~~~~~~~~~~~~~ ^
+../core/APP/Control_Unit/LTC6811/LTC681x.h(321): note: 'LTC681x_clraux' declared here
+  321 | void LTC681x_clraux(uint8_t n_ic);
+      |      ^              ~~~~~~~~~~~~
+fatal error: too many errors emitted, stopping now [-ferror-limit=]
+20 errors generated.
+compiling LTC6811.c...
+../core/APP/Control_Unit/LTC6811/LTC6811_Dual.c(25): warning: In file included from...
+../core/APP/Control_Unit/LTC6811/LTC6811.h(11): warning: In file included from...
+../core/APP/Control_Unit/LTC6811/LTC681x.h(11): warning: In file included from...
+../core/APP/Control_Unit/LTC6811/LT_SPI.h(36): warning: In file included from...
+../core/MCU\MCU.h(33): warning: In file included from...
+../core/MCU/STM32F4\STM32F4.h(34): warning: In file included from...
+../core/APP/Control_Unit/Control_Unit_Selection\Control_Unit_Selection.h(53): warning: In file included from...
+../core/APP/Control_Unit/Control_Unit_Selection/Battery Pack Control Unit\Battery_Pack_Control_Unit.h(32): warning: In file included from...
+../core/APP/Control_Unit/State_LEDs\State_LEDs.h(33): warning: In file included from...
+../core/TypeDefs\Typedefs.h(175): error: unknown type name 'LTC6811_Typdef'
+  175 |         LTC6811_Typdef LTC6811_1;
+      |         ^
+../core/TypeDefs\Typedefs.h(176): error: unknown type name 'LTC6811_Typdef'
+  176 |         LTC6811_Typdef LTC6811_2;
+      |         ^
+../core/APP/Control_Unit/LTC6811/LTC6811_Dual.c(25): warning: In file included from...
+../core/APP/Control_Unit/LTC6811/LTC6811.h(11): warning: In file included from...
+../core/APP/Control_Unit/LTC6811/LTC681x.h(11): warning: In file included from...
+../core/APP/Control_Unit/LTC6811/LT_SPI.h(36): warning: In file included from...
+../core/MCU\MCU.h(98): error: expected ';' after top level declarator
+   98 | void MCU_us_Delay(uint32_t us)
+      |                               ^
+      |                               ;
+../core/APP/Control_Unit/LTC6811/LTC6811_Dual.c(102): error: call to undeclared function 'LTC6811_Wake_Up'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+  102 |     LTC6811_Wake_Up(&Control_Unit->Status.LTC6811_1);
+      |     ^
+../core/APP/Control_Unit/LTC6811/LTC6811_Dual.c(107): error: call to undeclared function 'LTC_Disable_Balancing'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+  107 |     LTC_Disable_Balancing(&Control_Unit->Status.LTC6811_1);
+      |     ^
+../core/APP/Control_Unit/LTC6811/LTC6811_Dual.c(234): error: unknown type name 'LTC6811_Typdef'
+  234 | void LTC6811_SPI_Transfer(LTC6811_Typdef* LTC6811, uint8_t *tx, uint16_t len) 
+      |                           ^
+../core/APP/Control_Unit/LTC6811/LTC6811_Dual.c(244): error: use of undeclared identifier 'SPI_MAX_DELAY'
+  244 |     Status = HAL_SPI_Transmit(LTC6811->SPI_Handler, tx, len, SPI_MAX_DELAY);  // Tiempo m<E1>ximo de espera indefinido
+      |                                                              ^
+../core/APP/Control_Unit/LTC6811/LTC6811_Dual.c(276): error: unknown type name 'LTC6811_Typdef'
+  276 | void LTC6811_SPI_Transfer_No_CS(LTC6811_Typdef* LTC6811, uint8_t *tx, uint16_t len) 
+      |                                 ^
+../core/APP/Control_Unit/LTC6811/LTC6811_Dual.c(281): error: use of undeclared identifier 'SPI_MAX_DELAY'
+  281 |     Status = HAL_SPI_Transmit(LTC6811->SPI_Handler, tx, len, SPI_MAX_DELAY);  // Espera indefinida (bloqueante)
+      |                                                              ^
+../core/APP/Control_Unit/LTC6811/LTC6811_Dual.c(311): error: unknown type name 'LTC6811_Typdef'
+  311 | void LTC6811_SPI_Transmit_Receive(LTC6811_Typdef* LTC6811, uint8_t *tx, uint8_t *rx, uint16_t len_tx, uint16_t len_rx)
+      |                                   ^
+../core/APP/Control_Unit/LTC6811/LTC6811_Dual.c(320): error: use of undeclared identifier 'SPI_MAX_DELAY'
+  320 |     HAL_StatusTypeDef Status = HAL_SPI_Transmit(LTC6811->SPI_Handler, tx, len_tx, SPI_MAX_DELAY);
+      |                                                                                   ^
+../core/APP/Control_Unit/LTC6811/LTC6811_Dual.c(322): error: use of undeclared identifier 'SPI_MAX_DELAY'
+  322 |     HAL_StatusTypeDef Status1 = HAL_SPI_Receive(LTC6811->SPI_Handler, rx, len_rx, SPI_MAX_DELAY);
+      |                                                                                   ^
+../core/APP/Control_Unit/LTC6811/LTC6811_Dual.c(395): error: unknown type name 'LTC6811_Typdef'
+  395 | BoolTypeDef LTC6811_Read_CFG(LTC6811_Typdef* LTC6811, uint8_t* config_out)
+      |                              ^
+../core/APP/Control_Unit/LTC6811/LTC6811_Dual.c(413): error: call to undeclared library function 'memcpy' with type 'void *(void *, const void *, unsigned int)'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+  413 |     memcpy(config_out, rx, 6);
+      |     ^
+../core/APP/Control_Unit/LTC6811/LTC6811_Dual.c(413): note: include the header <string.h> or explicitly provide a declaration for 'memcpy'
+../core/APP/Control_Unit/LTC6811/LTC6811_Dual.c(434): error: unknown type name 'LTC6811_Typdef'
+  434 | void LTC6811_Wake_Up(LTC6811_Typdef* LTC6811) 
+      |                      ^
+../core/APP/Control_Unit/LTC6811/LTC6811_Dual.c(466): error: unknown type name 'LTC6811_Typdef'
+  466 | void LTC6811_Write_CFG(LTC6811_Typdef* LTC6811) 
+      |                        ^
+../core/APP/Control_Unit/LTC6811/LTC6811_Dual.c(526): error: unknown type name 'LTC6811_Typdef'
+  526 | BoolTypeDef LTC6811_Wait_ADC_Completion(LTC6811_Typdef* LTC6811, uint16_t timeout_ms)
+      |                                         ^
+../core/APP/Control_Unit/LTC6811/LTC6811_Dual.c(565): error: unknown type name 'LTC6811_Typdef'
+  565 | void LTC6811_Start_ADC_Conv(LTC6811_Typdef* LTC6811) {
+      |                             ^
+../core/APP/Control_Unit/LTC6811/LTC6811_Dual.c(598): error: unknown type name 'LTC6811_Typdef'
+  598 | void LTC_Active_Even_Balancing(LTC6811_Typdef* LTC6811) 
+      |                                ^
+fatal error: too many errors emitted, stopping now [-ferror-limit=]
+20 errors generated.
+compiling LTC6811_Dual.c...
+../Core/MCU/STM32F4/stm32f4xx_it.c(31): warning: In file included from...
+../Core/MCU/STM32F4/STM32F4.h(34): warning: In file included from...
+../core/APP/Control_Unit/Control_Unit_Selection\Control_Unit_Selection.h(53): warning: In file included from...
+../core/APP/Control_Unit/Control_Unit_Selection/Battery Pack Control Unit\Battery_Pack_Control_Unit.h(32): warning: In file included from...
+../core/APP/Control_Unit/State_LEDs\State_LEDs.h(32): warning: In file included from...
+../core/MCU\MCU.h(98): error: expected ';' after top level declarator
+   98 | void MCU_us_Delay(uint32_t us)
+      |                               ^
+      |                               ;
+../Core/MCU/STM32F4/stm32f4xx_it.c(31): warning: In file included from...
+../Core/MCU/STM32F4/STM32F4.h(34): warning: In file included from...
+../core/APP/Control_Unit/Control_Unit_Selection\Control_Unit_Selection.h(53): warning: In file included from...
+../core/APP/Control_Unit/Control_Unit_Selection/Battery Pack Control Unit\Battery_Pack_Control_Unit.h(32): warning: In file included from...
+../core/APP/Control_Unit/State_LEDs\State_LEDs.h(33): warning: In file included from...
+../core/TypeDefs\Typedefs.h(175): error: unknown type name 'LTC6811_Typdef'
+  175 |         LTC6811_Typdef LTC6811_1;
+      |         ^
+../core/TypeDefs\Typedefs.h(176): error: unknown type name 'LTC6811_Typdef'
+  176 |         LTC6811_Typdef LTC6811_2;
+      |         ^
+3 errors generated.
+compiling stm32f4xx_it.c...
+../Core/MCU/STM32F4/STM32F4.c(31): warning: In file included from...
+../Core/MCU/STM32F4/STM32F4.h(34): warning: In file included from...
+../core/APP/Control_Unit/Control_Unit_Selection\Control_Unit_Selection.h(53): warning: In file included from...
+../core/APP/Control_Unit/Control_Unit_Selection/Battery Pack Control Unit\Battery_Pack_Control_Unit.h(32): warning: In file included from...
+../core/APP/Control_Unit/State_LEDs\State_LEDs.h(32): warning: In file included from...
+../core/MCU\MCU.h(98): error: expected ';' after top level declarator
+   98 | void MCU_us_Delay(uint32_t us)
+      |                               ^
+      |                               ;
+../Core/MCU/STM32F4/STM32F4.c(31): warning: In file included from...
+../Core/MCU/STM32F4/STM32F4.h(34): warning: In file included from...
+../core/APP/Control_Unit/Control_Unit_Selection\Control_Unit_Selection.h(53): warning: In file included from...
+../core/APP/Control_Unit/Control_Unit_Selection/Battery Pack Control Unit\Battery_Pack_Control_Unit.h(32): warning: In file included from...
+../core/APP/Control_Unit/State_LEDs\State_LEDs.h(33): warning: In file included from...
+../core/TypeDefs\Typedefs.h(175): error: unknown type name 'LTC6811_Typdef'
+  175 |         LTC6811_Typdef LTC6811_1;
+      |         ^
+../core/TypeDefs\Typedefs.h(176): error: unknown type name 'LTC6811_Typdef'
+  176 |         LTC6811_Typdef LTC6811_2;
+      |         ^
+3 errors generated.
+compiling STM32F4.c...
+"FS2024_CUBE\Application.axf" - 92 Error(s), 0 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -52,7 +614,8 @@ Package Vendor: Keil
   C:/Users/d.rodriguez/AppData/Local/Arm/Packs/Keil/STM32F4xx_DFP/2.17.1/Drivers/CMSIS/Device/ST/STM32F4xx/Include
 
 <h2>Collection of Component Files used:</h2>
-Build Time Elapsed:  00:00:01
+Target not created.
+Build Time Elapsed:  00:00:03
 </pre>
 </body>
 </html>

@@ -1,8 +1,8 @@
-fs2024_cube/main.o: ..\Core\APP\main.c \
-  ..\core\APP\Control_Unit\Control_Unit.h \
-  ..\core\APP\Control_Unit\Control_Unit_Selection\Control_Unit_Selection.h \
-  ..\core\APP\Control_Unit\Control_Unit_Selection\Battery\ Pack\ Control\ Unit\Battery_Pack_Control_Unit.h \
-  ..\core\APP\Control_Unit\State_LEDs\State_LEDs.h ..\core\MCU\MCU.h \
+fs2024_cube/ltc681x.o: ..\core\APP\Control_Unit\LTC6811\LTC681x.c \
+  ..\core\APP\Control_Unit\LTC6811\LTC681x.h \
+  C:\Program\ Files\ (x86)\Keil\ARM\ARMCLANG\include\stdint.h \
+  C:\Program\ Files\ (x86)\Keil\ARM\ARMCLANG\include\stdbool.h \
+  ..\core\APP\Control_Unit\LTC6811\LT_SPI.h ..\core\MCU\MCU.h \
   ..\core\MCU\STM32F4\STM32F4.h \
   ..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal.h \
   ..\core\MCU\STM32F4\stm32f4xx_hal_conf.h \
@@ -11,7 +11,6 @@ fs2024_cube/main.o: ..\Core\APP\main.c \
   ..\Drivers\CMSIS\Device\ST\STM32F4xx\Include\stm32f4xx.h \
   ..\Drivers\CMSIS\Device\ST\STM32F4xx\Include\stm32f405xx.h \
   ..\Drivers\CMSIS\Include\core_cm4.h \
-  C:\Program\ Files\ (x86)\Keil\ARM\ARMCLANG\include\stdint.h \
   C:\Users\d.rodriguez\Desktop\GitHub\ACCU-Software-Control-Units\FS2025\ STM32F4\ Application\FS2025\ STM32F4\ Application\Drivers\CMSIS\Include\cmsis_version.h \
   C:\Users\d.rodriguez\Desktop\GitHub\ACCU-Software-Control-Units\FS2025\ STM32F4\ Application\FS2025\ STM32F4\ Application\Drivers\CMSIS\Include\cmsis_compiler.h \
   C:\Users\d.rodriguez\Desktop\GitHub\ACCU-Software-Control-Units\FS2025\ STM32F4\ Application\FS2025\ STM32F4\ Application\Drivers\CMSIS\Include\cmsis_armclang.h \
@@ -43,11 +42,13 @@ fs2024_cube/main.o: ..\Core\APP\main.c \
   ..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_spi.h \
   ..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_tim.h \
   ..\Drivers\STM32F4xx_HAL_Driver\Inc\stm32f4xx_hal_tim_ex.h \
+  ..\core\APP\Control_Unit\Control_Unit_Selection\Control_Unit_Selection.h \
+  ..\core\APP\Control_Unit\Control_Unit_Selection\Battery\ Pack\ Control\ Unit\Battery_Pack_Control_Unit.h \
+  ..\core\APP\Control_Unit\State_LEDs\State_LEDs.h \
+  ..\core\TypeDefs\Typedefs.h \
   ..\core\Common_Functions\Common_Functions.h \
   C:\Program\ Files\ (x86)\Keil\ARM\ARMCLANG\include\stdio.h \
-  ..\core\TypeDefs\Typedefs.h ..\core\CAN\ Bus\Can_Bus.h \
+  ..\core\CAN\ Bus\Can_Bus.h ..\core\APP\Control_Unit\Control_Unit.h \
   ..\core\APP\Control_Unit\LTC6811\LTC6811.h \
-  C:\Program\ Files\ (x86)\Keil\ARM\ARMCLANG\include\stdbool.h \
-  ..\core\APP\Control_Unit\LTC6811\LTC681x.h \
-  ..\core\APP\Control_Unit\LTC6811\LT_SPI.h \
-  C:\Program\ Files\ (x86)\Keil\ARM\ARMCLANG\include\math.h
+  C:\Program\ Files\ (x86)\Keil\ARM\ARMCLANG\include\math.h \
+  C:\Program\ Files\ (x86)\Keil\ARM\ARMCLANG\include\stdlib.h

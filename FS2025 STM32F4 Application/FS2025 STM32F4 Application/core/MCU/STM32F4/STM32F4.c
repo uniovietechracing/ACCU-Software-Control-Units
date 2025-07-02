@@ -214,7 +214,37 @@ void STM32F4_TIM7_Init(void)
 }
 
 
+/*******************************************************************************
+********************************************************************************
+***************          	 Init DWT for u_delay		 				   		*****************	
+********************************************************************************
+********************************************************************************
+  * @brief  Initializates TIMER 7 for 10ms interrupt
+  * @retval NOTHING
+  */
+void STM32F4_DWT_Init(void)
+{
+    // Habilita acceso al contador de ciclos
+    CoreDebug->DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
+    DWT->CTRL |= DWT_CTRL_CYCCNTENA_Msk;
+}
 
+
+/*******************************************************************************
+********************************************************************************
+***************          	 Init DWT for u_delay		 				   		*****************	
+********************************************************************************
+********************************************************************************
+  * @brief  Initializates TIMER 7 for 10ms interrupt
+  * @retval NOTHING
+  */
+void STM32F4_Us_Delay(uint32_t us)
+{
+    uint32_t cycles_per_us = SystemCoreClock / 1000000U;
+    uint32_t start = DWT->CYCCNT;
+    uint32_t delay_cycles = us * cycles_per_us;
+    while ((DWT->CYCCNT - start) < delay_cycles);
+}
 
 
 
@@ -350,9 +380,13 @@ void STM32F4_Common_Init(void)
   // Configure the system clock
   STM32F4_SystemClock_Config();
 	
+	
 	#ifndef NO_WDT
 		STM32F4_IWDG_Init();
 	#endif
+	
+	//Initialize DWT 
+	STM32F4_DWT_Init();
 	// Initialize timers
 	STM32F4_TIM7_Init();
 	

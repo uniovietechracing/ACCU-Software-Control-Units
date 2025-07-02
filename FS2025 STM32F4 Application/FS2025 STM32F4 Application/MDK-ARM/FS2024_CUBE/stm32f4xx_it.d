@@ -47,6 +47,8 @@ fs2024_cube/stm32f4xx_it.o: ..\Core\MCU\STM32F4\stm32f4xx_it.c \
   ..\core\TypeDefs\Typedefs.h ..\core\CAN\ Bus\Can_Bus.h \
   ..\core\APP\Control_Unit\Control_Unit.h \
   ..\core\APP\Control_Unit\LTC6811\LTC6811.h \
-  C:\Program\ Files\ (x86)\Keil\ARM\ARMCLANG\include\string.h \
+  C:\Program\ Files\ (x86)\Keil\ARM\ARMCLANG\include\stdbool.h \
+  ..\core\APP\Control_Unit\LTC6811\LTC681x.h \
+  ..\core\APP\Control_Unit\LTC6811\LT_SPI.h \
   C:\Program\ Files\ (x86)\Keil\ARM\ARMCLANG\include\math.h \
   ..\Core\MCU\STM32F4\stm32f4xx_it.h

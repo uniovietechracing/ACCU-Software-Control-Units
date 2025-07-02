@@ -46,6 +46,8 @@ fs2024_cube/can_bus.o: ..\Core\CAN\ Bus\Can_Bus.c \
   ..\core\Common_Functions\Common_Functions.h \
   C:\Program\ Files\ (x86)\Keil\ARM\ARMCLANG\include\stdio.h \
   ..\core\TypeDefs\Typedefs.h ..\core\APP\Control_Unit\LTC6811\LTC6811.h \
-  C:\Program\ Files\ (x86)\Keil\ARM\ARMCLANG\include\string.h \
+  C:\Program\ Files\ (x86)\Keil\ARM\ARMCLANG\include\stdbool.h \
+  ..\core\APP\Control_Unit\LTC6811\LTC681x.h \
+  ..\core\APP\Control_Unit\LTC6811\LT_SPI.h \
   C:\Program\ Files\ (x86)\Keil\ARM\ARMCLANG\include\math.h \
   ..\core\APP\Control_Unit\Control_Unit.h
