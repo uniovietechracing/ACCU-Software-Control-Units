@@ -68,9 +68,23 @@ Copyright 2017 Linear Technology Corp. (LTC)
     Library for LTC6811-1 Multicell Battery Monitor
 */
 
-#include "stdint.h"
 #include "LTC6811.h"
-#include "LTC681x.h"
+
+
+
+//LTC CONFIGURATION VARIABLES
+bool REFON_1 = true; //!< Reference Powered Up Bit (true means Vref remains powered on between conversions)
+bool ADCOPT_1 = true; //!< ADC Mode option bit	(true chooses the second set of ADC frequencies)
+bool gpioBits_a_1[5] = {false,false,false,false,false}; //!< GPIO Pin Control // Gpio 1,2,3,4,5 (false -> pull-down on)
+bool dccBits_a_1[12] = {false,false,false,false,false,false,false,false,false,false,false,false}; //!< Discharge cell switch //Dcc 1,2,3,4,5,6,7,8,9,10,11,12 (all false -> no discharge enabled)
+bool dctoBits_1[4] = {false, false, false, false}; //!< Discharge time value // Dcto 0,1,2,3	(all false -> discharge timer disabled)
+
+//LTC CONFIGURATION VARIABLES
+bool REFON_2 = true; //!< Reference Powered Up Bit (true means Vref remains powered on between conversions)
+bool ADCOPT_2 = true; //!< ADC Mode option bit	(true chooses the second set of ADC frequencies)
+bool gpioBits_a_2[5] = {false,false,false,false,false}; //!< GPIO Pin Control // Gpio 1,2,3,4,5 (false -> pull-down on)
+bool dccBits_a_2[12] = {false,false,false,false,false,false,false,false,false,false,false,false}; //!< Discharge cell switch //Dcc 1,2,3,4,5,6,7,8,9,10,11,12 (all false -> no discharge enabled)
+bool dctoBits_2[4] = {false, false, false, false}; //!< Discharge time value // Dcto 0,1,2,3	(all false -> discharge timer disabled)
 
 void LTC6811_init_reg_limits(cell_asic* ic)
 {
@@ -110,7 +124,7 @@ void LTC6811_adcvax(uint8_t n_ic,
   uint8_t DCP //Discharge Permit
 )
 {
-  LTC681x_adcvax(MD,DCP);
+  LTC681x_adcvax(n_ic,MD,DCP);
 }
 
 //Starts cell voltage overlap conversion
@@ -119,7 +133,7 @@ void LTC6811_adol(uint8_t n_ic,
   uint8_t DCP //Discharge Permit
 )
 {
-  LTC681x_adol(MD,DCP);
+  LTC681x_adol(n_ic,MD,DCP);
 }
 
 //Starts cell voltage self test conversion
@@ -128,7 +142,7 @@ void LTC6811_cvst(uint8_t n_ic,
   uint8_t ST //Self Test
 )
 {
-  LTC681x_cvst(MD,ST);
+  LTC681x_cvst(n_ic,MD,ST);
 }
 
 //Start an Auxiliary Register Self Test Conversion
@@ -137,7 +151,7 @@ void LTC6811_axst(uint8_t n_ic,
   uint8_t ST //Self Test
 )
 {
-  LTC681x_axst(MD,ST);
+  LTC681x_axst(n_ic,MD,ST);
 }
 
 //Start a Status Register Self Test Conversion
@@ -146,19 +160,19 @@ void LTC6811_statst(uint8_t n_ic,
   uint8_t ST //Self Test
 )
 {
-  LTC681x_statst(MD,ST);
+  LTC681x_statst(n_ic,MD,ST);
 }
 
 //Sends the poll adc command
 uint8_t LTC6811_pladc(uint8_t n_ic)
 {
-  return(LTC681x_pladc());
+  return(LTC681x_pladc(n_ic));
 }
 
 //This function will block operation until the ADC has finished it's conversion
 uint32_t LTC6811_pollAdc(uint8_t n_ic)
 {
-  return(LTC681x_pollAdc());
+  return(LTC681x_pollAdc(n_ic));
 }
 
 //Start a GPIO and Vref2 Conversion
@@ -167,7 +181,7 @@ void LTC6811_adax(uint8_t n_ic,
   uint8_t CHG //GPIO Channels to be measured)
 )
 {
-  LTC681x_adax(MD,CHG);
+  LTC681x_adax(n_ic,MD,CHG);
 }
 
 //Start an GPIO Redundancy test
@@ -176,7 +190,7 @@ void LTC6811_adaxd(uint8_t n_ic,
   uint8_t CHG //GPIO Channels to be measured)
 )
 {
-  LTC681x_adaxd(MD,CHG);
+  LTC681x_adaxd(n_ic,MD,CHG);
 }
 
 //Start a Status ADC Conversion
@@ -185,7 +199,7 @@ void LTC6811_adstat(uint8_t n_ic,
   uint8_t CHST //GPIO Channels to be measured
 )
 {
-  LTC681x_adstat(MD,CHST);
+  LTC681x_adstat(n_ic,MD,CHST);
 }
 
 // Start a Status register redundancy test Conversion
@@ -194,7 +208,7 @@ void LTC6811_adstatd(uint8_t n_ic,
   uint8_t CHST //GPIO Channels to be measured
 )
 {
-  LTC681x_adstatd(MD,CHST);
+  LTC681x_adstatd(n_ic,MD,CHST);
 }
 
 
@@ -204,7 +218,7 @@ void LTC6811_adow(uint8_t n_ic,
   uint8_t PUP //Discharge Permit
 )
 {
-  LTC681x_adow(MD,PUP);
+  LTC681x_adow(n_ic,MD,PUP);
 }
 
 // Reads and parses the LTC6811 cell voltage registers.
@@ -214,7 +228,7 @@ uint8_t LTC6811_rdcv(uint8_t n_ic,uint8_t reg, // Controls which cell voltage re
 {
 
   int8_t pec_error = 0;
-  pec_error = LTC681x_rdcv(reg,total_ic,ic);
+  pec_error = LTC681x_rdcv(n_ic,reg,ic);
   return(pec_error);
 }
 
@@ -228,7 +242,7 @@ int8_t LTC6811_rdaux(uint8_t n_ic,uint8_t reg, //Determines which GPIO voltage r
                     )
 {
   int8_t pec_error = 0;
-  pec_error = LTC681x_rdaux(reg,total_ic,ic);
+  pec_error = LTC681x_rdaux(n_ic,reg,ic);
   return (pec_error);
 }
 
@@ -243,7 +257,7 @@ int8_t LTC6811_rdstat(uint8_t n_ic,uint8_t reg, //Determines which Stat  registe
                      )
 {
   int8_t pec_error = 0;
-  pec_error = LTC681x_rdstat(reg,total_ic,ic);
+  pec_error = LTC681x_rdstat(n_ic,reg,ic);
   return (pec_error);
 }
 
@@ -254,7 +268,7 @@ int8_t LTC6811_rdstat(uint8_t n_ic,uint8_t reg, //Determines which Stat  registe
 */
 void LTC6811_clrcell(uint8_t n_ic)
 {
-  LTC681x_clrcell();
+  LTC681x_clrcell(n_ic);
 }
 
 /*
@@ -264,7 +278,7 @@ void LTC6811_clrcell(uint8_t n_ic)
 */
 void LTC6811_clraux(uint8_t n_ic)
 {
-  LTC681x_clraux();
+  LTC681x_clraux(n_ic);
 }
 
 /*
@@ -275,7 +289,7 @@ void LTC6811_clraux(uint8_t n_ic)
 */
 void LTC6811_clrstat(uint8_t n_ic)
 {
-  LTC681x_clrstat();
+  LTC681x_clrstat(n_ic);
 }
 
 /*
@@ -285,13 +299,13 @@ void LTC6811_clrstat(uint8_t n_ic)
  */
 void LTC6811_clrsctrl(uint8_t n_ic)
 {
-  LTC681x_clrsctrl();
+  LTC681x_clrsctrl(n_ic);
 }
 
 //Starts the Mux Decoder diagnostic self test
 void LTC6811_diagn(uint8_t n_ic)
 {
-  LTC681x_diagn();
+  LTC681x_diagn(n_ic);
 }
 
 /*
@@ -375,134 +389,122 @@ void LTC6811_stcomm()
 }
 
 //Helper function to set discharge bit in CFG register
-void LTC6811_set_discharge(int Cell, uint8_t total_ic, cell_asic* ic)
+void LTC6811_set_discharge( uint8_t n_ic,int Cell, cell_asic* ic)
 {
-  for (int i=0; i<total_ic; i++)
-  {
     if (Cell<9)
     {
-      ic[i].config.tx_data[4] = ic[i].config.tx_data[4] | (1<<(Cell-1));
+      ic->config.tx_data[4] = ic->config.tx_data[4] | (1<<(Cell-1));
     }
     else if (Cell < 13)
     {
-      ic[i].config.tx_data[5] = ic[i].config.tx_data[5] | (1<<(Cell-9));
+      ic->config.tx_data[5] = ic->config.tx_data[5] | (1<<(Cell-9));
     }
-  }
 }
 
 // Runs the Digital Filter Self Test
-int16_t LTC6811_run_cell_adc_st(uint8_t adc_reg,uint8_t total_ic, cell_asic* ic)
+int16_t LTC6811_run_cell_adc_st(uint8_t n_ic, uint8_t adc_reg, cell_asic* ic)
 {
   int16_t error = 0;
-  error = LTC681x_run_cell_adc_st(adc_reg,total_ic,ic);
+  error = LTC681x_run_cell_adc_st(n_ic,adc_reg,ic);
   return(error);
 }
 
 //runs the redundancy self test
-int16_t LTC6811_run_adc_redundancy_st(uint8_t adc_mode, uint8_t adc_reg, uint8_t total_ic, cell_asic* ic)
+int16_t LTC6811_run_adc_redundancy_st(uint8_t n_ic ,uint8_t adc_mode, uint8_t adc_reg, cell_asic* ic)
 {
   int16_t error = 0;
-  LTC681x_run_adc_redundancy_st(adc_mode,adc_reg,total_ic,ic);
+  LTC681x_run_adc_redundancy_st(n_ic,adc_mode,adc_reg,ic);
   return(error);
 }
 //Runs the datasheet algorithm for open wire
-void LTC6811_run_openwire(uint8_t total_ic, cell_asic* ic)
+void LTC6811_run_openwire(uint8_t n_ic, cell_asic* ic)
 {
-  LTC681x_run_openwire(total_ic,ic);
+  LTC681x_run_openwire(n_ic,ic);
 }
 // Runs the ADC overlap test for the IC
-uint16_t LTC6811_run_adc_overlap(uint8_t total_ic, cell_asic* ic)
+uint16_t LTC6811_run_adc_overlap(uint8_t n_ic, cell_asic* ic)
 {
   uint16_t error = 0;
-  LTC681x_run_adc_overlap(total_ic, ic);
+  LTC681x_run_adc_overlap(n_ic, ic);
   return(error);
 }
 
-void LTC6811_max_min(uint8_t total_ic, cell_asic ic_cells[],
-                     cell_asic ic_min[],
-                     cell_asic ic_max[],
-                     cell_asic ic_delta[])
+void LTC6811_max_min(uint8_t n_ic, cell_asic ic_cells[],
+                     cell_asic* ic_min,
+                     cell_asic* ic_max,
+                     cell_asic* ic_delta)
 {
-  for (int j=0; j < total_ic; j++)
-  {
-    for (int i = 0; i< 12; i++)
-    {
-      if (ic_cells[j].cells.c_codes[i]>ic_max[j].cells.c_codes[i])ic_max[j].cells.c_codes[i]=ic_cells[j].cells.c_codes[i];
-      else if (ic_cells[j].cells.c_codes[i]<ic_min[j].cells.c_codes[i])ic_min[j].cells.c_codes[i]=ic_cells[j].cells.c_codes[i];
-      ic_delta[j].cells.c_codes[i] = ic_max[j].cells.c_codes[i] - ic_min[j].cells.c_codes[i];
-    }
-  }
+
+   for (int i = 0; i< 12; i++)
+   {
+     if (ic_cells->cells.c_codes[i]>ic_max->cells.c_codes[i])ic_max->cells.c_codes[i]=ic_cells->cells.c_codes[i];
+     else if (ic_cells->cells.c_codes[i]<ic_min->cells.c_codes[i])ic_min->cells.c_codes[i]=ic_cells->cells.c_codes[i];
+     ic_delta->cells.c_codes[i] = ic_max->cells.c_codes[i] - ic_min->cells.c_codes[i];
+   }
+ }
 
 
-
-
-}
-
-void LTC6811_init_max_min(uint8_t total_ic, cell_asic* ic,cell_asic ic_max[],cell_asic ic_min[])
+void LTC6811_init_max_min(uint8_t n_ic, cell_asic* ic,cell_asic* ic_max,cell_asic* ic_min)
 {
-  for (int j=0; j < total_ic; j++)
+  for (int i = 0; i< ic->ic_reg.cell_channels; i++)
   {
-    for (int i = 0; i< ic[j].ic_reg.cell_channels; i++)
-    {
-      ic_max[j].cells.c_codes[i]=0;
-      ic_min[j].cells.c_codes[i]=0xFFFF;
-    }
+    ic_max->cells.c_codes[i]=0;
+    ic_min->cells.c_codes[i]=0xFFFF;
   }
-
 }
 
 //Helper function that increments PEC counters
-void LTC6811_check_pec(uint8_t total_ic,uint8_t reg, cell_asic* ic)
+void LTC6811_check_pec(uint8_t reg, cell_asic* ic)
 {
-  LTC681x_check_pec(total_ic,reg,ic);
+  LTC681x_check_pec(reg,ic);
 }
 
 //Helper Function to reset PEC counters
-void LTC6811_reset_crc_count(uint8_t total_ic, cell_asic* ic)
+void LTC6811_reset_crc_count(cell_asic* ic)
 {
-  LTC681x_reset_crc_count(total_ic,ic);
+  LTC681x_reset_crc_count(ic);
 }
 
 //Helper function to intialize CFG variables.
-void LTC6811_init_cfg(uint8_t total_ic, cell_asic* ic)
+void LTC6811_init_cfg(cell_asic* ic)
 {
-  LTC681x_init_cfg(total_ic,ic);
+  LTC681x_init_cfg(ic);
 }
 //Helper function to set CFGR variable
-void LTC6811_set_cfgr(uint8_t nIC, cell_asic* ic, bool refon, bool adcopt, bool gpio[5],bool dcc[12])
+void LTC6811_set_cfgr(cell_asic* ic, bool refon, bool adcopt, bool gpio[5],bool dcc[12])
 {
-  LTC681x_set_cfgr_refon(nIC,ic,refon);
-  LTC681x_set_cfgr_adcopt(nIC,ic,adcopt);
-  LTC681x_set_cfgr_gpio(nIC,ic,gpio);
-  LTC681x_set_cfgr_dis(nIC,ic,dcc);
+  LTC681x_set_cfgr_refon(ic,refon);
+  LTC681x_set_cfgr_adcopt(ic,adcopt);
+  LTC681x_set_cfgr_gpio(ic,gpio);
+  LTC681x_set_cfgr_dis(ic,dcc);
 }
 //Helper function to set the REFON bit
-void LTC6811_set_cfgr_refon(uint8_t nIC, cell_asic* ic, bool refon)
+void LTC6811_set_cfgr_refon(cell_asic* ic, bool refon)
 {
-  LTC681x_set_cfgr_refon(nIC,ic,refon);
+  LTC681x_set_cfgr_refon(ic,refon);
 }
 //Helper function to set the adcopt bit
-void LTC6811_set_cfgr_adcopt(uint8_t nIC, cell_asic* ic, bool adcopt)
+void LTC6811_set_cfgr_adcopt(cell_asic* ic, bool adcopt)
 {
-  LTC681x_set_cfgr_adcopt(nIC,ic,adcopt);
+  LTC681x_set_cfgr_adcopt(ic,adcopt);
 }
 //Helper function to set GPIO bits
-void LTC6811_set_cfgr_gpio(uint8_t nIC, cell_asic* ic,bool gpio[5])
+void LTC6811_set_cfgr_gpio(cell_asic* ic,bool gpio[5])
 {
-  LTC681x_set_cfgr_gpio(nIC,ic,gpio);
+  LTC681x_set_cfgr_gpio(ic,gpio);
 }
 //Helper function to control discharge
-void LTC6811_set_cfgr_dis(uint8_t nIC, cell_asic* ic,bool dcc[12])
+void LTC6811_set_cfgr_dis(cell_asic* ic,bool dcc[12])
 {
-  LTC681x_set_cfgr_dis(nIC,ic,dcc);
+  LTC681x_set_cfgr_dis(ic,dcc);
 }
 //Helper Function to set uv value in CFG register
-void LTC6811_set_cfgr_uv(uint8_t nIC, cell_asic* ic,uint16_t uv)
+void LTC6811_set_cfgr_uv(cell_asic* ic,uint16_t uv)
 {
-  LTC681x_set_cfgr_uv(nIC, ic, uv);
+  LTC681x_set_cfgr_uv(ic, uv);
 }
 //helper function to set OV value in CFG register
-void LTC6811_set_cfgr_ov(uint8_t nIC, cell_asic* ic,uint16_t ov)
+void LTC6811_set_cfgr_ov(cell_asic* ic,uint16_t ov)
 {
-  LTC681x_set_cfgr_ov( nIC, ic, ov);
+  LTC681x_set_cfgr_ov(ic, ov);
 }

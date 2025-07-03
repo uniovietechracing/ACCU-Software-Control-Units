@@ -95,7 +95,7 @@ void MCU_CAN1_Send(CAN_TxHeaderTypeDef* CAN_Header, uint8_t* Data , uint32_t* Ma
 ***************											us delay	       		         ***************	
 ********************************************************************************
 *******************************************************************************/
-void MCU_us_Delay(uint32_t us)
+void MCU_us_Delay(uint32_t us);
 
 
 

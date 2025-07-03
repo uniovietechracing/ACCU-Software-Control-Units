@@ -15,6 +15,19 @@
 #define STAT 3
 
 
+//LTC CONFIGURATION VARIABLES
+extern bool REFON_1;
+extern bool ADCOPT_1;
+extern bool gpioBits_a_1[5];
+extern bool dccBits_a_1[12];
+extern bool dctoBits_1[4];
+
+//LTC CONFIGURATION VARIABLES
+extern bool REFON_2;
+extern bool ADCOPT_2;
+extern bool gpioBits_a_2[5];
+extern bool dccBits_a_2[12];
+extern bool dctoBits_2[4];
 
 void LTC6811_init_reg_limits(cell_asic* ic);
 //extern const uint16_t crc15Table[256];
@@ -31,12 +44,12 @@ void LTC6811_diagn(uint8_t n_ic);
 
 //! Sends the poll adc command
 //! @returns 1 byte read back after a pladc command. If the byte is not 0xFF ADC conversion has completed
-uint8_t LTC6811_pladc();
+uint8_t LTC6811_pladc(uint8_t n_ic);
 
 
 //! This function will block operation until the ADC has finished it's conversion
 //! @returns the approximate time it took for the ADC function to complete.
-uint32_t LTC6811_pollAdc();
+uint32_t LTC6811_pollAdc(uint8_t n_ic);
 
 /*! Starts cell voltage conversion
 */
@@ -252,7 +265,7 @@ int8_t LTC6811_rdcomm(uint8_t n_ic, //!< number of ICs in the daisy chain
                      );
 
 /*!  issues a stcomm command and clocks data out of the COMM register */
-void LTC6811_stcomm(uint8_t n_ic);
+void LTC6811_stcomm();
 
 
 /*! @returns returns the register data pattern for a given ADC MD and Self test */
@@ -285,59 +298,49 @@ uint16_t LTC6811_run_adc_overlap(uint8_t n_ic,
                                  cell_asic* ic);
 
 /*! Helper Function that counts overall PEC errors and register/IC PEC errors*/
-void LTC6811_check_pec(uint8_t n_ic,
-                       uint8_t reg,
+void LTC6811_check_pec(uint8_t reg,
                        cell_asic* ic);
 
 /*! Helper Function that resets the PEC error counters */
-void LTC6811_reset_crc_count(uint8_t n_ic,
-                             cell_asic* ic);
+void LTC6811_reset_crc_count(cell_asic* ic);
 
 /*! Helper Function to initialize the CFGR data structures*/
-void LTC6811_init_cfg(uint8_t n_ic,
-                      cell_asic* ic);
+void LTC6811_init_cfg(cell_asic* ic);
 
 /*! Helper function to set appropriate bits in CFGR register based on bit function*/
-void LTC6811_set_cfgr(uint8_t n_ic,
-                      cell_asic* ic,
+void LTC6811_set_cfgr(cell_asic* ic,
                       bool refon,
                       bool adcopt,
                       bool gpio[5],
                       bool dcc[12]);
 
 /*! Helper function to turn the refon bit HIGH or LOW*/
-void LTC6811_set_cfgr_refon(uuint8_t n_ic,
-                            cell_asic* ic,
+void LTC6811_set_cfgr_refon(cell_asic* ic,
                             bool refon);
 
 /*! Helper function to turn the ADCOPT bit HIGH or LOW*/
-void LTC6811_set_cfgr_adcopt(uint8_t n_ic,
-                             cell_asic* ic,
+void LTC6811_set_cfgr_adcopt(cell_asic* ic,
                              bool adcopt);
 
 /*! Helper function to turn the GPIO bits HIGH or LOW*/
-void LTC6811_set_cfgr_gpio(uint8_t n_ic,
-                           cell_asic* ic,
+void LTC6811_set_cfgr_gpio(cell_asic* ic,
 													 bool gpio[]);
 
 /*! Helper function to turn the DCC bits HIGH or LOW*/
-void LTC6811_set_cfgr_dis(uint8_t n_ic,
-                          cell_asic* ic,
+void LTC6811_set_cfgr_dis(cell_asic* ic,
                           bool dcc[]);
 /*!  Helper function to set uv field in CFGRA register*/
-void LTC6811_set_cfgr_uv(uint8_t n_ic,
-                         cell_asic* ic,
+void LTC6811_set_cfgr_uv(cell_asic* ic,
                          uint16_t uv);
 
 /*!  Helper function to set ov field in CFGRA register*/
-void LTC6811_set_cfgr_ov(uint8_t n_ic,
-                         cell_asic* ic,
+void LTC6811_set_cfgr_ov(cell_asic* ic,
                          uint16_t ov);
 
 void LTC6811_init_max_min(uint8_t n_ic,
                           cell_asic* ic,
-                          cell_asic ic_max,
-                          cell_asic ic_min);
+                          cell_asic* ic_max,
+                          cell_asic* ic_min);
 
 void LTC6811_max_min(uint8_t n_ic, cell_asic ic_cells[],
                      cell_asic ic_min[],

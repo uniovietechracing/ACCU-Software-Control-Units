@@ -34,7 +34,9 @@
 #include "LTC6811.h"
 #include "MCU.h"
 #include <math.h>
+#include "LTC6811_Dual.h"
 
+ extern 
 #define STM32F4_MCU
 
 /*******************************************************************************

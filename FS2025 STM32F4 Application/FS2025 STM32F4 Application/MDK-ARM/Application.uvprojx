@@ -10,7 +10,7 @@
       <TargetName>Application</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>6210000::V6.21::ARMCLANG</pCCUsed>
+      <pCCUsed>6220000::V6.22::ARMCLANG</pCCUsed>
       <uAC6>1</uAC6>
       <TargetOption>
         <TargetCommonOption>
@@ -460,14 +460,14 @@
               <FilePath>..\core\APP\Control_Unit\LTC6811\LTC6811.h</FilePath>
             </File>
             <File>
-              <FileName>LT_SPI.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\core\APP\Control_Unit\LTC6811\LT_SPI.c</FilePath>
-            </File>
-            <File>
               <FileName>LT_SPI.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\core\APP\Control_Unit\LTC6811\LT_SPI.h</FilePath>
+            </File>
+            <File>
+              <FileName>LT_SPI.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\core\APP\Control_Unit\LTC6811\LT_SPI.c</FilePath>
             </File>
             <File>
               <FileName>LTC681x.c</FileName>

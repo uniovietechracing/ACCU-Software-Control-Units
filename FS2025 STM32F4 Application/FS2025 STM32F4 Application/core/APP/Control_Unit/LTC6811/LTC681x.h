@@ -9,7 +9,11 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "LT_SPI.h"
-
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include "stm32f4xx_hal.h"
 
 
 #define MD_422HZ_1KHZ 0
@@ -475,12 +479,10 @@ void LTC681x_reset_crc_count(
                              cell_asic* ic);
 
 /*! Helper Function to initialize the CFGR data structures*/
-void LTC681x_init_cfg(uint8_t n_ic,
-                      cell_asic* ic);
+void LTC681x_init_cfg(cell_asic* ic);
 
 /*! Helper function to set appropriate bits in CFGR register based on bit function*/
-void LTC681x_set_cfgr(uint8_t n_ic,
-                      cell_asic* ic,
+void LTC681x_set_cfgr(cell_asic* ic,
                       bool refon,
                       bool adcopt,
                       bool gpio[5],

@@ -33,6 +33,8 @@
 #include "Control_Unit_Selection.h"
 #include "Common_Functions.h"
 #include "MCU.h"
+#include "LTC681x.h"
+
 
 
 /*******************************************************************************
@@ -172,8 +174,8 @@ typedef struct
 	uint8_t Temperatures_Failed;
 	Control_Unit_Time_TypeDef Timing;
 	CAN_Message_TypeDef CAN_Message;
-	LTC6811_Typdef LTC6811_1;
-	LTC6811_Typdef LTC6811_2;
+	cell_asic LTC6811_1;
+	cell_asic LTC6811_2;
 	Read_Temperatures_Status_TypeDef Read_Temperatures;
 
 } Control_Unit_Status_Typdef;

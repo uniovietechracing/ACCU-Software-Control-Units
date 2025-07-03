@@ -27,6 +27,7 @@
 #include <stdlib.h>
 #include "LT_SPI.h"
 #include "stm32f4xx_hal.h"
+#include "MCU.h"
 
 
 void LTC6811_1_Initialize(void)
@@ -113,6 +114,26 @@ void LTC6811_1_SPI_Write_Read(uint8_t  tx_Data[],uint8_t  tx_len,  uint8_t* rx_d
     {
         // Receive byte.
         HAL_SPI_TransmitReceive(&STM32_SPI1, (uint8_t*)0xFF, (uint8_t*)&rx_data[i], 1, HAL_MAX_DELAY);
+    }
+}
+
+void LTC6811_2_SPI_Write_Read(uint8_t  tx_Data[],uint8_t  tx_len,  uint8_t* rx_data, uint8_t  rx_len)
+{
+    uint8_t i;
+    uint8_t data;
+
+    // Transfer data
+    for ( i = 0; i < tx_len; i++ )
+    {
+        // Transmit byte.
+        HAL_SPI_TransmitReceive(&STM32_SPI2, (uint8_t*)&tx_Data[i], &data, 1, HAL_MAX_DELAY);
+    }
+
+    // Receive data.
+    for ( i = 0; i < rx_len; i++ )
+    {
+        // Receive byte.
+        HAL_SPI_TransmitReceive(&STM32_SPI2, (uint8_t*)0xFF, (uint8_t*)&rx_data[i], 1, HAL_MAX_DELAY);
     }
 }
 

@@ -43,11 +43,8 @@ ongoing work.
 Copyright 2017 Linear Technology Corp. (LTC)
 ***********************************************************/
 #include "LTC681x.h"
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include "stm32f4xx_hal.h"
+
+extern void MCU_us_Delay(uint32_t us);
 
 const uint16_t crc15Table[256] = {0x0,0xc599, 0xceab, 0xb32, 0xd8cf, 0x1d56, 0x1664, 0xd3fd, 0xf407, 0x319e, 0x3aac,  //!<precomputed CRC15 Table
                                 0xff35, 0x2cc8, 0xe951, 0xe263, 0x27fa, 0xad97, 0x680e, 0x633c, 0xa6a5, 0x7558, 0xb0c1,
@@ -910,7 +907,7 @@ int8_t LTC681x_rdstat(uint8_t n_ic,uint8_t reg, //Determines which Stat  registe
     }
     else if (reg == 2)
     {
-      parsed_stat = data[data_counter++] + (data[data_counter++]<<8);              //Each gpio codes is received as two bytes and is combined to
+      parsed_stat = data[data_counter] + (data[data_counter]<<8);              //Each gpio codes is received as two bytes and is combined to
       ic->stat.stat_codes[3] = parsed_stat;
       ic->stat.flags[0] = data[data_counter++];
       ic->stat.flags[1] = data[data_counter++];
@@ -1322,7 +1319,7 @@ void LTC681x_reset_crc_count( cell_asic* ic)
 }
 
 //Helper function to intialize CFG variables.
-void LTC681x_init_cfg(uint8_t n_ic, cell_asic* ic)
+void LTC681x_init_cfg(cell_asic* ic)
 {
   bool REFON = true;
   bool ADCOPT = false;
@@ -1333,11 +1330,11 @@ void LTC681x_init_cfg(uint8_t n_ic, cell_asic* ic)
     ic->config.tx_data[j] = 0;
     ic->configb.tx_data[j] = 0;
   }
-  LTC681x_set_cfgr(n_ic ,ic,REFON,ADCOPT,gpioBits,dccBits);
+  LTC681x_set_cfgr(ic,REFON,ADCOPT,gpioBits,dccBits);
 }
 
 //Helper function to set CFGR variable
-void LTC681x_set_cfgr(uint8_t n_ic, cell_asic* ic, bool refon, bool adcopt, bool gpio[5],bool dcc[12])
+void LTC681x_set_cfgr(cell_asic* ic, bool refon, bool adcopt, bool gpio[5],bool dcc[12])
 {
   LTC681x_set_cfgr_refon(ic,refon);
   LTC681x_set_cfgr_adcopt(ic,adcopt);
@@ -1453,24 +1450,6 @@ Shifts data in COMM register out over LTC6811 SPI/I2C port
 */
 void LTC681x_stcomm()
 {
-
-  uint8_t cmd[4];
-  uint16_t cmd_pec;
-
-  cmd[0] = 0x07;
-  cmd[1] = 0x23;
-  cmd_pec = pec15_calc(2, cmd);
-  cmd[2] = (uint8_t)(cmd_pec >> 8);
-  cmd[3] = (uint8_t)(cmd_pec);
-
-  cs_low();
-  spi_write_array(4,cmd);
-  for (int i = 0; i<9; i++)
-  {
-    spi_read_byte(0xFF);
-  }
-  cs_high();
-
 }
 
 // Writes the pwm register

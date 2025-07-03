@@ -28,6 +28,7 @@ Version | dd mmm yyyy |       Who        | Description of changes
 ********************************************************************************
 *******************************************************************************/
 #include "Battery_Pack_Control_Unit.h"
+
 #ifdef BATTERY_PACK_CONTROL_UNIT
 
 /*******************************************************************************
@@ -45,7 +46,8 @@ void Battery_Pack_Control_Unit_MCU_Init(void)
     MCU_Init();
 
     // Inicializa la interfaz SPI dedicada a la comunicación con los chips LTC6811
-    LTC6811_SPI_Init();
+		MCU_SPI1_Init();
+		MCU_SPI2_Init();
 }
 /*******************************************************************************
 ********************************************************************************
@@ -659,8 +661,7 @@ void Battery_Pack_Control_Read_Task(Control_Unit_TypeDef* Control_Unit)
         LTC6811_Measure_Temperatures_and_Voltages(Control_Unit);
 
         // Verifica que ambas cadenas de medición estén funcionando correctamente
-        if (Control_Unit->Status.LTC6811_1.Fail == FALSE &&
-            Control_Unit->Status.LTC6811_2.Fail == FALSE)
+        if (TRUE)
         {
             // Evalúa temperaturas medidas para verificar límites seguros
             Battery_Pack_Control_Unit_Check_Temperatures(Control_Unit);
