@@ -351,7 +351,7 @@ void STM32F4_Common_Init(void)
   STM32F4_SystemClock_Config();
 	
 	#ifndef NO_WDT
-		STM32F4_IWDG_Init();
+		//STM32F4_IWDG_Init();
 	#endif
 	// Initialize timers
 	STM32F4_TIM7_Init();

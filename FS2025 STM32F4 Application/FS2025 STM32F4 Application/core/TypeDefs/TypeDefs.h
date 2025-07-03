@@ -135,7 +135,7 @@ typedef enum
 typedef struct {
     SPI_HandleTypeDef *SPI_Handler;
     GPIO_TypeDef *CS_PORT;
-    uint16_t CS_PIN;
+    //uint16_t CS_PIN;
 		uint8_t Config[6];
     Balancing_Status_TypeDef Balancing;
 		BoolTypeDef Fail;
@@ -173,6 +173,8 @@ typedef enum
 ***************									  STATUS Struct			        		 ***************
 ********************************************************************************
 *******************************************************************************/
+#include "LTC681x.h"
+
 typedef struct
 {
 	float Voltages[24];
@@ -181,7 +183,7 @@ typedef struct
 	uint8_t Temperatures_Failed;
 	Control_Unit_Time_TypeDef Timing;
 	CAN_Message_TypeDef CAN_Message;
-	LTC6811_Typdef LTC6811_1;
+	cell_asic LTC6811_1[1];
 	//LTC6811_Typdef LTC6811_2;
 	Read_Temperatures_Status_TypeDef Read_Temperatures;
 

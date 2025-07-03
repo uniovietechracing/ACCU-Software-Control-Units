@@ -10,7 +10,7 @@
       <TargetName>Application</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>6210000::V6.21::ARMCLANG</pCCUsed>
+      <pCCUsed>6220000::V6.22::ARMCLANG</pCCUsed>
       <uAC6>1</uAC6>
       <TargetOption>
         <TargetCommonOption>
@@ -458,6 +458,36 @@
               <FileName>LTC6811.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\core\APP\Control_Unit\LTC6811\LTC6811.h</FilePath>
+            </File>
+            <File>
+              <FileName>LT_SPI.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\core\APP\Control_Unit\LTC6811\LT_SPI.h</FilePath>
+            </File>
+            <File>
+              <FileName>LT_SPI.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\core\APP\Control_Unit\LTC6811\LT_SPI.c</FilePath>
+            </File>
+            <File>
+              <FileName>LTC681x.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\core\APP\Control_Unit\LTC6811\LTC681x.c</FilePath>
+            </File>
+            <File>
+              <FileName>LTC681x.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\core\APP\Control_Unit\LTC6811\LTC681x.h</FilePath>
+            </File>
+            <File>
+              <FileName>LTC6811_Dual.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\LTC6811_Dual.c</FilePath>
+            </File>
+            <File>
+              <FileName>LTC6811_Dual.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\core\APP\Control_Unit\LTC6811\LTC6811_Dual.h</FilePath>
             </File>
           </Files>
         </Group>

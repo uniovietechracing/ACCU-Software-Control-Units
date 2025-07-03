@@ -29,11 +29,13 @@
 ***************										 Includes                      ***************	
 ********************************************************************************
 *******************************************************************************/
+#include "TypeDefs.h"
 #include "State_LEDs.h"
 #include "Can_Bus.h"
 #include "LTC6811.h"
 #include "MCU.h"
 #include <math.h>
+#include "LTC6811_Dual.h"
 
 #define STM32F4_MCU
 
@@ -53,6 +55,7 @@ void Battery_Pack_Control_Unit_Init(Control_Unit_TypeDef* Control_Unit);
 *******************************************************************************/
 void Generate_Status_Message(Control_Unit_TypeDef* Control_Unit);
 void Generate_Temp_Message(Control_Unit_TypeDef* Control_Unit);
+void LTC6811_Measure_Temperatures_and_Voltages(Control_Unit_TypeDef* Control_Unit);
 
 
 /*******************************************************************************

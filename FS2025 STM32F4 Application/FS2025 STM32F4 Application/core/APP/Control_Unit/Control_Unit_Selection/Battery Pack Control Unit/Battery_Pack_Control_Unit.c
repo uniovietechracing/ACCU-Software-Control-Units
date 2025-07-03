@@ -30,6 +30,7 @@ Version | dd mmm yyyy |       Who        | Description of changes
 #include "Battery_Pack_Control_Unit.h"
 #ifdef BATTERY_PACK_CONTROL_UNIT
 
+
 /*******************************************************************************
 ********************************************************************************
 ***************									Init MCU Function	    		    	 ***************	
@@ -45,7 +46,7 @@ void Battery_Pack_Control_Unit_MCU_Init(void)
     MCU_Init();
 
     // Inicializa la interfaz SPI dedicada a la comunicación con los chips LTC6811
-    LTC6811_SPI_Init();
+		MCU_SPI1_Init();
 }
 /*******************************************************************************
 ********************************************************************************
@@ -143,7 +144,8 @@ void Battery_Pack_Control_Unit_Init(Control_Unit_TypeDef* Control_Unit)
     Timer_10ms_Init(&Control_Unit->Timing.Temp_Send_Timer, 1, MILISECONDS, 200);
 
     // Inicializa los módulos de medición LTC6811 (voltaje y temperatura)
-    LTC6811_Init(Control_Unit);
+    LTC6811_Init(Control_Unit);	//initializes the LTC and SPI communication
+
 }
 
 /*******************************************************************************
@@ -201,8 +203,8 @@ void Generate_Status_Message(Control_Unit_TypeDef* Control_Unit)
     // Codifica y almacena las 6 temperaturas seleccionadas en los primeros 6 bytes
     for (uint8_t i = 0; i < 6; i++) 
     {
-        Control_Unit->Tx_Message.Data[i] =
-        LTC6811_Encode_Temp(Control_Unit->Status.Temperatures[base + i].Actual_Value);
+        //Control_Unit->Tx_Message.Data[i] =
+        //LTC6811_Encode_Temp(Control_Unit->Status.Temperatures[base + i].Actual_Value);
     }
 
     // Byte 6: número total de sensores en sobretemperatura
@@ -240,8 +242,8 @@ void Generate_Volt_Message(Control_Unit_TypeDef* Control_Unit)
 
 	for (uint8_t i = 0; i < 8; i++)
 	{
-		Control_Unit->Tx_Message.Data[i] =
-			LTC6811_Encode_Volt_10mV(Control_Unit->Status.Voltages[base_index + i]);
+		//Control_Unit->Tx_Message.Data[i] =
+			//LTC6811_Encode_Volt_10mV(Control_Unit->Status.Voltages[base_index + i]);
 	}
 }
 
@@ -656,10 +658,10 @@ void Battery_Pack_Control_Read_Task(Control_Unit_TypeDef* Control_Unit)
         Control_Unit->Status.Read_Temperatures = READING;
 
         // Inicia la medición de temperaturas y voltajes a través de los dos chips LTC6811
-        LTC6811_Measure_Temperatures_and_Voltages(Control_Unit);
+        //LTC6811_Measure_Temperatures_and_Voltages(Control_Unit);
 
         // Verifica que ambas cadenas de medición estén funcionando correctamente
-        if (Control_Unit->Status.LTC6811_1.Fail == FALSE )//&& Control_Unit->Status.LTC6811_2.Fail == FALSE)
+        if (1)//&& Control_Unit->Status.LTC6811_2.Fail == FALSE)
         {
             // Evalúa temperaturas medidas para verificar límites seguros
             Battery_Pack_Control_Unit_Check_Temperatures(Control_Unit);
@@ -846,6 +848,10 @@ void Battery_Pack_Control_Unit_CAN1_Interrupt(Control_Unit_TypeDef* Control_Unit
 
 	}
 }
+
+
+
+
 
 #endif
 
