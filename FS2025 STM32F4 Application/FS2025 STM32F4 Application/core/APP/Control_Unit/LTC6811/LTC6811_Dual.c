@@ -336,7 +336,7 @@ void LTC6811_Measure_Temperatures_and_Voltages(Control_Unit_TypeDef* Control_Uni
 		while(error_2 && intentos_2<=2)
 		{
 				intentos_2++;
-				error_1=LTC6811_rdcv(1,CELL_CH_ALL,&Control_Unit->Status.LTC6811_1);
+				error_2=LTC6811_rdcv(2,CELL_CH_ALL,&Control_Unit->Status.LTC6811_2);
 		}
 		
 		//Si ha vuelto a fallar damos fallo
@@ -393,7 +393,7 @@ void LTC6811_Measure_Temperatures_and_Voltages(Control_Unit_TypeDef* Control_Uni
 		while(error_2 && intentos_2<=2)
 		{
 				intentos_2++;
-				error_1=LTC6811_rdcv(1,CELL_CH_ALL,&Control_Unit->Status.LTC6811_1);
+				error_2=LTC6811_rdcv(2,CELL_CH_ALL,&Control_Unit->Status.LTC6811_2);
 		}
 		
 		//Si ha vuelto a fallar damos fallo
