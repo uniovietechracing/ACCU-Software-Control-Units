@@ -8,23 +8,23 @@
 
 //Initialize the SPI Peripheral
 
-void LTC6811_Initialize(void);
+void LTC6811_Initialize_1(void);
 
-// cs_low
+// LTC6811_CS_Low_1
 
-void cs_low(void);
+void LTC6811_CS_Low_1(void);
 
-// cs_high
+// LTC6811_CS_High_1
 
-void cs_high(void);
+void LTC6811_CS_High_1(void);
 
-// spi_write
+// LTC6811_SPI_Write_1
 
-void spi_write(uint8_t data); //Bytes to be written on the SPI port
+void LTC6811_SPI_Write_1(uint8_t data); //Bytes to be written on the SPI port
 
-// spi_write_array
+// LTC6811_SPI_Write_Array_1
 
-void spi_write_array(uint8_t len, // Option: Number of bytes to be written on the SPI port
+void LTC6811_SPI_Write_Array_1(uint8_t len, // Option: Number of bytes to be written on the SPI port
                      uint8_t data[] //Array of bytes to be written on the SPI port
                     );
 
@@ -32,11 +32,46 @@ void spi_write_array(uint8_t len, // Option: Number of bytes to be written on th
  Writes and read a set number of bytes using the SPI port.
 */
 
-void spi_write_read(uint8_t tx_Data[],//array of data to be written on SPI port
+void LTC6811_SPI_Write_Read_1(uint8_t tx_Data[],//array of data to be written on SPI port
                     uint8_t tx_len, //length of the tx data arry
                     uint8_t *rx_data,//Input: array that will store the data read by the SPI port
                     uint8_t rx_len //Option: number of bytes to be read from the SPI port
                    );
 
-uint8_t spi_read_byte(uint8_t tx_dat);//name conflicts with linduino also needs to take a byte as a parameter
+uint8_t LTC6811_SPI_Read_Byte_1(uint8_t tx_dat);//name conflicts with linduino also needs to take a byte as a parameter
+
+
+
+
+void LTC6811_Initialize_2(void);
+
+// LTC6811_CS_Low_1
+
+void LTC6811_CS_Low_2(void);
+
+// LTC6811_CS_High_1
+
+void LTC6811_CS_High_2(void);
+
+// LTC6811_SPI_Write_1
+
+void LTC6811_SPI_Write_2(uint8_t data); //Bytes to be written on the SPI port
+
+// LTC6811_SPI_Write_Array_1
+
+void LTC6811_SPI_Write_Array_2(uint8_t len, // Option: Number of bytes to be written on the SPI port
+                     uint8_t data[] //Array of bytes to be written on the SPI port
+                    );
+
+/*
+ Writes and read a set number of bytes using the SPI port.
+*/
+
+void LTC6811_SPI_Write_Read_2(uint8_t tx_Data[],//array of data to be written on SPI port
+                    uint8_t tx_len, //length of the tx data arry
+                    uint8_t *rx_data,//Input: array that will store the data read by the SPI port
+                    uint8_t rx_len //Option: number of bytes to be read from the SPI port
+                   );
+
+uint8_t LTC6811_SPI_Read_Byte_2(uint8_t tx_dat);//name conflicts with linduino also needs to take a byte as a parameter
 #endif

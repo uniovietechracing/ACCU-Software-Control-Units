@@ -77,15 +77,33 @@ bool dctoBits_2[4] = {false, false, false, false}; //!< Discharge time value // 
  *
  * @param[in,out] Control_Unit  Puntero a la estructura principal de control del sistema.
  */
-void LTC6811_Init(Control_Unit_TypeDef* Control_Unit)
+void LTC6811_Init_1(Control_Unit_TypeDef* Control_Unit)
 {
 	uint8_t y=1;
-	LTC6811_Initialize();	//Initializes the SPI communication at 1MHz
+	LTC6811_Initialize_1();	//Initializes the SPI communication at 1MHz
 	LTC6811_init_cfg(1, Control_Unit->Status.LTC6811_1);	//Initializes the confiugration registers to all 0s
 	//This for loop initializes the configuration register variables 
 	for (uint8_t current_ic = 0; current_ic<y;current_ic++) 
   {
     LTC6811_set_cfgr(current_ic,Control_Unit->Status.LTC6811_1,REFON_1,ADCOPT_1,gpioBits_a_1,dccBits_a_1);
+  }
+	LTC6811_reset_crc_count(1,Control_Unit->Status.LTC6811_1);	//sets the CRC count to 0
+	LTC6811_init_reg_limits(1, Control_Unit->Status.LTC6811_1);	//Initializes the LTC's register limits for LTC6811 (because the generic LTC681x libraries can also be used for LTC6813 and others)
+	wakeup_sleep(1);
+	LTC6811_wrcfg(1,Control_Unit->Status.LTC6811_1);	//writes the configuration variables in the configuration registers via SPI
+}
+
+
+
+void LTC6811_Init_2(Control_Unit_TypeDef* Control_Unit)
+{
+	uint8_t y=1;
+	LTC6811_Initialize_2();	//Initializes the SPI communication at 1MHz
+	LTC6811_init_cfg(21, Control_Unit->Status.LTC6811_1);	//Initializes the confiugration registers to all 0s
+	//This for loop initializes the configuration register variables 
+	for (uint8_t current_ic = 0; current_ic<y;current_ic++) 
+  {
+    LTC6811_set_cfgr_2(current_ic,Control_Unit->Status.LTC6811_2,REFON_2,ADCOPT_2,gpioBits_a_2,dccBits_a_2);
   }
 	LTC6811_reset_crc_count(1,Control_Unit->Status.LTC6811_1);	//sets the CRC count to 0
 	LTC6811_init_reg_limits(1, Control_Unit->Status.LTC6811_1);	//Initializes the LTC's register limits for LTC6811 (because the generic LTC681x libraries can also be used for LTC6813 and others)

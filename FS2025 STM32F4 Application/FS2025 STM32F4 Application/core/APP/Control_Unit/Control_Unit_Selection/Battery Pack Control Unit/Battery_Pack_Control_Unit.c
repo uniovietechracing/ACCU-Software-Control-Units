@@ -46,7 +46,6 @@ void Battery_Pack_Control_Unit_MCU_Init(void)
     MCU_Init();
 
     // Inicializa la interfaz SPI dedicada a la comunicación con los chips LTC6811
-		MCU_SPI1_Init();
 }
 /*******************************************************************************
 ********************************************************************************
@@ -144,7 +143,9 @@ void Battery_Pack_Control_Unit_Init(Control_Unit_TypeDef* Control_Unit)
     Timer_10ms_Init(&Control_Unit->Timing.Temp_Send_Timer, 1, MILISECONDS, 200);
 
     // Inicializa los módulos de medición LTC6811 (voltaje y temperatura)
-    LTC6811_Init(Control_Unit);	//initializes the LTC and SPI communication
+    LTC6811_Init_1(Control_Unit);	//initializes the LTC and SPI communication
+	  LTC6811_Init_2(Control_Unit);	//initializes the LTC and SPI communication
+
 
 }
 
