@@ -22,7 +22,7 @@
   ******************************************************************************
   */
 	
-#include "LTC6811.h"
+#include "LTC6811_Dual.h"
 #include "MCU.h"
 
 /*******************************************************************************
@@ -99,16 +99,16 @@ void LTC6811_Init_2(Control_Unit_TypeDef* Control_Unit)
 {
 	uint8_t y=1;
 	LTC6811_Initialize_2();	//Initializes the SPI communication at 1MHz
-	LTC6811_init_cfg(21, Control_Unit->Status.LTC6811_1);	//Initializes the confiugration registers to all 0s
+	LTC6811_init_cfg_2(21, Control_Unit->Status.LTC6811_2);	//Initializes the confiugration registers to all 0s
 	//This for loop initializes the configuration register variables 
 	for (uint8_t current_ic = 0; current_ic<y;current_ic++) 
   {
     LTC6811_set_cfgr_2(current_ic,Control_Unit->Status.LTC6811_2,REFON_2,ADCOPT_2,gpioBits_a_2,dccBits_a_2);
   }
-	LTC6811_reset_crc_count(1,Control_Unit->Status.LTC6811_1);	//sets the CRC count to 0
-	LTC6811_init_reg_limits(1, Control_Unit->Status.LTC6811_1);	//Initializes the LTC's register limits for LTC6811 (because the generic LTC681x libraries can also be used for LTC6813 and others)
-	wakeup_sleep(1);
-	LTC6811_wrcfg(1,Control_Unit->Status.LTC6811_1);	//writes the configuration variables in the configuration registers via SPI
+	LTC6811_reset_crc_count_2(1,Control_Unit->Status.LTC6811_2);	//sets the CRC count to 0
+	LTC6811_init_reg_limits_2(1, Control_Unit->Status.LTC6811_2);	//Initializes the LTC's register limits for LTC6811 (because the generic LTC681x libraries can also be used for LTC6813 and others)
+	wakeup_sleep_2(1);
+	LTC6811_wrcfg_2(1,Control_Unit->Status.LTC6811_2);	//writes the configuration variables in the configuration registers via SPI
 }
 
 
@@ -306,6 +306,105 @@ void LTC_Disable_Balancing(uint8_t total_ic, cell_asic ic[])
 }
 
 
+
+
+
+
+/*******************************************************************************
+********************************************************************************
+***************								Activar balanceo par				     	 ***************	
+********************************************************************************
+*******************************************************************************/
+/**
+ * @brief Activa el balanceo de celdas pares en un LTC6811.
+ *
+ * Esta función configura el LTC6811 para activar el balanceo de celdas pares 
+ * (C2, C4, C6, C8, C10, C12) utilizando los bits DCC (Discharge Cell Control).
+ * También habilita el regulador de referencia interno (`REFON = 1`) necesario 
+ * para operar el circuito de descarga.
+ *
+ * Después de aplicar la configuración, se verifica que haya sido correctamente 
+ * escrita mediante una lectura de vuelta de los registros de configuración.
+ * Si la verificación falla o no hay comunicación, se marca la estructura con 
+ * `Fail = TRUE`.
+ *
+ * @param[in,out] LTC6811  Puntero a la estructura de estado del LTC6811.
+ */
+ void LTC_Active_Even_Balancing_2(uint8_t total_ic, cell_asic ic[])
+{
+    for (int dev = 0; dev < total_ic; dev++)
+    {
+        bool dcc[12] = {false};
+        for (int i = 1; i < 12; i += 2)  // Celdas 2,4,...12 (índices impares)
+            dcc[i] = true;
+
+        LTC6811_set_cfgr_dis_2(dev, ic, dcc);
+    }
+    LTC6811_wrcfg_2(total_ic, ic);  // Escribir la configuración
+}
+
+
+
+/*******************************************************************************
+********************************************************************************
+***************								Activar balanceo IMpar				     ***************	
+********************************************************************************
+*******************************************************************************/
+/**
+ * @brief Activa el balanceo de celdas impares en un LTC6811.
+ *
+ * Esta función configura los bits DCC (Discharge Cell Control) para activar el balanceo
+ * solo en las celdas impares (C1, C3, C5, ..., C11) del LTC6811. También enciende el regulador 
+ * interno (`REFON = 1`) para permitir la operación del circuito de balanceo.
+ *
+ * Luego de escribir la configuración, se realiza una lectura de verificación para confirmar
+ * que los bits DCC se hayan aplicado correctamente. Si ocurre un fallo en la comunicación
+ * o los valores no coinciden, se activa el indicador de fallo (`Fail = TRUE`).
+ *
+ * @param[in,out] LTC6811   Puntero a la estructura del LTC6811 que contiene configuración
+ *                          y estado del dispositivo.
+ */
+ void LTC_Active_Odd_Balancing_2(uint8_t total_ic, cell_asic ic[])
+{
+    for (int dev = 0; dev < total_ic; dev++)
+    {
+        bool dcc[12] = {false};
+        for (int i = 0; i < 12; i += 2)  // Celdas 1,3,...11 (índices pares)
+            dcc[i] = true;
+
+        LTC6811_set_cfgr_dis_2(dev, ic, dcc);
+    }
+    LTC6811_wrcfg_2(total_ic, ic);
+}
+	
+/*******************************************************************************
+********************************************************************************
+***************								Desactivar Balanceo				     		 ***************	
+********************************************************************************
+*******************************************************************************/
+/**
+ * @brief Desactiva el balanceo de celdas en un LTC6811.
+ *
+ * Esta función limpia los bits DCC (Discharge Cell Control) en la configuración del LTC6811
+ * para detener cualquier balanceo activo. También actualiza el estado interno `Balancing` y 
+ * verifica que la configuración haya sido aplicada correctamente leyendo de vuelta los registros.
+ *
+ * Si se detecta un error de comunicación o un fallo al desactivar completamente el balanceo,
+ * se establece el flag `Fail` dentro de la estructura del LTC.
+ *
+ * @param[in,out] LTC6811   Puntero a la estructura del LTC6811 que contiene la configuración
+ *                          y estado actual del dispositivo.
+ */
+void LTC_Disable_Balancing_2(uint8_t total_ic, cell_asic ic[])
+{
+    for (int dev = 0; dev < total_ic; dev++)
+    {
+        bool dcc[12] = {false};  // Todas en false
+        LTC6811_set_cfgr_dis_2(dev, ic, dcc);
+    }
+    LTC6811_wrcfg_2(total_ic, ic);
+}
+
 /*******************************************************************************
 ********************************************************************************
 ***************									LTC Measure 							     	 ***************	
@@ -331,36 +430,37 @@ void LTC6811_Measure_Temperatures_and_Voltages(Control_Unit_TypeDef* Control_Uni
 		int8_t error_1=0;
 		int8_t error_2=0;
 		uint8_t intentos_1=0;
-		//uint8_t intentos_2=0;
+		uint8_t intentos_2=0;
 
     // Despierta ambos LTC6811
     wakeup_idle(1);
-    //wakeup_idle(2);
+    wakeup_idle_2(1);
     HAL_Delay(1); 
 
     // === Medición de celdas pares ===
-    // Activa el balanceo de celdas pares
-    //LTC_Active_Even_Balancing(1,Control_Unit->Status.LTC6811_1);
-	
+    // Activa el balanceo de celdas pares	
 	  LTC6811_set_cfgr_refon(0, Control_Unit->Status.LTC6811_1, true);  // Habilitar REFON
+		LTC6811_set_cfgr_refon_2(0, Control_Unit->Status.LTC6811_2, true);  // Habilitar REFON
 		LTC_Active_Even_Balancing(1, Control_Unit->Status.LTC6811_1);
-    //LTC_Active_Even_Balancing(2,&Control_Unit->Status.LTC6811_2);
+		LTC_Active_Even_Balancing_2(1, Control_Unit->Status.LTC6811_2);
     HAL_Delay(2); // Permite estabilización
 		
+	
+		// Comenzamos la medida
 		wakeup_idle(1);
-    //wakeup_idle(2);
+    wakeup_idle_2(1);
     HAL_Delay(1);
     // Inicia conversión ADC en ambos LTC
     LTC6811_adcv(MD_27KHZ_14KHZ,DCP_ENABLED,CELL_CH_ALL);
-    //LTC6811_adcv(2,MD_7KHZ_3KHZ,DCP_ENABLED,CELL_CH_ALL);
+		LTC6811_adcv_2(MD_27KHZ_14KHZ,DCP_ENABLED,CELL_CH_ALL);
     HAL_Delay(3); // Espera la finalización de la conversión
 
-		 wakeup_idle(1);
-    //wakeup_idle(2);
-    HAL_Delay(1);
     // Lee los voltajes
+		wakeup_idle(1);
+    wakeup_idle_2(1);
+    HAL_Delay(1);
     error_1=LTC6811_rdcv(CELL_CH_ALL,1,Control_Unit->Status.LTC6811_1);
-    //error_2=LTC6811_rdcv(2,CELL_CH_ALL,&Control_Unit->Status.LTC6811_2);
+    error_2=LTC6811_rdcv_2(CELL_CH_ALL,1,Control_Unit->Status.LTC6811_2);
 		
 		//Si ha fallado algo volvemos a medir una vez
 		while(error_1 && intentos_1<=2)
@@ -369,75 +469,63 @@ void LTC6811_Measure_Temperatures_and_Voltages(Control_Unit_TypeDef* Control_Uni
 				error_1=LTC6811_rdcv(CELL_CH_ALL,1,Control_Unit->Status.LTC6811_1);
 		}
 		
-		//while(error_2 && intentos_2<=2)
-		//{
-				//intentos_2++;
-				//error_2=LTC6811_rdcv(2,CELL_CH_ALL,&Control_Unit->Status.LTC6811_2);
-		//}
+		while(error_2 && intentos_2<=2)
+		{
+				intentos_2++;
+				error_2=LTC6811_rdcv_2(CELL_CH_ALL,1,Control_Unit->Status.LTC6811_2);
+		}
 		
 		//Si ha vuelto a fallar damos fallo
 		if(error_1 || error_2)
 		{
 			Control_Unit->State=LTC6811_FAIL_MODE;
 			LTC_Disable_Balancing(1,Control_Unit->Status.LTC6811_1);
-			//LTC_Disable_Balancing(2,&Control_Unit->Status.LTC6811_2);
+			LTC_Disable_Balancing_2(1,Control_Unit->Status.LTC6811_2);
 			return;
 		}
 		intentos_1=0;
-		//intentos_2=0;
-		for (int i = 0; i < 12; i += 2) 
-		{
-        Control_Unit->Status.Voltages[i] = Control_Unit->Status.LTC6811_1[0].cells.c_codes[i]*0.0001;
-       // Control_Unit->Status.Voltages[i + 12] = Control_Unit->Status.LTC6811_2.cells.c_codes[i]*0.0001;
-    }
-		
+		intentos_2=0;
+
     // Convertir voltajes pares a temperaturas (índices impares)
     for (int i = 1; i < 12; i += 2) 
 		{
         Control_Unit->Status.Temperatures[i].Readed_Value = LTC_Voltage_to_Temperature(Control_Unit->Status.LTC6811_1[0].cells.c_codes[i]*0.0001);
-        //Control_Unit->Status.Temperatures[i+12].Readed_Value = LTC_Voltage_to_Temperature(Control_Unit->Status.LTC6811_2.cells.c_codes[i]*0.0001);
+        Control_Unit->Status.Temperatures[i+12].Readed_Value = LTC_Voltage_to_Temperature(Control_Unit->Status.LTC6811_2[0].cells.c_codes[i]*0.0001);
     }
 
-    // Guardar voltajes de celdas impares (índices pares)
-    
-
-		
-    // Desactiva balanceo
-    //LTC_Disable_Balancing(1,Control_Unit->Status.LTC6811_1);
-    //LTC_Disable_Balancing(2,&Control_Unit->Status.LTC6811_2);
-    HAL_Delay(3);
+   
+   
 
 
 		
     // === Medición de celdas impares ===
 		// Activa el balanceo de celdas impares
     wakeup_idle(1);
-    //wakeup_idle(2);
-    HAL_Delay(1); 
-
-    // === Medición de celdas pares ===
-    // Activa el balanceo de celdas pares
-    //LTC_Active_Even_Balancing(1,Control_Unit->Status.LTC6811_1);
-	
+    wakeup_idle_2(1);
+    HAL_Delay(1); 	
 	  LTC6811_set_cfgr_refon(0, Control_Unit->Status.LTC6811_1, true);  // Habilitar REFON
+		LTC6811_set_cfgr_refon_2(0, Control_Unit->Status.LTC6811_2, true);  // Habilitar REFON
 		LTC_Active_Odd_Balancing(1, Control_Unit->Status.LTC6811_1);
-    //LTC_Active_Even_Balancing(2,&Control_Unit->Status.LTC6811_2);
+    LTC_Active_Odd_Balancing(1,Control_Unit->Status.LTC6811_2);
     HAL_Delay(2); // Permite estabilización
 		
+		
+		// Inicia conversión ADC en ambos LTC
 		wakeup_idle(1);
-    //wakeup_idle(2);
+    wakeup_idle_2(1);
     HAL_Delay(1);
-    // Inicia conversión ADC en ambos LTC
     LTC6811_adcv(MD_27KHZ_14KHZ,DCP_ENABLED,CELL_CH_ALL);
-    //LTC6811_adcv(2,MD_7KHZ_3KHZ,DCP_ENABLED,CELL_CH_ALL);
+		LTC6811_adcv_2(MD_27KHZ_14KHZ,DCP_ENABLED,CELL_CH_ALL);
     HAL_Delay(3); // Espera la finalización de la conversión
 
-		 wakeup_idle(1);
-    //wakeup_idle(2);
-    HAL_Delay(1);
+
     // Lee los voltajes
+		wakeup_idle(1);
+    wakeup_idle_2(1);
+    HAL_Delay(1);
+
     error_1=LTC6811_rdcv(CELL_CH_ALL,1,Control_Unit->Status.LTC6811_1);
-    //error_2=LTC6811_rdcv(2,CELL_CH_ALL,&Control_Unit->Status.LTC6811_2);
+    error_2=LTC6811_rdcv(CELL_CH_ALL,1,Control_Unit->Status.LTC6811_2);
 		
 
     //Si ha fallado algo volvemos a medir tres veces
@@ -447,70 +535,58 @@ void LTC6811_Measure_Temperatures_and_Voltages(Control_Unit_TypeDef* Control_Uni
 				error_1=LTC6811_rdcv(1,CELL_CH_ALL,Control_Unit->Status.LTC6811_1);
 		}
 		
-		//while(error_2 && intentos_2<=2)
-		//{
-				//intentos_2++;
-				//error_2=LTC6811_rdcv(2,CELL_CH_ALL,&Control_Unit->Status.LTC6811_2);
-		//}
+		while(error_2 && intentos_2<=2)
+		{
+				intentos_2++;
+				error_2=LTC6811_rdcv(CELL_CH_ALL,1,Control_Unit->Status.LTC6811_2);
+		}
 		
 		//Si ha vuelto a fallar damos fallo
 		if(error_1 || error_2)
 		{
 			Control_Unit->State=LTC6811_FAIL_MODE;
 			LTC_Disable_Balancing(1,Control_Unit->Status.LTC6811_1);
-			//LTC_Disable_Balancing(2,&Control_Unit->Status.LTC6811_2);
+			LTC_Disable_Balancing_2(1,Control_Unit->Status.LTC6811_2);
 			return;
 		}
 
+		intentos_1=0;
+		intentos_2=0;
     // Convertir voltajes impares a temperatura (índices pares)
     for (int i = 0; i < 12; i += 2) 
 		{
         Control_Unit->Status.Temperatures[i].Readed_Value = LTC_Voltage_to_Temperature(Control_Unit->Status.LTC6811_1[0].cells.c_codes[i]*0.0001);
-        //Control_Unit->Status.Temperatures[i+12].Readed_Value = LTC_Voltage_to_Temperature(Control_Unit->Status.LTC6811_2.cells.c_codes[i]*0.0001);
+        Control_Unit->Status.Temperatures[i+12].Readed_Value = LTC_Voltage_to_Temperature(Control_Unit->Status.LTC6811_2[0].cells.c_codes[i]*0.0001);
     }
-
-    // Guardar voltajes de celdas pares (índices impares)
-    for (int i = 1; i < 12; i += 2) 
-		{
-        Control_Unit->Status.Voltages[i] = Control_Unit->Status.LTC6811_1[0].cells.c_codes[i]*0.0001;
-       // Control_Unit->Status.Voltages[i + 12] = Control_Unit->Status.LTC6811_2.cells.c_codes[i]*0.0001;
-    }
-
 		
 		
-    // Desactiva balanceo al final (por seguridad)
-    //LTC_Disable_Balancing(1,Control_Unit->Status.LTC6811_1);
-    //LTC_Disable_Balancing(2,&Control_Unit->Status.LTC6811_2); 
-		
-		
-		
+		// === Medición de Voltaje ===
+		 // Quitamos el balanceo
 		wakeup_idle(1);
-    //wakeup_idle(2);
+    wakeup_idle_2(1);
     HAL_Delay(1); 
-
-    // === Medición de celdas pares ===
-    // Activa el balanceo de celdas pares
-    //LTC_Active_Even_Balancing(1,Control_Unit->Status.LTC6811_1);
-	
 	  LTC6811_set_cfgr_refon(0, Control_Unit->Status.LTC6811_1, true);  // Habilitar REFON
+		LTC6811_set_cfgr_refon_2(0, Control_Unit->Status.LTC6811_2, true);  // Habilitar REFON
 		LTC_Disable_Balancing(1, Control_Unit->Status.LTC6811_1);
-    //LTC_Active_Even_Balancing(2,&Control_Unit->Status.LTC6811_2);
+		LTC_Disable_Balancing_2(1, Control_Unit->Status.LTC6811_2);
     HAL_Delay(2); // Permite estabilización
 		
+		
+		// Inicia conversión ADC en ambos LTC
 		wakeup_idle(1);
-    //wakeup_idle(2);
+    wakeup_idle_2(1);
     HAL_Delay(1);
-    // Inicia conversión ADC en ambos LTC
     LTC6811_adcv(MD_27KHZ_14KHZ,DCP_ENABLED,CELL_CH_ALL);
-    //LTC6811_adcv(2,MD_7KHZ_3KHZ,DCP_ENABLED,CELL_CH_ALL);
+		LTC6811_adcv_2(MD_27KHZ_14KHZ,DCP_ENABLED,CELL_CH_ALL);
     HAL_Delay(3); // Espera la finalización de la conversión
 
-		 wakeup_idle(1);
-    //wakeup_idle(2);
-    HAL_Delay(1);
+
     // Lee los voltajes
+		wakeup_idle(1);
+    wakeup_idle_2(1);
+    HAL_Delay(1);
     error_1=LTC6811_rdcv(CELL_CH_ALL,1,Control_Unit->Status.LTC6811_1);
-    //error_2=LTC6811_rdcv(2,CELL_CH_ALL,&Control_Unit->Status.LTC6811_2);
+    error_2=LTC6811_rdcv(CELL_CH_ALL,1,Control_Unit->Status.LTC6811_2);
 		
 
     //Si ha fallado algo volvemos a medir tres veces
@@ -520,18 +596,18 @@ void LTC6811_Measure_Temperatures_and_Voltages(Control_Unit_TypeDef* Control_Uni
 				error_1=LTC6811_rdcv(1,CELL_CH_ALL,Control_Unit->Status.LTC6811_1);
 		}
 		
-		//while(error_2 && intentos_2<=2)
-		//{
-				//intentos_2++;
-				//error_2=LTC6811_rdcv(2,CELL_CH_ALL,&Control_Unit->Status.LTC6811_2);
-		//}
+		while(error_2 && intentos_2<=2)
+		{
+				intentos_2++;
+				error_2=LTC6811_rdcv(CELL_CH_ALL,1,Control_Unit->Status.LTC6811_2);
+		}
 		
 		//Si ha vuelto a fallar damos fallo
 		if(error_1 || error_2)
 		{
 			Control_Unit->State=LTC6811_FAIL_MODE;
 			LTC_Disable_Balancing(1,Control_Unit->Status.LTC6811_1);
-			//LTC_Disable_Balancing(2,&Control_Unit->Status.LTC6811_2);
+			LTC_Disable_Balancing_2(1,Control_Unit->Status.LTC6811_2);
 			return;
 		}
 
@@ -539,7 +615,7 @@ void LTC6811_Measure_Temperatures_and_Voltages(Control_Unit_TypeDef* Control_Uni
     for (int i = 1; i < 12; i += 1) 
 		{
         Control_Unit->Status.Voltages[i] = Control_Unit->Status.LTC6811_1[0].cells.c_codes[i]*0.0001;
-       // Control_Unit->Status.Voltages[i + 12] = Control_Unit->Status.LTC6811_2.cells.c_codes[i]*0.0001;
+        Control_Unit->Status.Voltages[i + 12] = Control_Unit->Status.LTC6811_2[0].cells.c_codes[i]*0.0001;
     }
 		
 		

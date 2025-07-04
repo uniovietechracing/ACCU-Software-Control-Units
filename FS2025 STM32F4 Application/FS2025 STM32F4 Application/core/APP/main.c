@@ -16,11 +16,7 @@
   *
   ******************************************************************************
   */
-/* USER CODE END Header */
 
-/* Includes ------------------------------------------------------------------*/
-
-/* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "LT_SPI.h"
 #include "LTC6811.h"
@@ -31,44 +27,19 @@
 #include "Battery_Pack_Control_Unit.h"
 
 
-
-
-
-/* Private function prototypes -----------------------------------------------*/
-
-/* USER CODE BEGIN PFP */
-/* USER CODE END PFP */
-
-/* Private user code ---------------------------------------------------------*/
-/* USER CODE BEGIN 0 */
-
-/* USER CODE END 0 */
-
-/**
-  * @brief  The application entry point.
-  * @retval int
-  */
-
 int main(void)
 {
 
-
-	Battery_Pack_Control_Unit_MCU_Init();
+	Control_Unit_MCU_Init();
+	Control_Unit_Init();
 	
-	//initialize error counter and LTC/SPI
 
-	
-  /* USER CODE END 2 */
-
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
   while (1)
   {
-			
+			//Control_Unit_Main_Task();
 			LTC6811_Measure_Temperatures_and_Voltages(&CONTROL_UNIT);
 			HAL_Delay(5000);
   }
-  /* USER CODE END 3 */
 }
 
 

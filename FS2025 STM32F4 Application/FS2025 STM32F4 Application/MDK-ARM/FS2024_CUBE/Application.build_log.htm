@@ -3,49 +3,38 @@
 <pre>
 <h1>µVision Build Log</h1>
 <h2>Tool Versions:</h2>
-IDE-Version: µVision V5.40.0.0
-Copyright (C) 2024 ARM Ltd and ARM Germany GmbH. All rights reserved.
-License Information: Diego Rodriguez, Uniovi e-tech Racing, LIC=----
+IDE-Version: µVision V5.39.0.0
+Copyright (C) 2023 ARM Ltd and ARM Germany GmbH. All rights reserved.
+License Information: Diego Rodriguez Fuertes, Normagrup S.L., LIC=42BTB-LKBR8-KE0H3-NB2QC-95MI8-35TFM
  
 Tool Versions:
-Toolchain:       MDK-Lite  Version: 5.40.0.3
-Toolchain Path:  C:\Users\diego\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin
-C Compiler:      ArmClang.exe V6.22
-Assembler:       Armasm.exe V6.22
-Linker/Locator:  ArmLink.exe V6.22
-Library Manager: ArmAr.exe V6.22
-Hex Converter:   FromElf.exe V6.22
-CPU DLL:         SARMCM3.DLL V5.40.0.3
+Toolchain:       MDK-ARM Community  Version: 5.39.0.0
+Toolchain Path:  C:\Program Files (x86)\Keil\ARM\ARMCLANG\Bin
+C Compiler:      ArmClang.exe V6.21
+Assembler:       Armasm.exe V6.21
+Linker/Locator:  ArmLink.exe V6.21
+Library Manager: ArmAr.exe V6.21
+Hex Converter:   FromElf.exe V6.21
+CPU DLL:         SARMCM3.DLL V5.39.0.0
 Dialog DLL:      DCM.DLL V1.17.5.0
-Target DLL:      STLink\ST-LINKIII-KEIL_SWO.dll V3.3.0.0
+Target DLL:      STLink\ST-LINKIII-KEIL_SWO.dll V3.2.0.0
 Dialog DLL:      TCM.DLL V1.56.4.0
  
 <h2>Project:</h2>
-C:\Users\diego\Desktop\GIT\ACCU-Software-Control-Units\FS2025 STM32F4 Application\FS2025 STM32F4 Application\MDK-ARM\Application.uvprojx
-Project File Date:  07/03/2025
+C:\Users\d.rodriguez\Desktop\GitHub\ACCU-Software-Control-Units\FS2025 STM32F4 Application\FS2025 STM32F4 Application\MDK-ARM\Application.uvprojx
+Project File Date:  07/04/2025
 
 <h2>Output:</h2>
-*** Using Compiler 'V6.22', folder: 'C:\Users\diego\AppData\Local\Keil_v5\ARM\ARMCLANG\Bin'
+*** Using Compiler 'V6.21', folder: 'C:\Program Files (x86)\Keil\ARM\ARMCLANG\Bin'
 Build target 'Application'
-compiling Control_Unit.c...
-compiling LTC6811.c...
-compiling Can_Bus.c...
-compiling main.c...
-compiling MCU.c...
-compiling STM32F4.c...
-../core/APP/Control_Unit/Control_Unit_Selection/Battery Pack Control Unit/Battery_Pack_Control_Unit.c(146): error: call to undeclared function 'LTC6811_Init_1'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-  146 |     LTC6811_Init_1(Control_Unit);       //initializes the LTC and SPI communication
-      |     ^
-../core/APP/Control_Unit/Control_Unit_Selection/Battery Pack Control Unit/Battery_Pack_Control_Unit.c(147): error: call to undeclared function 'LTC6811_Init_2'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-  147 |           LTC6811_Init_2(Control_Unit); //initializes the LTC and SPI communication
-      |           ^
-2 errors generated.
-compiling Battery_Pack_Control_Unit.c...
-compiling stm32f4xx_it.c...
-compiling State_LEDs.c...
-compiling stm32f4xx_hal_msp.c...
 compiling LTC6811_Dual.c...
-"FS2024_CUBE\Application.axf" - 2 Error(s), 0 Warning(s).
+compiling main.c...
+linking...
+Program Size: Code=14440 RO-data=1128 RW-data=16 ZI-data=3056  
+FromELF: creating hex file...
+FS2024_CUBE\Application.hex: Warning: Q9931W: Your license for feature Keil will expire in 27 days
+Finished: 0 information, 1 warning and 0 error messages.
+"FS2024_CUBE\Application.axf" - 0 Error(s), 0 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -55,10 +44,9 @@ Package Vendor: Keil
                 STMicroelectronics STM32F4 Series Device Support, Drivers and Examples
 
 <h2>Collection of Component include folders:</h2>
-  C:/Users/diego/AppData/Local/Arm/Packs/Keil/STM32F4xx_DFP/2.17.1/Drivers/CMSIS/Device/ST/STM32F4xx/Include
+  C:/Users/d.rodriguez/AppData/Local/Arm/Packs/Keil/STM32F4xx_DFP/2.17.1/Drivers/CMSIS/Device/ST/STM32F4xx/Include
 
 <h2>Collection of Component Files used:</h2>
-Target not created.
 Build Time Elapsed:  00:00:01
 </pre>
 </body>

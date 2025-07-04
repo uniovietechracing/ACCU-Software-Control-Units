@@ -332,7 +332,7 @@ int8_t LTC681x_rdpwm_2(uint8_t total_ic, uint8_t pwmReg, cell_asic ic[]);
 
 // PEC diagnostics
 void LTC681x_check_pec_2(uint8_t total_ic, uint8_t reg, cell_asic ic[]);
-void LTC681x_reset_crc_2_count(uint8_t total_ic, cell_asic ic[]);
+void LTC681x_reset_crc_count_2(uint8_t total_ic, cell_asic ic[]);
 
 // Self test routines
 int16_t LTC681x_run_cell_adc_st_2(uint8_t adc_reg, uint8_t total_ic, cell_asic ic[]);
