@@ -114,7 +114,6 @@ void SDC_Feedback_Init 										(void);
 ***************							 			Input reading     						 ***************	
 ********************************************************************************
 *******************************************************************************/
-void BMS_Status_And_Relay_State_Read			(Control_Unit_TypeDef* Control_Unit);
 BoolTypeDef SDC_Feedback_Read 						(Control_Unit_TypeDef* Control_Unit);
 
 
@@ -193,6 +192,8 @@ void Precharge_CAN_Received_Interrupt_Task(Control_Unit_TypeDef* Control_Unit);
 void Precharge_Status_Send_Interrupt_Task(Control_Unit_TypeDef* Control_Unit);
 void ADCs_Reading_Interrupt_Task(Control_Unit_TypeDef* Control_Unit);
 void Temp_Timeout_Interrupt_Task(Control_Unit_TypeDef* Control_Unit);
+void Temp_Measure_Send_Interrupt_Task(Control_Unit_TypeDef* Control_Unit);
+
 
 /*******************************************************************************
 ********************************************************************************
@@ -203,6 +204,7 @@ void Generate_BMS_Master_Status_Message(Control_Unit_TypeDef* Control_Unit);
 void Generate_Precarge_Status_Message(Control_Unit_TypeDef* Control_Unit);
 void Generate_Done_Precharge_Message(Control_Unit_TypeDef* Control_Unit);
 void Generate_Ready_To_Drive_Message(Control_Unit_TypeDef* Control_Unit);
+void Generate_Temp_Measure_Message(Control_Unit_TypeDef* Control_Unit);
 
 
 /*******************************************************************************
@@ -212,7 +214,10 @@ void Generate_Ready_To_Drive_Message(Control_Unit_TypeDef* Control_Unit);
 *******************************************************************************/
 void Proccess_Start_Precharge_Frame(Control_Unit_TypeDef* Control_Unit);
 void Proccess_Fan_Control_Frame(Control_Unit_TypeDef* Control_Unit);
-void Proccess_Thermistor_Frame(Control_Unit_TypeDef* Control_Unit);
+void Proccess_BPCU1_Status_Frame(Control_Unit_TypeDef* Control_Unit);
+void Proccess_BPCU2_Status_Frame(Control_Unit_TypeDef* Control_Unit);
+void Proccess_BPCU3_Status_Frame(Control_Unit_TypeDef* Control_Unit);
+void Proccess_BPCU4_Status_Frame(Control_Unit_TypeDef* Control_Unit);
 
 
 /*******************************************************************************
@@ -221,14 +226,6 @@ void Proccess_Thermistor_Frame(Control_Unit_TypeDef* Control_Unit);
 ********************************************************************************
 *******************************************************************************/
 void Proccess_ADCs_Reading(Control_Unit_TypeDef* Control_Unit);
-
-
-/*******************************************************************************
-********************************************************************************
-***************				 			Thermistor Module            		 		 ***************	
-********************************************************************************
-*******************************************************************************/
-void Thermistor_Module_Init(Control_Unit_TypeDef* Control_Unit);
 
 
 

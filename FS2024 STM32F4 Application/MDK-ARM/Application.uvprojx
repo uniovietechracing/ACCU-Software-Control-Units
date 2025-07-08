@@ -10,7 +10,7 @@
       <TargetName>Application</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>6220000::V6.22::ARMCLANG</pCCUsed>
+      <pCCUsed>6210000::V6.21::ARMCLANG</pCCUsed>
       <uAC6>1</uAC6>
       <TargetOption>
         <TargetCommonOption>
@@ -340,7 +340,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32F405xx</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;..\core;..\core\APP;..\core\CAN Bus;..\core\Common_Functions;..\core\MCU;..\core\MCU\STM32F4;..\core\Task Manager;..\core\TypeDefs;..\core\MCU\STM32F4;..\core\APP\Control_Unit;..\core\APP\Control_Unit\Control_Unit_Selection;..\core\APP\Control_Unit\Control_Unit_Selection\Front Control Unit;..\core\APP\Control_Unit\Control_Unit_Selection\Rear Control Unit;..\core\APP\Control_Unit\Control_Unit_Selection\Rear Control Unit Power Distribution;..\core\APP\Control_Unit\Control_Unit_Selection\SDC Charger;..\core\APP\Control_Unit\Control_Unit_Selection\Accu Master;..\core\MCU\Simulated_Eeprom</IncludePath>
+              <IncludePath>../Core/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc;../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32F4xx/Include;../Drivers/CMSIS/Include;..\core;..\core\APP;..\core\CAN Bus;..\core\Common_Functions;..\core\MCU;..\core\MCU\STM32F4;..\core\Task Manager;..\core\TypeDefs;..\core\MCU\STM32F4;..\core\APP\Control_Unit;..\core\APP\Control_Unit\Control_Unit_Selection;..\core\APP\Control_Unit\Control_Unit_Selection\Accu_Master_Control_Unit</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -417,77 +417,17 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>APP/Control_Unit/Control_Unit_Selection/Rear_Control_Unit</GroupName>
-          <Files>
-            <File>
-              <FileName>Rear_Control_Unit.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\core\APP\Control_Unit\Control_Unit_Selection\Rear Control Unit\Rear_Control_Unit.c</FilePath>
-            </File>
-            <File>
-              <FileName>Rear_Control_Unit.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\core\APP\Control_Unit\Control_Unit_Selection\Rear Control Unit\Rear_Control_Unit.h</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>APP/Control_Unit/Control_Unit_Selection/Rear_Control_Unit_Power_Distribution</GroupName>
-          <Files>
-            <File>
-              <FileName>Rear_Control_Unit_Power_Distribution.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\core\APP\Control_Unit\Control_Unit_Selection\Rear Control Unit Power Distribution\Rear_Control_Unit_Power_Distribution.c</FilePath>
-            </File>
-            <File>
-              <FileName>Rear_Control_Unit_Power_Distribution.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\core\APP\Control_Unit\Control_Unit_Selection\Rear Control Unit Power Distribution\Rear_Control_Unit_Power_Distribution.h</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>APP/Control_Unit/Control_Unit_Selection/Front_Control_Unit</GroupName>
-          <Files>
-            <File>
-              <FileName>Front_Control_Unit.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\core\APP\Control_Unit\Control_Unit_Selection\Front Control Unit\Front_Control_Unit.c</FilePath>
-            </File>
-            <File>
-              <FileName>Front_Control_Unit.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\core\APP\Control_Unit\Control_Unit_Selection\Front Control Unit\Front_Control_Unit.h</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>APP/Control_Unit/Control_Unit_Selection/SDC_Charger</GroupName>
-          <Files>
-            <File>
-              <FileName>SDC_Charger.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>..\core\APP\Control_Unit\Control_Unit_Selection\SDC Charger\SDC_Charger.h</FilePath>
-            </File>
-            <File>
-              <FileName>SDC_Charger.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\core\APP\Control_Unit\Control_Unit_Selection\SDC Charger\SDC_Charger.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
           <GroupName>APP/Control_Unit/Control_Unit_Selection/Accu_Master</GroupName>
           <Files>
             <File>
               <FileName>Accu_Master_Control_Unit.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\core\APP\Control_Unit\Control_Unit_Selection\Accu Master\Accu_Master_Control_Unit.c</FilePath>
+              <FilePath>..\core\APP\Control_Unit\Control_Unit_Selection\Accu_Master_Control_Unit\Accu_Master_Control_Unit.c</FilePath>
             </File>
             <File>
               <FileName>Accu_Master_Control_Unit.h</FileName>
               <FileType>5</FileType>
-              <FilePath>..\core\APP\Control_Unit\Control_Unit_Selection\Accu Master\Accu_Master_Control_Unit.h</FilePath>
+              <FilePath>..\core\APP\Control_Unit\Control_Unit_Selection\Accu_Master_Control_Unit\Accu_Master_Control_Unit.h</FilePath>
             </File>
           </Files>
         </Group>

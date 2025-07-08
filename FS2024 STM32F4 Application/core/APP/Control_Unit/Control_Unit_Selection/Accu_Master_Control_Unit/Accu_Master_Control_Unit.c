@@ -32,8 +32,8 @@ Version | dd mmm yyyy |       Who        | Description of changes
 
 #ifdef ACCU_MASTER_CONTROL_UNIT_BOARD
 
-BoolTypeDef Temp_fail=FALSE;
-BoolTypeDef Temp_timeout=FALSE;
+
+
 /*******************************************************************************
 ********************************************************************************
 ***************					 Precharge Relay Control Init        		 ***************	
@@ -227,8 +227,9 @@ void SDC_Feedback_Init (void)
 ***************									BMS Status Read        			     ***************	
 ********************************************************************************
 *******************************************************************************/
-void BMS_Status_And_Relay_State_Read (Control_Unit_TypeDef* Control_Unit)
+void BMS_Status_Check (Control_Unit_TypeDef* Control_Unit)
 {
+	//RELAYS CHECK
 	BoolTypeDef Relay_Fail=FALSE;
 	
 	if (Control_Unit->Status.Precharge_Relay.Real_State == STATE_FAIL || Control_Unit->Status.Air_Plus_Relay.Real_State == STATE_FAIL
@@ -236,9 +237,31 @@ void BMS_Status_And_Relay_State_Read (Control_Unit_TypeDef* Control_Unit)
 	{
 		Relay_Fail=TRUE;
 	}
-
 	
-if (MCU_GPIO_Read_A9_Input()==TRUE && Temp_timeout==FALSE && (Relay_Fail==FALSE || (Relay_Fail==TRUE && SDC_Feedback_Read(Control_Unit)==FALSE)) && Temp_fail==FALSE) 
+	
+	//BPCU CHECK
+	if(Control_Unit->Status.BPCU1_Fails >0 || Control_Unit->Status.BPCU2_Fails >0 || Control_Unit->Status.BPCU3_Fails >0 || Control_Unit->Status.BPCU4_Fails >0)
+	{
+		Control_Unit->Status.Temp_Fail=TRUE;
+	}
+	else
+	{
+		Control_Unit->Status.Temp_Fail=FALSE;
+	}
+	if( Control_Unit->Status.BPCU1_Status>0x01 || Control_Unit->Status.BPCU2_Status>0x01 || Control_Unit->Status.BPCU3_Status>0x01 || Control_Unit->Status.BPCU4_Status>0x01)
+	{
+		Control_Unit->Status.BPCU_Fail=TRUE;
+	}
+	else
+	{
+		Control_Unit->Status.BPCU_Fail=FALSE;
+	}
+	
+	
+	
+	//Si ha fallado algo cortamos la salida.
+	if (MCU_GPIO_Read_A9_Input()==TRUE  && Control_Unit->Status.Temp_Timeout==FALSE && Control_Unit->Status.BPCU_Fail==FALSE &&
+	(Relay_Fail==FALSE || (Relay_Fail==TRUE && SDC_Feedback_Read(Control_Unit)==FALSE)) &&  Control_Unit->Status.Temp_Fail==FALSE) 
 	{
 		Control_Unit->Status.BMS_Status = FALSE;
 		BMS_Status_Control_On(Control_Unit);
@@ -323,15 +346,6 @@ void HV_Feedback_ADC_Init (void)
 }
 
 
-void Thermistor_Module_Init(Control_Unit_TypeDef* Control_Unit)
-{
-	for (uint8_t ID = 0; ID < MAX_TEMPERATURE_VALUES; ID++)
-	{
-		Control_Unit->Temperature.Thermistor_Module[ID].Thermistor_ID = ID;
-		Control_Unit->Temperature.Thermistor_Module[ID].Real_Value = 25;
-		Control_Unit->Temperature.Thermistor_Module[ID].cont = 0;
-	}
-}
 
 /*******************************************************************************
 ********************************************************************************
@@ -385,13 +399,34 @@ void Accu_Master_Control_Unit_Task_Init(Control_Unit_TypeDef* Control_Unit)
 	Timer_10ms_Start(&Control_Unit->Timing.ADCs_Reading_Tim);
 	
 	//Inicializacion del TIMER de temps timeout
-	Timer_10ms_Init(&Control_Unit->Timing.Temp_Timeout, 1, MILISECONDS, 500);
-	Timer_10ms_Start(&Control_Unit->Timing.Temp_Timeout);
+	Timer_10ms_Init(&Control_Unit->Timing.Temp1_Timeout, 1, MILISECONDS, 1000);
+	Timer_10ms_Start(&Control_Unit->Timing.Temp1_Timeout);
+	Timer_10ms_Init(&Control_Unit->Timing.Temp2_Timeout, 1, MILISECONDS, 1000);
+	Timer_10ms_Start(&Control_Unit->Timing.Temp2_Timeout);
+	Timer_10ms_Init(&Control_Unit->Timing.Temp3_Timeout, 1, MILISECONDS, 1000);
+	Timer_10ms_Start(&Control_Unit->Timing.Temp3_Timeout);
+	Timer_10ms_Init(&Control_Unit->Timing.Temp4_Timeout, 1, MILISECONDS, 1000);
+	Timer_10ms_Start(&Control_Unit->Timing.Temp4_Timeout);
+	
+	Timer_10ms_Init(&Control_Unit->Timing.Temp_Measure, 1, MILISECONDS, 3000);
+	Timer_10ms_Start(&Control_Unit->Timing.Temp_Measure);
 	
 	Control_Unit->State = NORMAL_OPERATION;
 	Control_Unit->Status.RTD_Send = FALSE;
+	Control_Unit->Status.BPCU1_Status=0;
+	Control_Unit->Status.BPCU2_Status=0;
+	Control_Unit->Status.BPCU3_Status=0;
+	Control_Unit->Status.BPCU4_Status=0;
 	
-	Thermistor_Module_Init(Control_Unit);
+	Control_Unit->Status.Temp_Fail=FALSE;
+	Control_Unit->Status.Temp_Timeout=FALSE;
+	Control_Unit->Status.BPCU_Fail=FALSE;
+	
+	Control_Unit->Status.BPCU1_Fails=0;
+	Control_Unit->Status.BPCU2_Fails=0;
+	Control_Unit->Status.BPCU3_Fails=0;
+	Control_Unit->Status.BPCU4_Fails=0;
+	
 }
 
 /*******************************************************************************
@@ -418,6 +453,7 @@ void Accu_Master_Control_Unit_Interrupt_Task(Control_Unit_TypeDef* Control_Unit)
 	Precharge_Status_Send_Interrupt_Task(Control_Unit);
 	ADCs_Reading_Interrupt_Task(Control_Unit);
 	Temp_Timeout_Interrupt_Task(Control_Unit);
+	Temp_Measure_Send_Interrupt_Task(Control_Unit);
 }
 
 
@@ -429,7 +465,7 @@ void Accu_Master_Control_Unit_Interrupt_Task(Control_Unit_TypeDef* Control_Unit)
 void Accu_Master_Control_Unit_State_Machine_Task(Control_Unit_TypeDef* Control_Unit)
 {
 	//SDC_Feedback_Read(Control_Unit);
-	BMS_Status_And_Relay_State_Read(Control_Unit);
+	BMS_Status_Check(Control_Unit);
 	switch(Control_Unit->State)
 	{
 		case NORMAL_OPERATION:
@@ -478,8 +514,20 @@ void Accu_Master_Control_Unit_CAN1_Interrupt(Control_Unit_TypeDef* Control_Unit)
 //*
 	switch(Control_Unit->Rx_Message.Header.ExtId)
 	{
-		case THERMISTOR_GENERAL:
-			Proccess_Thermistor_Frame(Control_Unit);
+		case BPCU1_STATUS:
+			Proccess_BPCU1_Status_Frame(Control_Unit);
+		break;
+		
+		case BPCU2_STATUS:
+			Proccess_BPCU2_Status_Frame(Control_Unit);
+		break;
+		
+		case BPCU3_STATUS:
+			Proccess_BPCU3_Status_Frame(Control_Unit);
+		break;
+		
+		case BPCU4_STATUS:
+			Proccess_BPCU4_Status_Frame(Control_Unit);
 		break;
 		
 		default:
@@ -522,7 +570,11 @@ void Accu_Master_Control_Unit_10ms_Interrupt(Control_Unit_TypeDef* Control_Unit)
 	Timer_10ms_Tick(&Control_Unit->Timing.Precharge_Tim);
 	Timer_10ms_Tick(&Control_Unit->Timing.Precharge_Status_Tim);
 	Timer_10ms_Tick(&Control_Unit->Timing.ADCs_Reading_Tim);
-	Timer_10ms_Tick(&Control_Unit->Timing.Temp_Timeout);
+	Timer_10ms_Tick(&Control_Unit->Timing.Temp1_Timeout);
+	Timer_10ms_Tick(&Control_Unit->Timing.Temp2_Timeout);
+	Timer_10ms_Tick(&Control_Unit->Timing.Temp3_Timeout);
+	Timer_10ms_Tick(&Control_Unit->Timing.Temp4_Timeout);
+	Timer_10ms_Tick(&Control_Unit->Timing.Temp_Measure);
 }
 
 	
@@ -555,6 +607,23 @@ void CAN_Status_Send_Interrupt_Task(Control_Unit_TypeDef* Control_Unit)
 		Generate_BMS_Master_Status_Message(Control_Unit);
 		Timer_10ms_Restart(&Control_Unit->Timing.Status_Send_Tim);
 		CAN2_Send(&Control_Unit->Tx_Message);
+
+	}
+}
+
+/*******************************************************************************
+********************************************************************************
+***************				Interrupt Task for Temp Measure SEND        ***************	
+********************************************************************************
+*******************************************************************************/
+void Temp_Measure_Send_Interrupt_Task(Control_Unit_TypeDef* Control_Unit)
+{
+	if(Control_Unit->Timing.Temp_Measure.Overflowed==TRUE)
+	{
+		Generate_Temp_Measure_Message(Control_Unit);
+		Timer_10ms_Change_Timing(&Control_Unit->Timing.Temp_Measure,1000);
+		Timer_10ms_Restart(&Control_Unit->Timing.Temp_Measure);
+		CAN1_Send(&Control_Unit->Tx_Message);
 
 	}
 }
@@ -618,12 +687,17 @@ void ADCs_Reading_Interrupt_Task(Control_Unit_TypeDef* Control_Unit)
 *******************************************************************************/
 void Temp_Timeout_Interrupt_Task(Control_Unit_TypeDef* Control_Unit)
 {
-	if(Control_Unit->Timing.Temp_Timeout.Overflowed==TRUE)
+	if(Control_Unit->Timing.Temp1_Timeout.Overflowed==TRUE || Control_Unit->Timing.Temp2_Timeout.Overflowed==TRUE || Control_Unit->Timing.Temp3_Timeout.Overflowed==TRUE || Control_Unit->Timing.Temp4_Timeout.Overflowed==TRUE)
 	{
-		Timer_10ms_Stop(&Control_Unit->Timing.Temp_Timeout);
-		Temp_timeout=TRUE;
-		//Control_Unit->State = SDC_BREAK;
-		//Control_Unit->Status.SDC_Status = FALSE;
+		Timer_10ms_Stop(&Control_Unit->Timing.Temp1_Timeout);
+		Timer_10ms_Stop(&Control_Unit->Timing.Temp2_Timeout);
+		Timer_10ms_Stop(&Control_Unit->Timing.Temp3_Timeout);
+		Timer_10ms_Stop(&Control_Unit->Timing.Temp4_Timeout);
+		Control_Unit->Status.Temp_Timeout=TRUE;
+	}
+	else
+	{
+		Control_Unit->Status.Temp_Timeout=FALSE;
 	}
 }
 
@@ -650,11 +724,28 @@ void Generate_BMS_Master_Status_Message(Control_Unit_TypeDef* Control_Unit)
 	Control_Unit->Tx_Message.Data[1]=Control_Unit->Tx_Message.Data[1] | (Control_Unit->Status.HV_Feedback.Intentional_State << 3);
 	Control_Unit->Tx_Message.Data[1]=Control_Unit->Tx_Message.Data[1] | (Control_Unit->Status.HV_Feedback.Real_State << 4);
 	
-	Control_Unit->Tx_Message.Data[2]=Control_Unit->Temperature.Min_Temperature_Value;
+	Control_Unit->Tx_Message.Data[2]=Control_Unit->Min_Temperature_Value;
 	
-	Control_Unit->Tx_Message.Data[3]=Control_Unit->Temperature.Max_Temperature_Value;
+	Control_Unit->Tx_Message.Data[3]=Control_Unit->Max_Temperature_Value;
+	
+	Control_Unit->Tx_Message.Data[4]=Control_Unit->Min_Voltage_Value;
+	
+	Control_Unit->Tx_Message.Data[5]=Control_Unit->Max_Voltage_Value;
 }
 
+
+/*******************************************************************************
+********************************************************************************
+***************					Generate Status Message       			 	   ***************	
+********************************************************************************
+*******************************************************************************/
+void Generate_Temp_Measure_Message(Control_Unit_TypeDef* Control_Unit)
+{
+	Control_Unit->Tx_Message.ID=BMS_MASTER_STATUS;
+	Control_Unit->Tx_Message.DLC=1;
+	
+	Control_Unit->Tx_Message.Data[0]=0x01;	
+}
 
 /*******************************************************************************
 ********************************************************************************
@@ -714,6 +805,55 @@ void Proccess_Start_Precharge_Frame(Control_Unit_TypeDef* Control_Unit)
 
 /*******************************************************************************
 ********************************************************************************
+***************				 Proccess BPCU 1 Status Frame              ***************	
+********************************************************************************
+*******************************************************************************/
+void Proccess_BPCU1_Status_Frame(Control_Unit_TypeDef* Control_Unit)
+{
+	Control_Unit->Status.BPCU1_Status=Control_Unit->Rx_Message.Data[0];
+	Control_Unit->Status.BPCU1_Fails=Control_Unit->Rx_Message.Data[1]+ Control_Unit->Rx_Message.Data[2];
+	Timer_10ms_Restart(&Control_Unit->Timing.Temp1_Timeout);
+}
+
+/*******************************************************************************
+********************************************************************************
+***************				 Proccess BPCU 2 Status Frame              ***************	
+********************************************************************************
+*******************************************************************************/
+void Proccess_BPCU2_Status_Frame(Control_Unit_TypeDef* Control_Unit)
+{
+	Control_Unit->Status.BPCU2_Status=Control_Unit->Rx_Message.Data[0];
+	Control_Unit->Status.BPCU2_Fails=Control_Unit->Rx_Message.Data[1]+ Control_Unit->Rx_Message.Data[2];
+	Timer_10ms_Restart(&Control_Unit->Timing.Temp2_Timeout);
+}
+
+/*******************************************************************************
+********************************************************************************
+***************				 Proccess BPCU 3 Status Frame              ***************	
+********************************************************************************
+*******************************************************************************/
+void Proccess_BPCU3_Status_Frame(Control_Unit_TypeDef* Control_Unit)
+{
+	Control_Unit->Status.BPCU3_Status=Control_Unit->Rx_Message.Data[0];
+	Control_Unit->Status.BPCU3_Fails=Control_Unit->Rx_Message.Data[1]+ Control_Unit->Rx_Message.Data[2];
+	Timer_10ms_Restart(&Control_Unit->Timing.Temp3_Timeout);
+}
+
+/*******************************************************************************
+********************************************************************************
+***************				 Proccess BPCU 4 Status Frame              ***************	
+********************************************************************************
+*******************************************************************************/
+void Proccess_BPCU4_Status_Frame(Control_Unit_TypeDef* Control_Unit)
+{
+	Control_Unit->Status.BPCU4_Status=Control_Unit->Rx_Message.Data[0];
+	Control_Unit->Status.BPCU4_Fails=Control_Unit->Rx_Message.Data[1]+ Control_Unit->Rx_Message.Data[2];
+	Timer_10ms_Restart(&Control_Unit->Timing.Temp4_Timeout);
+}
+
+
+/*******************************************************************************
+********************************************************************************
 ***************				 Proccess Fan Control Frame            		 ***************	
 ********************************************************************************
 *******************************************************************************/
@@ -722,64 +862,6 @@ void Proccess_Fan_Control_Frame(Control_Unit_TypeDef* Control_Unit)
 	if(Control_Unit->Rx_Message.Data[0]==0x01 && Control_Unit->Rx_Message.Header.DLC==1)
 	{
 		Fan_Control_On(Control_Unit);
-	}
-}
-
-
-/*******************************************************************************
-********************************************************************************
-***************				 				Thermistor Frame            			 ***************	
-********************************************************************************
-*******************************************************************************/
-void Proccess_Thermistor_Frame(Control_Unit_TypeDef* Control_Unit)
-{
-	if(Control_Unit->Rx_Message.Header.DLC==8)
-		{
-		Timer_10ms_Restart(&Control_Unit->Timing.Temp_Timeout);
-		Temp_timeout=FALSE;
-		unsigned char ID=Control_Unit->Rx_Message.Data[3];
-		if(ID>=0X80)
-		{
-				ID=ID-0X80;
-		}
-		if(ID<MAX_TEMPERATURE_VALUES && ID!=4 && ID!=14)
-		{
-			Control_Unit->Temperature.Thermistor_Module[ID].Thermistor_ID=ID;
-			Control_Unit->Temperature.Thermistor_Module[ID].Real_Value = Control_Unit->Rx_Message.Data[2];
-			Control_Unit->Temperature.Min_Temperature_Value = Control_Unit->Rx_Message.Data[4];
-			Control_Unit->Temperature.Max_Temperature_Value = Control_Unit->Rx_Message.Data[5];
-			if(Control_Unit->Rx_Message.Data[3]>0x80)
-			{
-				Control_Unit->Temperature.Thermistor_Module[ID].Real_Value=85;
-
-			}
-			BoolTypeDef fail=FALSE;
-			for(unsigned char n=0;n<MAX_TEMPERATURE_VALUES;n++)
-			{
-				if (Control_Unit->Temperature.Thermistor_Module[n].Real_Value > 60 )//|| Control_Unit->Rx_Message.Data[3]>=0X80)//|| Control_Unit->Temperature.Max_Temperature_Value > 60)
-				{
-					//Control_Unit->Status.BMS_Status = TRUE;
-					//BMS_Status_Control_Off(Control_Unit);
-					//if(Control_Unit->Temperature.Thermistor_Module[n].cont<5)
-					//{
-						//Control_Unit->Temperature.Thermistor_Module[n].cont++;
-					//}
-					//else
-					//{
-						//fail=TRUE;
-					//break;
-					//}
-					
-					//Control_Unit->State = SDC_BREAK;
-					//Control_Unit->Status.SDC_Status = FALSE;
-				}
-				//else 
-				//{
-				//	Control_Unit->Temperature.Thermistor_Module[n].cont=0;
-				//}
-			}
-			Temp_fail=fail;
-			}
 	}
 }
 

@@ -124,38 +124,19 @@ typedef struct
 *******************************************************************************/
 typedef struct
 {
-	#ifdef REAR_CONTROL_UNIT_POWER_DISTRIBUTION_BOARD
-		Timer_10ms_TypeDef	Initialisation_Tim;
-	  Timer_10ms_TypeDef	Status_Send_Tim;
-		Timer_10ms_TypeDef	RTDS_Tim;
-		Timer_10ms_TypeDef	Fuses_Read_Tim;
-	#endif
-	
-	#ifdef ACCU_MASTER_CONTROL_UNIT_BOARD
 	  Timer_10ms_TypeDef	Status_Send_Tim;
 		Timer_10ms_TypeDef	Precharge_Tim;
 		Timer_10ms_TypeDef	Precharge_Status_Tim;
 		Timer_10ms_TypeDef	ADCs_Reading_Tim;
-		Timer_10ms_TypeDef  Temp_Timeout;
-	#endif
+		Timer_10ms_TypeDef  Temp1_Timeout;
+		Timer_10ms_TypeDef  Temp2_Timeout;
+		Timer_10ms_TypeDef  Temp3_Timeout;
+		Timer_10ms_TypeDef  Temp4_Timeout;
+		Timer_10ms_TypeDef  Temp_Measure;
 
 } Control_Unit_Time_TypeDef;
 
 
-/*******************************************************************************
-********************************************************************************
-***************			Rear Control Unit Power Distribution Status	 ***************
-********************************************************************************
-*******************************************************************************/
-	#ifdef REAR_CONTROL_UNIT_POWER_DISTRIBUTION_BOARD
-
-typedef struct
-{
-	BoolTypeDef 	Relay_State;
-	BoolTypeDef 	Fuse_State;
-	
-} Rear_Control_Unit_Relay_Status_TypeDef;
-	#endif
 
 
 
@@ -166,14 +147,6 @@ typedef struct
 *******************************************************************************/
 typedef struct
 {
-	#ifdef REAR_CONTROL_UNIT_POWER_DISTRIBUTION_BOARD
-		Rear_Control_Unit_Relay_Status_TypeDef  Relays[7];
-		BoolTypeDef															Battery_Relay;
-		BoolTypeDef															Brake_Light;
-		BoolTypeDef															RTDS;
-		uint32_t																LV_Voltage[1];
-	#endif
-	#ifdef ACCU_MASTER_CONTROL_UNIT_BOARD
 		Relay_State_Typedef				Precharge_Relay;
 		Relay_State_Typedef				Air_Plus_Relay;
 		Relay_State_Typedef				Air_Minus_Relay;
@@ -183,7 +156,21 @@ typedef struct
 		BoolTypeDef 							BMS_Status;
 		BoolTypeDef 							RTD_Send;
 		uint32_t									Relays_Value[2];
-	#endif
+	
+		uint8_t 									BPCU1_Status;
+		uint8_t 									BPCU2_Status;
+		uint8_t 									BPCU3_Status;
+		uint8_t 									BPCU4_Status;
+	
+		uint8_t 									BPCU1_Fails;
+		uint8_t 									BPCU2_Fails;
+		uint8_t 									BPCU3_Fails;
+		uint8_t 									BPCU4_Fails;
+
+	
+		BoolTypeDef 							Temp_Fail;
+		BoolTypeDef 							Temp_Timeout;
+		BoolTypeDef 							BPCU_Fail;
 } Control_Unit_Status_Typdef;
 
 /*******************************************************************************
@@ -194,19 +181,8 @@ typedef struct
 
 typedef enum
 {
-#ifdef REAR_CONTROL_UNIT_POWER_DISTRIBUTION_BOARD
-	INIT,
-	RELAY_INIT_0,
-	RELAY_INIT_1,
-	RELAY_INIT_2,
-	RELAY_INIT_3,
-	NORMAL_OPERATION,
-	TESTING_MODE
-#endif
-#ifdef ACCU_MASTER_CONTROL_UNIT_BOARD
 	NORMAL_OPERATION,
 	SDC_BREAK
-#endif
 } Control_Unit_State_Typdef;
 
 
@@ -256,12 +232,7 @@ typedef struct
 	  uint8_t						cont;
 } Control_Unit_Thermistor_Typedef;
 
-typedef struct
-{
-		int8_t																Max_Temperature_Value;
-		int8_t																Min_Temperature_Value;
-		Control_Unit_Thermistor_Typedef				Thermistor_Module[MAX_TEMPERATURE_VALUES];
-} Control_Unit_Temperature_Typedef;
+
 
 /*******************************************************************************
 ********************************************************************************
@@ -278,9 +249,10 @@ typedef struct
 	Control_Unit_Status_Typdef						Status;
 	Control_Unit_Led_Typedef							Green_Led;
 	Control_Unit_Led_Typedef							Yellow_Led;
-#ifdef ACCU_MASTER_CONTROL_UNIT_BOARD
-	Control_Unit_Temperature_Typedef			Temperature;
-#endif
+	uint8_t																Max_Temperature_Value;
+	uint8_t																Min_Temperature_Value;
+	uint8_t																Max_Voltage_Value;
+	uint8_t																Min_Voltage_Value;
 } Control_Unit_TypeDef;
 
 #endif

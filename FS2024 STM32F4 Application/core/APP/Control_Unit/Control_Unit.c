@@ -46,18 +46,6 @@ Control_Unit_TypeDef CONTROL_UNIT;
 *******************************************************************************/
 void Control_Unit_MCU_Init()
 {
-	#ifdef REAR_CONTROL_UNIT_POWER_DISTRIBUTION_BOARD
-		Rear_Control_Unit_Power_Distribution_MCU_Init();
-	#endif
-
-	#ifdef REAR_CONTROL_UNIT_BOARD
-		Rear_Control_Unit_MCU_Init();
-	#endif
-
-	#ifdef FRONT_CONTROL_UNIT_BOARD
-		Front_Control_Unit_MCU_Init();
-	#endif
-	
 	#ifdef ACCU_MASTER_CONTROL_UNIT_BOARD
 		Accu_Master_Control_Unit_MCU_Init();
 	#endif
@@ -71,18 +59,6 @@ void Control_Unit_MCU_Init()
 *******************************************************************************/
 void Control_Unit_Init()
 {
-	#ifdef REAR_CONTROL_UNIT_POWER_DISTRIBUTION_BOARD
-		Rear_Control_Unit_Power_Distribution_Init(&CONTROL_UNIT);
-	#endif
-
-	#ifdef REAR_CONTROL_UNIT_BOARD
-		Rear_Control_Unit_Init(Control_Unit_TypeDef* Control_Unit);
-	#endif
-
-	#ifdef FRONT_CONTROL_UNIT_BOARD
-		Front_Control_Unit_Init(Control_Unit_TypeDef* Control_Unit);
-	#endif
-	
 	#ifdef ACCU_MASTER_CONTROL_UNIT_BOARD
 		Accu_Master_Control_Unit_Task_Init(&CONTROL_UNIT);
 	#endif
@@ -96,18 +72,6 @@ void Control_Unit_Init()
 *******************************************************************************/
 void Control_Unit_Main_Task()
 {
-	#ifdef REAR_CONTROL_UNIT_POWER_DISTRIBUTION_BOARD
-		Rear_Control_Unit_Power_Distribution_Main_Task(&CONTROL_UNIT);
-	#endif
-
-	#ifdef REAR_CONTROL_UNIT_BOARD
-		Rear_Control_Unit_Main_Task(&CONTROL_UNIT);
-	#endif
-
-	#ifdef FRONT_CONTROL_UNIT_BOARD
-		Front_Control_Unit_Main_Task(&CONTROL_UNIT);
-	#endif
-	
 	#ifdef ACCU_MASTER_CONTROL_UNIT_BOARD
 		Accu_Master_Control_Unit_Main_Task(&CONTROL_UNIT);
 	#endif
@@ -120,18 +84,6 @@ void Control_Unit_Main_Task()
 *******************************************************************************/
 void Control_Unit_Timer_10ms_Interrupt()
 {
-	#ifdef REAR_CONTROL_UNIT_POWER_DISTRIBUTION_BOARD
-		Rear_Control_Unit_Power_Distribution_10ms_Interrupt(&CONTROL_UNIT);
-	#endif
-
-	#ifdef REAR_CONTROL_UNIT_BOARD
-		Rear_Control_Unit_10ms_Interrupt(&CONTROL_UNIT);
-	#endif
-
-	#ifdef FRONT_CONTROL_UNIT_BOARD
-		Front_Control_Unit_10ms_Interrupt(&CONTROL_UNIT);
-	#endif
-	
 	#ifdef ACCU_MASTER_CONTROL_UNIT_BOARD
 		Accu_Master_Control_Unit_10ms_Interrupt(&CONTROL_UNIT);
 	#endif
@@ -145,18 +97,6 @@ void Control_Unit_Timer_10ms_Interrupt()
 *******************************************************************************/
 void Control_Unit_CAN1_Interrupt()
 {
-	#ifdef REAR_CONTROL_UNIT_POWER_DISTRIBUTION_BOARD
-		Rear_Control_Unit_Power_Distribution_CAN1_Interrupt(&CONTROL_UNIT);
-	#endif
-
-	#ifdef REAR_CONTROL_UNIT_BOARD
-		Rear_Control_Unit_CAN1_Interrupt(&CONTROL_UNIT);
-	#endif
-
-	#ifdef FRONT_CONTROL_UNIT_BOARD
-		Front_Control_Unit_CAN1_Interrupt(&CONTROL_UNIT);
-	#endif
-	
 	#ifdef ACCU_MASTER_CONTROL_UNIT_BOARD
 		Accu_Master_Control_Unit_CAN1_Interrupt(&CONTROL_UNIT);
 	#endif

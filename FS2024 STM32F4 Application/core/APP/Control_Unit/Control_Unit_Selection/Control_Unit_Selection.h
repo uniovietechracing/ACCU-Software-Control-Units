@@ -30,10 +30,6 @@
 ***************								 Board Selection                   ***************	
 ********************************************************************************
 *******************************************************************************/
-//#define REAR_CONTROL_UNIT_BOARD
-//#define REAR_CONTROL_UNIT_POWER_DISTRIBUTION_BOARD
-//#define FRONT_CONTROL_UNIT_BOARD
-//#define SDC_CHARGER_BOARD
 #define ACCU_MASTER_CONTROL_UNIT_BOARD
 
 
@@ -45,21 +41,6 @@
 ***************										Includes                  		 ***************	
 ********************************************************************************
 *******************************************************************************/
-#ifdef REAR_CONTROL_UNIT_POWER_DISTRIBUTION_BOARD
-	#include "Rear_Control_Unit_Power_Distribution.h"
-#endif
-
-#ifdef REAR_CONTROL_UNIT_BOARD
-	#include "Rear_Control_Unit.h"
-#endif
-
-#ifdef FRONT_CONTROL_UNIT_BOARD
-	#include "Front_Control_Unit.h"
-#endif
-
-#ifdef SDC_CHARGER_BOARD
-	#include "SDC_Charger.h"
-#endif
 
 #ifdef ACCU_MASTER_CONTROL_UNIT_BOARD
 	#include "Accu_Master_Control_Unit.h"
