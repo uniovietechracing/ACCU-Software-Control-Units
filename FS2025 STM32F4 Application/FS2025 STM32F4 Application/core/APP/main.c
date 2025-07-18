@@ -36,9 +36,9 @@ int main(void)
 
   while (1)
   {
-			//Control_Unit_Main_Task();
-			LTC6811_Measure_Temperatures_and_Voltages(&CONTROL_UNIT);
-			HAL_Delay(5000);
+			Control_Unit_Main_Task();
+			//LTC6811_Measure_Temperatures_and_Voltages(&CONTROL_UNIT);
+			//HAL_Delay(5000);
   }
 }
 

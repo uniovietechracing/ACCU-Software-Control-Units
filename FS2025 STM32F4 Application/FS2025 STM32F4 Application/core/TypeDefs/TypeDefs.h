@@ -164,9 +164,9 @@ typedef enum
 *******************************************************************************/
 typedef enum
 {
-	IDLE,
-	READ_RECEIVED,
-	READING
+	IDLE_1=0,
+	READ_RECEIVED=1,
+	READING=2
 } Read_Temperatures_Status_TypeDef;
 /*******************************************************************************
 ********************************************************************************
@@ -177,6 +177,7 @@ typedef enum
 
 typedef struct
 {
+	Read_Temperatures_Status_TypeDef Read_Temperatures_2;
 	float Voltages[24];
 	Temperatures_Typedef Temperatures[24];
 	uint8_t Temperatures_Hot;
@@ -185,7 +186,6 @@ typedef struct
 	CAN_Message_TypeDef CAN_Message;
 	cell_asic LTC6811_1[1];
 	cell_asic LTC6811_2[1];
-	Read_Temperatures_Status_TypeDef Read_Temperatures;
 
 } Control_Unit_Status_Typdef;
 
@@ -197,11 +197,11 @@ typedef struct
 
 typedef enum
 {
-	INIT,
-	NORMAL_OPERATION,
-	LTC6811_FAIL_MODE,
-	TEMP_FAIL_MODE,
-	TEMP_PLUS_60_FAIL_MODE
+	INIT=0,
+	NORMAL_OPERATION=1,
+	LTC6811_FAIL_MODE=2,
+	TEMP_FAIL_MODE=3,
+	TEMP_PLUS_60_FAIL_MODE=4
 } Control_Unit_State_Typdef;
 
 /*******************************************************************************

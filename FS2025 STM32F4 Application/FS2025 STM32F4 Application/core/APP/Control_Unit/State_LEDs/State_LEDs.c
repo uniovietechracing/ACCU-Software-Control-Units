@@ -76,7 +76,7 @@ void State_LEDs_Init(Control_Unit_TypeDef* Control_Unit)
 *******************************************************************************/
 void Green_LED_On (void)
 {
-	MCU_GPIO_Write_C9_Output(TRUE);
+	MCU_GPIO_Write_C8_Output(TRUE);
 }
 
 
@@ -88,7 +88,7 @@ void Green_LED_On (void)
 void Yellow_LED_On (void)
 {
 
-	MCU_GPIO_Write_C8_Output(TRUE);
+	MCU_GPIO_Write_C9_Output(TRUE);
 }
 
 /*******************************************************************************
@@ -98,7 +98,7 @@ void Yellow_LED_On (void)
 *******************************************************************************/
 void Green_LED_Off (void)
 {
-	MCU_GPIO_Write_C9_Output(FALSE);
+	MCU_GPIO_Write_C8_Output(FALSE);
 }
 
 
@@ -109,7 +109,7 @@ void Green_LED_Off (void)
 *******************************************************************************/
 void Yellow_LED_Off (void)
 {
-	MCU_GPIO_Write_C8_Output(FALSE);
+	MCU_GPIO_Write_C9_Output(FALSE);
 }
 
 

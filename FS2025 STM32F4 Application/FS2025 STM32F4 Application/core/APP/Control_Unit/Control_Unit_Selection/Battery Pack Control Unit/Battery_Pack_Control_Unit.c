@@ -61,7 +61,8 @@ void Battery_Pack_Control_Unit_MCU_Init(void)
  */
 void Battery_Pack_Control_Unit_Read_Memory_Init(Control_Unit_TypeDef* Control_Unit)
 {
-    // Lee desde la dirección de memoria Flash la palabra de 32 bits que representa el mapa de sensores activados
+   Control_Unit->Status.Read_Temperatures_2=IDLE_1;  
+	// Lee desde la dirección de memoria Flash la palabra de 32 bits que representa el mapa de sensores activados
     uint32_t Activated_Sensors = MCU_Flash_Read_Word(Address_APP_BPCU_Activated_Sensors);
 
     // Itera sobre los 24 sensores de temperatura
@@ -136,7 +137,7 @@ void Battery_Pack_Control_Unit_Init(Control_Unit_TypeDef* Control_Unit)
     Timer_10ms_Init(&Control_Unit->Timing.Status_Send_Timer, 1, MILISECONDS, 100);
 
     // Configura e inicia temporizador para duración del estado INIT (1000 ms)
-    Timer_10ms_Init(&Control_Unit->Timing.Init_State_Timer, 1, MILISECONDS, 1000);
+    Timer_10ms_Init(&Control_Unit->Timing.Init_State_Timer, 1, MILISECONDS, 2000);
     Timer_10ms_Start(&Control_Unit->Timing.Init_State_Timer);
 
     // Configura temporizador para envío periódico de temperatura CAN cada 200 ms (no iniciado aún)
@@ -204,8 +205,8 @@ void Generate_Status_Message(Control_Unit_TypeDef* Control_Unit)
     // Codifica y almacena las 6 temperaturas seleccionadas en los primeros 6 bytes
     for (uint8_t i = 0; i < 6; i++) 
     {
-        //Control_Unit->Tx_Message.Data[i] =
-        //LTC6811_Encode_Temp(Control_Unit->Status.Temperatures[base + i].Actual_Value);
+        Control_Unit->Tx_Message.Data[i] =
+        LTC6811_Encode_Temp(Control_Unit->Status.Temperatures[base + i].Actual_Value);
     }
 
     // Byte 6: número total de sensores en sobretemperatura
@@ -243,8 +244,8 @@ void Generate_Volt_Message(Control_Unit_TypeDef* Control_Unit)
 
 	for (uint8_t i = 0; i < 8; i++)
 	{
-		//Control_Unit->Tx_Message.Data[i] =
-			//LTC6811_Encode_Volt_10mV(Control_Unit->Status.Voltages[base_index + i]);
+		Control_Unit->Tx_Message.Data[i] =
+			LTC6811_Encode_Volt_10mV(Control_Unit->Status.Voltages[base_index + i]);
 	}
 }
 
@@ -317,7 +318,8 @@ void Battery_Pack_Control_State_Machine_Task(Control_Unit_TypeDef* Control_Unit)
 
         // Estado operativo normal: solo LED verde encendido fijo, LED amarillo apagado
         case NORMAL_OPERATION:
-            Green_LED_Permanent_On(Control_Unit);
+						Yellow_LED_Permanent_Off(Control_Unit);
+            Green_LED_Blink(Control_Unit,500);
         break;
 
         // Fallo en la comunicación con los chips LTC6811: ambos LEDs parpadean a 500 ms
@@ -496,9 +498,7 @@ void Battery_Pack_Control_Unit_10ms_Interrupt(Control_Unit_TypeDef* Control_Unit
 {
     // Verifica que no se esté realizando una lectura de temperaturas,
     // y que el sistema esté fuera del estado de inicialización o fallo grave
-    if (Control_Unit->Status.Read_Temperatures != READING &&
-        Control_Unit->State != INIT &&
-        Control_Unit->State != LTC6811_FAIL_MODE)
+    if (Control_Unit->Status.Read_Temperatures_2 != READING)
     {
         // Incrementa el temporizador de envío de estado por CAN
         Timer_10ms_Tick(&Control_Unit->Timing.Status_Send_Timer);
@@ -584,7 +584,15 @@ void Battery_Pack_Control_Unit_Check_Temperatures (Control_Unit_TypeDef* Control
 			{
 				// Sensor deshabilitado: se fuerza valor a 25°C
 				Control_Unit->Status.Temperatures[i].Actual_Value = 107.5f;
+				Control_Unit->Status.Temperatures[i].Failed=FALSE;
+				Control_Unit->Status.Temperatures[i].Hot=FALSE;
 			}
+		}
+		if (Control_Unit->Status.Temperatures[i].Disabled == TRUE)
+		{
+			Control_Unit->Status.Temperatures[i].Actual_Value = 107.5f;
+			Control_Unit->Status.Temperatures[i].Failed=FALSE;
+			Control_Unit->Status.Temperatures[i].Hot=FALSE;
 		}
 	}
 }
@@ -634,6 +642,11 @@ void Battery_Pack_Control_Check_Fails(Control_Unit_TypeDef* Control_Unit)
     {
         Control_Unit->State = TEMP_FAIL_MODE;
     }
+		
+		if(Control_Unit->Status.Temperatures_Failed ==0 && Control_Unit->Status.Temperatures_Hot==0)
+		{
+			Control_Unit->State = NORMAL_OPERATION;
+		}
 }
 	
 
@@ -651,37 +664,29 @@ void Battery_Pack_Control_Check_Fails(Control_Unit_TypeDef* Control_Unit)
 void Battery_Pack_Control_Read_Task(Control_Unit_TypeDef* Control_Unit)
 {
     // Verifica que se haya recibido una solicitud de lectura y que el sistema no esté en estado INIT ni en modo de fallo de los LTC
-    if (Control_Unit->Status.Read_Temperatures == READ_RECEIVED &&
+    if (Control_Unit->Status.Read_Temperatures_2 == READ_RECEIVED &&
         Control_Unit->State != INIT &&
         Control_Unit->State != LTC6811_FAIL_MODE)
     {
-        // Cambia el estado a 'leyendo' para evitar reentradas simultáneas
-        Control_Unit->Status.Read_Temperatures = READING;
+			// Cambia el estado a 'leyendo' para evitar reentradas simultáneas
+        Control_Unit->Status.Read_Temperatures_2 = READING;
 
         // Inicia la medición de temperaturas y voltajes a través de los dos chips LTC6811
-        //LTC6811_Measure_Temperatures_and_Voltages(Control_Unit);
+        LTC6811_Measure_Temperatures_and_Voltages(Control_Unit);
 
         // Verifica que ambas cadenas de medición estén funcionando correctamente
-        if (1)//&& Control_Unit->Status.LTC6811_2.Fail == FALSE)
-        {
-            // Evalúa temperaturas medidas para verificar límites seguros
-            Battery_Pack_Control_Unit_Check_Temperatures(Control_Unit);
+        // Evalúa temperaturas medidas para verificar límites seguros
+        Battery_Pack_Control_Unit_Check_Temperatures(Control_Unit);
 
-            // Revisa condiciones de fallo generales tras la lectura
-            Battery_Pack_Control_Check_Fails(Control_Unit);
+        // Revisa condiciones de fallo generales tras la lectura
+        Battery_Pack_Control_Check_Fails(Control_Unit);
 
-            // Prepara el mensaje de finalización de lectura para ser enviado por CAN
-            Generate_Finish_Message(Control_Unit);
-            CAN1_Send(&Control_Unit->Tx_Message);
+       // Prepara el mensaje de finalización de lectura para ser enviado por CAN
+        Generate_Finish_Message(Control_Unit);
+        CAN1_Send(&Control_Unit->Tx_Message);
 
-            // Devuelve el estado a IDLE indicando que se completó la lectura
-            Control_Unit->Status.Read_Temperatures = IDLE;
-        }
-        else
-        {
-            // En caso de fallo en la lectura, se libera el estado sin procesamiento adicional
-            Control_Unit->Status.Read_Temperatures = IDLE;
-        }
+       //Devuelve el estado a IDLE indicando que se completó la lectura
+        Control_Unit->Status.Read_Temperatures_2 = IDLE_1;
     }
 }
 
@@ -738,6 +743,41 @@ void Battery_Pack_Control_Unit_Main_Task(Control_Unit_TypeDef* Control_Unit)
  * @param Control_Unit Puntero a la estructura que contiene el estado de la unidad de control de baterías y el mensaje CAN recibido.
  * @param sensor_offset Índice base del grupo de sensores a modificar (0 = grupo 1, 8 = grupo 2, 16 = grupo 3).
  */
+
+void Flash_Erase_Sector2(void)
+{
+    FLASH_EraseInitTypeDef erase;
+    uint32_t pageError;
+
+    erase.TypeErase    = FLASH_TYPEERASE_SECTORS;
+    erase.Sector       = FLASH_SECTOR_2;
+    erase.NbSectors    = 1;
+    erase.VoltageRange = FLASH_VOLTAGE_RANGE_3;
+
+    HAL_FLASH_Unlock();
+
+    __disable_irq();
+
+	// Limpia cualquier flag de error previa
+	__HAL_FLASH_CLEAR_FLAG(FLASH_FLAG_EOP | FLASH_FLAG_OPERR | FLASH_FLAG_WRPERR |
+                       FLASH_FLAG_PGAERR | FLASH_FLAG_PGPERR | FLASH_FLAG_PGSERR);
+
+	// Espera a que no haya operación pendiente
+	while (__HAL_FLASH_GET_FLAG(FLASH_FLAG_BSY));
+
+	// Ahora sí: borrar
+	HAL_StatusTypeDef st = HAL_FLASHEx_Erase(&erase, &pageError);
+    __enable_irq();
+
+    if (st != HAL_OK) {
+        uint32_t err = HAL_FLASH_GetError();
+        //printf("? Erase failed. FLASH Error: 0x%08lX\n", err);
+        HAL_FLASH_Lock();
+        STM32F4_Error_Handler();
+    }
+
+    HAL_FLASH_Lock();
+}
 void Battery_Pack_Control_Unit_Cancel_Sensors(Control_Unit_TypeDef* Control_Unit, uint8_t sensor_offset)
 {
     BoolTypeDef Changed = FALSE;  // Indica si hubo algún cambio en los estados de los sensores
@@ -787,6 +827,7 @@ void Battery_Pack_Control_Unit_Cancel_Sensors(Control_Unit_TypeDef* Control_Unit
         // Si el nuevo mapa es diferente al anterior, se escribe en memoria Flash
         if (New_Activated_Sensors != Activated_Sensors)
         {
+						Flash_Erase_Sector2();
             MCU_Flash_Program_Word(Address_APP_BPCU_Activated_Sensors, New_Activated_Sensors);
         }
     }
@@ -810,10 +851,10 @@ void Battery_Pack_Control_Unit_CAN1_Interrupt(Control_Unit_TypeDef* Control_Unit
 		case BPCU_INIT_MEASURE_DEF:
 			// Inicia la lectura de temperaturas si el estado es IDLE, el sistema no está en INIT ni en modo de fallo LTC6811,
 			// el mensaje tiene un solo byte de datos (DLC == 0x01), y ese byte es 0x01.
-			if(Control_Unit->Status.Read_Temperatures == IDLE &&  Control_Unit->State != INIT && Control_Unit->State != LTC6811_FAIL_MODE &&
+			if(Control_Unit->Status.Read_Temperatures_2 == IDLE_1 && Control_Unit->State != LTC6811_FAIL_MODE && Control_Unit->State!=INIT &&
 			   Control_Unit->Rx_Message.Header.DLC == 0x01 && Control_Unit->Rx_Message.Data[0] == 0x01)
 			{
-				Control_Unit->Status.Read_Temperatures = READ_RECEIVED;
+				Control_Unit->Status.Read_Temperatures_2 = READ_RECEIVED;
 			}
 		break;
 			

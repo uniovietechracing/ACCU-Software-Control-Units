@@ -506,7 +506,7 @@ void LTC6811_Measure_Temperatures_and_Voltages(Control_Unit_TypeDef* Control_Uni
 	  LTC6811_set_cfgr_refon(0, Control_Unit->Status.LTC6811_1, true);  // Habilitar REFON
 		LTC6811_set_cfgr_refon_2(0, Control_Unit->Status.LTC6811_2, true);  // Habilitar REFON
 		LTC_Active_Odd_Balancing(1, Control_Unit->Status.LTC6811_1);
-    LTC_Active_Odd_Balancing(1,Control_Unit->Status.LTC6811_2);
+    LTC_Active_Odd_Balancing_2(1,Control_Unit->Status.LTC6811_2);
     HAL_Delay(2); // Permite estabilización
 		
 		
@@ -525,7 +525,7 @@ void LTC6811_Measure_Temperatures_and_Voltages(Control_Unit_TypeDef* Control_Uni
     HAL_Delay(1);
 
     error_1=LTC6811_rdcv(CELL_CH_ALL,1,Control_Unit->Status.LTC6811_1);
-    error_2=LTC6811_rdcv(CELL_CH_ALL,1,Control_Unit->Status.LTC6811_2);
+    error_2=LTC6811_rdcv_2(CELL_CH_ALL,1,Control_Unit->Status.LTC6811_2);
 		
 
     //Si ha fallado algo volvemos a medir tres veces
@@ -538,7 +538,7 @@ void LTC6811_Measure_Temperatures_and_Voltages(Control_Unit_TypeDef* Control_Uni
 		while(error_2 && intentos_2<=2)
 		{
 				intentos_2++;
-				error_2=LTC6811_rdcv(CELL_CH_ALL,1,Control_Unit->Status.LTC6811_2);
+				error_2=LTC6811_rdcv_2(CELL_CH_ALL,1,Control_Unit->Status.LTC6811_2);
 		}
 		
 		//Si ha vuelto a fallar damos fallo
@@ -586,7 +586,7 @@ void LTC6811_Measure_Temperatures_and_Voltages(Control_Unit_TypeDef* Control_Uni
     wakeup_idle_2(1);
     HAL_Delay(1);
     error_1=LTC6811_rdcv(CELL_CH_ALL,1,Control_Unit->Status.LTC6811_1);
-    error_2=LTC6811_rdcv(CELL_CH_ALL,1,Control_Unit->Status.LTC6811_2);
+    error_2=LTC6811_rdcv_2(CELL_CH_ALL,1,Control_Unit->Status.LTC6811_2);
 		
 
     //Si ha fallado algo volvemos a medir tres veces
@@ -599,7 +599,7 @@ void LTC6811_Measure_Temperatures_and_Voltages(Control_Unit_TypeDef* Control_Uni
 		while(error_2 && intentos_2<=2)
 		{
 				intentos_2++;
-				error_2=LTC6811_rdcv(CELL_CH_ALL,1,Control_Unit->Status.LTC6811_2);
+				error_2=LTC6811_rdcv_2(CELL_CH_ALL,1,Control_Unit->Status.LTC6811_2);
 		}
 		
 		//Si ha vuelto a fallar damos fallo
@@ -612,7 +612,7 @@ void LTC6811_Measure_Temperatures_and_Voltages(Control_Unit_TypeDef* Control_Uni
 		}
 
     // Guardar voltajes de celdas pares (índices impares)
-    for (int i = 1; i < 12; i += 1) 
+    for (int i = 0; i < 12; i += 1) 
 		{
         Control_Unit->Status.Voltages[i] = Control_Unit->Status.LTC6811_1[0].cells.c_codes[i]*0.0001;
         Control_Unit->Status.Voltages[i + 12] = Control_Unit->Status.LTC6811_2[0].cells.c_codes[i]*0.0001;
